@@ -61,9 +61,12 @@ page_top ();
 </div>
 
 <div style="float:right; ">
-<h2>
-	<a href="/logout.php">Logout</a>
-</h2> 
+	<form 
+		action='/logout.php'
+		onSubmit="return confirm('thoát nha anh hai');"
+	>
+		<input type="submit" value=">logout" />
+	</form>
 </div>
 
 
@@ -117,7 +120,7 @@ page_top ();
 				onSubmit="return confirm('chắc chưa đại vương? <?=escape($tik['name_'])?>');"
 			>
 				<input type="hidden" name="tik_id" value="<?=$tik['id_']?>" />
-				<input type="submit" value="Chấm công" />
+				<input type="submit" value="Tik" />
 			</form>
 		</td>
 	<?php } else { 

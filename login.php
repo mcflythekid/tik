@@ -21,11 +21,11 @@ if (isset ( $username )) { // have username
 	}
 }
 db_close ();
+page_title("đăng nhập đi");
+page_top();
 ?>
 
-<html>
-<head>
-<title>Đăng nhập</title>
+
 <style>
 body{
   font-family: 'Open Sans', sans-serif;
@@ -147,11 +147,12 @@ $(document).ready(function(){
 <div class="box">
 <h1>Tik</h1>
 
-<input placeholder="Tên đăng nhập" id="username" name="username" value=""  class="email" />
+<input autocapitalize="off" type="text" placeholder="Tên đăng nhập" id="username" name="username" value=""  class="email" />
   
 <input placeholder="Mật khẩu" id="password" name="password" type="password"  class="email" />
+
   
-<a href="#" onclick="document.getElementById('myForm').submit();".><div class="btn">Đăng Nhập</div></a> <!-- End Btn -->
+<input type="submit" value="Đăng Nhập" class="btn"/>
 
 
   
@@ -160,5 +161,6 @@ $(document).ready(function(){
 </form>
 
 <p>Quên mật khẩu? Chết mẹ mày đi</p>
-</body>
-</html>
+
+<?php
+page_bot();

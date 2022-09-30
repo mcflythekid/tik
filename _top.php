@@ -11,6 +11,8 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css">
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"></script>
 
+	<link rel="icon" type="image/png" href="favicon-1.png" />
+
 	<title><?=$page_title?></title>
 </head>
 <body>
