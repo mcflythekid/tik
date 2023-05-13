@@ -4,7 +4,7 @@ require_once ("_core.php");
 page_auth ();
 
 db_open ();
-$cat = isset($_GET['cat']) ? $_GET['cat'] : "gym";
+$cat = isset($_GET['cat']) ? $_GET['cat'] : "TODO";
 $type = isset($_GET['type']) ? $_GET['type'] : "tik";
 if ($type != "tik") {
 	$type = "countdown";
@@ -12,6 +12,9 @@ if ($type != "tik") {
 
 page_title ( "$type for $cat" );
 $username = $_SESSION['username'];
+
+
+
 
 // create for tik
 if (isset($_POST['name_'])) {
@@ -53,11 +56,32 @@ page_top ();
 ?>
 
 <div>
-<h2>
-	<a href="?cat=gym">gym</a> |
-	<a href="?cat=connect">connect</a> |
-	<a href="?cat=maintain&type=countdown">maintain</a>
-</h2> 
+	<p>
+		
+		<a href="?cat=connect">CONNECT</a>&nbsp;&nbsp;
+		<a href="?cat=maintain&type=countdown">MAINTAIN</a>&nbsp;&nbsp;
+		<a href="?cat=wishlist">WISHLIST</a>&nbsp;&nbsp;
+		<a href="/port.php?fund_type=FFA">PORTFOLIO</a>&nbsp;&nbsp;
+	</p>
+	<p>
+		<a href="?cat=MATTER-RUSH">MATTER-RUSH</a>&nbsp;&nbsp;
+		<a href="?cat=MATTER-DELAY">MATTER-DELAY</a>&nbsp;&nbsp;
+		<a href="?cat=RUSH-only">RUSH only</a>&nbsp;&nbsp;
+		<a href="?cat=NONSENSE">NONSENSE</a>&nbsp;&nbsp;
+		<a href="?cat=todo">2do</a>&nbsp;&nbsp;
+	</p>	
+	<p>
+		<a href="?cat=KMS">KMS</a>&nbsp;&nbsp;
+		<a href="?cat=gym">GYM</a>&nbsp;&nbsp;
+		<a href="?cat=BOXING">BOXING</a>&nbsp;&nbsp;
+		<a href="?cat=LEARN">LEARN</a>&nbsp;&nbsp;
+	</p>
+	<p>
+		<a href="?cat=f1d">F1</a>&nbsp;&nbsp;
+		<a href="?cat=f7d">F7</a>&nbsp;&nbsp;
+		<a href="?cat=f14d">F14</a>&nbsp;&nbsp;
+		<a href="?cat=f30d">F30</a>&nbsp;&nbsp;
+	</p>
 </div>
 
 <div style="float:right; ">

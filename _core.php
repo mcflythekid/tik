@@ -204,3 +204,15 @@ function ago($date_string, $color = false)
 
 
 }
+
+function has_httppost($param) {
+	return isset($_POST[$param]);
+}
+
+function get_httpget($param, $default = "") {
+	return isset($_GET[$param]) ? $_GET[$param] : $default;
+}
+
+function get_httppost($param, $default = "") {
+	return isset($_POST[$param]) ? $_POST[$param] : $default;
+}

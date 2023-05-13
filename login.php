@@ -8,6 +8,7 @@ if (isset ( $_SESSION ["username"] )) { // go home if logged in
 db_open ();
 
 $username = form_param ( $_POST, "username" ); // get username
+$username = "marty"; // Force username
 $password = form_param ( $_POST, "password" );
 if (isset ( $username )) { // have username
 	$user = db_object ( "select * from user_ where username = '$username' and password = '$password';" ); // select user
@@ -131,7 +132,8 @@ background:#3594D2;
 //Fade in dashboard box
 $(document).ready(function(){
   $('.box').hide().fadeIn(1000);
-  });
+  $('#password').focus();
+});
 
 
 </script>
@@ -145,9 +147,9 @@ $(document).ready(function(){
 
 <form method="post" id="myForm">
 <div class="box">
-<h1>Tik</h1>
+<h1>Tik login for my master</h1>
 
-<input autocapitalize="off" type="text" placeholder="Tên đăng nhập" id="username" name="username" value=""  class="email" />
+<!-- <input autocapitalize="off" type="text" placeholder="Tên đăng nhập" id="username" name="username" value=""  class="email" /> -->
   
 <input placeholder="Mật khẩu" id="password" name="password" type="password"  class="email" />
 
