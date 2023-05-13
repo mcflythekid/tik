@@ -5,6 +5,7 @@ page_auth ();
 db_open ();
 $username = $_SESSION['username'];
 $param_fund_type = get_httpget("fund_type", "FFA");
+page_title("Portfolio");
 
 function digit($in, $count = 3) {
 	$nbr = number_format($in, $count, ".", ",");
@@ -85,29 +86,36 @@ foreach($coins as $coin ) {
 	$coin_code = $coin["coin_code"];
 	$price = $price_data[$coin_code];
 	
-	$total_coin = 0;
-	$total_usd = 0;
-	$total_inflow = 0;
-	$total_outflow = 0;
+	$quantity = 0;
+	$sum_buy = 0;
+	$sum_sell = 0;
 	$trans = db_list("select amount_coin, amount_usd, type from portfolio_trans where port_id = $port_id");
 	foreach($trans as $tran) {
 		if ($tran["type"] == "sell") {
-			$total_coin -= $tran["amount_coin"];
-			$total_usd -= $tran["amount_usd"];
-			$total_outflow += $tran["amount_usd"];
+			$quantity -= $tran["amount_coin"];
+			$sum_sell += $tran["amount_usd"];
 		} else { // buy
-			$total_coin += $tran["amount_coin"];
-			$total_usd += $tran["amount_usd"];
-			$total_inflow += $tran["amount_usd"];
+			$quantity += $tran["amount_coin"];
+			$sum_buy += $tran["amount_usd"];
 		}
 	}
+	$value = $quantity * $price;
+	$per_onhand = ($sum_sell + 0) / $sum_buy * 100.0;
+	$per_rug = ($sum_sell + $value) / $sum_buy * 100.0;
+	$delta_rug = (  ($sum_sell + $value) - $sum_buy  )  *  23333;
+	
 	$data = array();
-	$data["coin"] = $total_coin;
-	$data["usd"] = $total_usd;
-	$data["in"] = $total_inflow;
-	$data["out"] = $total_outflow;
-	$data["liqui"] = $total_coin * $price;
-	$data["per"] = ($total_outflow + $total_coin * $price) / $total_inflow * 100;
+	$data["quantity"] = $quantity;
+	$data["value"] = $value;
+	$data["sum_buy"] = $sum_buy;
+	$data["sum_sell"] = $sum_sell;
+	$data["per_onhand"] = $per_onhand;
+	$data["per_rug"] = $per_rug;
+	$data["delta_rug"] = $delta_rug;
+	
+	//$data["per"] = ($sum_sell + $quantity * $price) / $sum_buy * 100;
+	
+	
 	$coin_data[$port_id] = $data;
 }
 
@@ -165,13 +173,15 @@ page_top ();
 
 <!-- header -->
 <tr>
-	<th>coin_code</th>
-	<th>name</th>
-	<th>current coin</th>
-	<th>IN usd</th>
-	<th>OUT usd</th>
-	<th>LIQUI usd</th>
-	<th>ret</th>
+	<th>Name</th>
+	<th>Coin</th>
+	<th>Quantity</th>
+	<th>Value</th>
+	<th>Σ_Buy</th>
+	<th>Σ_Sell</th>
+	<th>%_OnHand</th>
+	<th>%_Rug</th>
+	<th>Δ_RugVND</th>
 	<th>#</th>
 	<th>#</th>
 	<th>#</th>
@@ -180,13 +190,15 @@ page_top ();
 <!-- body -->
 <?php foreach($coins as $coin ) {?>
 <tr>
-	<td><?=escape($coin['coin_code'])?></td>
 	<td><?=escape($coin['name_'])?></td>
-	<td><?=digit($coin_data[$coin["id_"]]["coin"], 5)?></td>
-	<td><?=digit($coin_data[$coin["id_"]]["in"], 0)?></td>
-	<td><?=digit($coin_data[$coin["id_"]]["out"], 0)?></td>
-	<td><?=digit($coin_data[$coin["id_"]]["liqui"], 0)?></td>
-	<td><?=digit($coin_data[$coin["id_"]]["per"], 0)?>%</td>
+	<td><?=escape($coin['coin_code'])?></td>
+	<td><?=digit($coin_data[$coin["id_"]]["quantity"], 5)?></td>
+	<td><?=digit($coin_data[$coin["id_"]]["value"], 0)?></td>
+	<td><?=digit($coin_data[$coin["id_"]]["sum_buy"], 0)?></td>
+	<td><?=digit($coin_data[$coin["id_"]]["sum_sell"], 0)?></td>
+	<td><?=digit($coin_data[$coin["id_"]]["per_onhand"], 0)?>%</td>
+	<td><?=digit($coin_data[$coin["id_"]]["per_rug"], 0)?>%</td>
+	<td><?=digit($coin_data[$coin["id_"]]["delta_rug"], 0)?></td>
 	<td><?=ui_del($coin)?></td>
 	<td><?=ui_toggle($coin)?></td>
 	<td id="act_<?=$coin["id_"]?>" style="display: none;">
