@@ -182,10 +182,10 @@ page_top ();
 <tr>
 	<td><?=escape($coin['coin_code'])?></td>
 	<td><?=escape($coin['name_'])?></td>
-	<td><?=digit($coin_data[$coin["id_"]]["coin"])?></td>
-	<td><?=digit($coin_data[$coin["id_"]]["in"])?></td>
-	<td><?=digit($coin_data[$coin["id_"]]["out"])?></td>
-	<td><?=digit($coin_data[$coin["id_"]]["liqui"])?></td>
+	<td><?=digit($coin_data[$coin["id_"]]["coin"], 5)?></td>
+	<td><?=digit($coin_data[$coin["id_"]]["in"], 0)?></td>
+	<td><?=digit($coin_data[$coin["id_"]]["out"], 0)?></td>
+	<td><?=digit($coin_data[$coin["id_"]]["liqui"], 0)?></td>
 	<td><?=digit($coin_data[$coin["id_"]]["per"], 0)?>%</td>
 	<td><?=ui_del($coin)?></td>
 	<td><?=ui_toggle($coin)?></td>
