@@ -152,7 +152,7 @@ page_top ();
 
 <p>
 <?php foreach($prices as $price ) {?>
-	<strong><?=$price["code"]?>=<?=digit($price["price"], 10)?>
+	<span><?=$price["code"]?>=<?=digit($price["price"], 10)?></span>&nbsp;&nbsp;
 <?php }?>
 </p>
 <hr/>
