@@ -16,13 +16,18 @@ function update_price($code) {
 	db_query("update portfolio_price set price = $price_txt where code = '$code'");
 }
 
+//tier a
+update_price("ETH");
+update_price("BTC");
+
+//tier b
 update_price("NEO");
 update_price("GAS");
-update_price("PEPE");
 update_price("WING");
 update_price("FIRO");
-update_price("ETH");
 
+//tier e
+update_price("PEPE");
 update_price("TATE");
 update_price("BOBO");
 
@@ -66,7 +71,7 @@ $coins = db_list("select id_, name_, coin_code from portfolio where username = '
 
 
 
-$prices = db_list("select * from portfolio_price");
+$prices = db_list("select * from portfolio_price order by order_");
 $price_data = array();
 foreach($prices as $price ) {
 	$price_data[$price["code"]] = $price["price"];
@@ -125,8 +130,12 @@ page_top ();
 
 <div>
 	<p>
-		
 		<a href="/index.php?cat=f1d">F1D</a>&nbsp;&nbsp;
+	</p>
+	<p>
+		<a href="/port.php?fund_type=FFA">FFA</a>&nbsp;&nbsp;
+		<a href="/port.php?fund_type=TRADE">TRADE</a>&nbsp;&nbsp;
+		<a href="/port.php?fund_type=RISK">RISK</a>&nbsp;&nbsp;
 	</p>
 </div>
 
