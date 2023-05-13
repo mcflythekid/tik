@@ -147,6 +147,16 @@ page_top ();
 	</p>
 </div>
 
+<?php
+	$ts_cz = file_get_contents("/home/mc/app/matrix/price-ts-cz");
+	$ts_erc = file_get_contents("/home/mc/app/matrix/price-ts-erc");
+?>
+<p>
+	<strong>Binance: <?=$ts_cz?></strong>&nbsp;&nbsp;
+	<strong>ERC20: <?=$ts_erc?></strong>
+</p>
+<hr/>
+
 <p><strong><?= "param_fund_type=$param_fund_type" ?></strong></p>
 <hr/>
 
