@@ -113,9 +113,6 @@ foreach($coins as $coin ) {
 	$data["per_rug"] = $per_rug;
 	$data["delta_rug"] = $delta_rug;
 	
-	//$data["per"] = ($sum_sell + $quantity * $price) / $sum_buy * 100;
-	
-	
 	$coin_data[$port_id] = $data;
 }
 
