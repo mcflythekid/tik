@@ -12,6 +12,13 @@ function digit($in, $count = 3) {
 	return strpos($nbr,'.')!==false ? rtrim(rtrim($nbr,'0'),'.') : $nbr;
 }
 
+function money_color($num) {
+	if ($num <= 0) {
+		return $num;
+	}
+	return "<strong style='color: green;'>$num</strong>";
+}
+
 function update_price($code) {
 	$price_txt = file_get_contents("/home/mc/app/matrix/price-$code");
 	db_query("update portfolio_price set price = $price_txt where code = '$code'");
@@ -205,7 +212,7 @@ page_top ();
 	<td><?=digit($coin_data[$coin["id_"]]["sum_sell"], 0)?></td>
 	<td><?=digit($coin_data[$coin["id_"]]["per_onhand"], 0)?>%</td>
 	<td><?=digit($coin_data[$coin["id_"]]["per_rug"], 0)?>%</td>
-	<td><?=digit($coin_data[$coin["id_"]]["delta_rug"], 0)?></td>
+	<td><?=money_color(digit($coin_data[$coin["id_"]]["delta_rug"], 0))?></td>
 	<td><?=ui_del($coin)?></td>
 	<td><?=ui_toggle($coin)?></td>
 	<td id="act_<?=$coin["id_"]?>" style="display: none;">
