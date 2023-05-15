@@ -81,6 +81,11 @@ page_top ();
 		<a href="?cat=f7d">F7</a>&nbsp;&nbsp;
 		<a href="?cat=f14d">F14</a>&nbsp;&nbsp;
 		<a href="?cat=f30d">F30</a>&nbsp;&nbsp;
+		<a href="?cat=f180d">F180</a>&nbsp;&nbsp;
+	</p>
+	<p>
+		<a href="?cat=f30d_15th">Monthly_15th</a>&nbsp;&nbsp;
+		<a href="?cat=f30d_payment">Monthly_Payment</a>&nbsp;&nbsp;
 	</p>
 </div>
 
