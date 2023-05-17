@@ -78,9 +78,11 @@ page_top ();
 	</p>
 	<p>
 		<a href="?cat=f1d">F1</a>&nbsp;&nbsp;
+		<a href="?cat=f1d_care">CARE</a>&nbsp;&nbsp;
 		<a href="?cat=f7d">F7</a>&nbsp;&nbsp;
 		<a href="?cat=f14d">F14</a>&nbsp;&nbsp;
 		<a href="?cat=f30d">F30</a>&nbsp;&nbsp;
+		<a href="?cat=f90d">F90</a>&nbsp;&nbsp;
 		<a href="?cat=f180d">F180</a>&nbsp;&nbsp;
 	</p>
 	<p>
