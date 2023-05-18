@@ -14,7 +14,7 @@ page_title ( "$type for $cat" );
 $username = $_SESSION['username'];
 
 
-
+$tik_color_day = get_tik_color_day($cat);
 
 // create for tik
 if (isset($_POST['name_'])) {
@@ -52,6 +52,12 @@ if (isset($_POST['rm_id'])) {
 
 $tiks = db_list("select id_, name_, tik from tik where username = '$username' and category = '$cat' and type_ = '$type' order by tik asc");
 
+function get_numerics ($str) {
+    preg_match_all('/\d+/', $str, $matches);
+    return $matches[0];
+}
+
+
 page_top ();
 ?>
 
@@ -77,8 +83,9 @@ page_top ();
 		<a href="?cat=LEARN">LEARN</a>&nbsp;&nbsp;
 	</p>
 	<p>
-		<a href="?cat=f1d">F1</a>&nbsp;&nbsp;
+		<a href="?cat=f1d">TASK</a>&nbsp;&nbsp;
 		<a href="?cat=f1d_care">CARE</a>&nbsp;&nbsp;
+		<a href="?cat=f3d">F3</a>&nbsp;&nbsp;
 		<a href="?cat=f7d">F7</a>&nbsp;&nbsp;
 		<a href="?cat=f14d">F14</a>&nbsp;&nbsp;
 		<a href="?cat=f30d">F30</a>&nbsp;&nbsp;
@@ -144,7 +151,7 @@ page_top ();
 	<td><?=escape($tik['name_'])?></td>
 
 	<?php if ($type == "tik") { ?>
-		<td><?=ago($tik['tik'])?></td>
+		<td><?=ago2($tik['tik'], false, $tik_color_day)?></td>
 		<td>
 			<form 
 				method='post'
@@ -157,7 +164,7 @@ page_top ();
 	<?php } else { 
 		$tmp_date = str_replace(" 00:00:00", "", $tik['tik']);
 	?>
-		<td><?=ago($tik['tik'], true)?> (<?=$tmp_date?>)</td>
+		<td><?=ago2($tik['tik'], true)?> (<?=$tmp_date?>)</td>
 	<?php } ?>
 
 

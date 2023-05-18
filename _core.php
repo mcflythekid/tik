@@ -201,8 +201,83 @@ function ago($date_string, $color = false)
 			return "$ret ago";
 		}
 	}
+}
 
 
+function get_tik_color_day($cat) {
+    preg_match_all('!\d+!', $cat, $matches);
+    return $matches[0][0];
+}
+
+
+function ago2_unit($value1, $unit1, $value2, $unit2) {
+	$suffix1 = $value1 > 1 ? $unit1 . "s" : $unit1;
+	$ret1 = "$value1 $suffix1";
+	
+	if ($value2 == 0) {
+		return $ret1;
+	}
+	
+	$suffix2 = $value2 > 1 ? $unit2 . "s" : $unit2;
+	$ret2 = "$value2 $suffix2";
+	
+	return "$ret1 $ret2";
+}
+function ago2_date_diff($d1, $d2) {
+	$difference = $d1 - $d2;
+	return abs($difference/(60 * 60)/24);
+}
+function ago2($date_string, $color = false, $tik_color_day = 0)
+{
+    $today = new DateTime("now");
+    $thatDay = new DateTime($date_string);
+    $dt = $today->diff($thatDay);
+	
+	$x_year = $dt->y;
+	$x_month = $dt->m;
+	$x_day = $dt->d;
+	$x_hour = $dt->h;
+	$x_minute = $dt->i;
+	$x_second = $dt->s;
+
+    if ($dt->y > 0){
+        $ret = ago2_unit($x_year, "year", $x_month, "month");
+    } else if ($dt->m > 0) {
+        $ret = ago2_unit($x_month, "month", $x_day, "day");
+    } else if ($dt->d > 0) {
+        $ret = ago2_unit($x_day, "day", $x_hour, "hour");
+    } else if ($dt->h > 0) {
+        $ret = ago2_unit($x_hour, "hour", $x_minute, "minute");
+    } else if ($dt->i > 0) {
+        $ret = ago2_unit($x_minute, "minute", $x_second, "second");
+    } else if ($dt->s > 0) {
+        $ret = ago2_unit($x_second, "second", 0, "");
+    } else {
+		return "just now";
+	}
+
+	if ($color) { // For maintain
+		if ($thatDay > $today) {
+			return "<span style='color:green'>Next $ret</span>";
+		} else {
+			return "<span style='color:red'>$ret ago</span>";
+		}
+		
+	} else if ($tik_color_day > 0) { // For tik day
+		$diff = date_diff($today, $thatDay)->days;
+		if ($diff >= $tik_color_day) {
+			return "<strong style='color:green'>$ret ago</strong>";
+		} else {
+			return "<span style='color:black'>$ret ago</span>";
+		}
+		
+	} else {
+		if ($thatDay > $today) {
+			return "Next $ret";
+		} else {
+			return "$ret ago";
+		}
+	}
 }
 
 function has_httppost($param) {
