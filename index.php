@@ -73,7 +73,7 @@ page_top ();
 <div>
 	<p>
 		
-		<a href="?cat=connect">CONNECT</a>&nbsp;&nbsp;
+		<a href="?cat=connect30">CONNECT</a>&nbsp;&nbsp;
 		<a href="?cat=maintain&type=countdown">MAINTAIN</a>&nbsp;&nbsp;
 		<a href="?cat=wishlist">WISHLIST</a>&nbsp;&nbsp;
 		<a href="?cat=luna&type=luna">LUNA</a>&nbsp;&nbsp;
