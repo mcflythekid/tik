@@ -15,8 +15,7 @@ if ($type == 'luna') {
 page_title ( "$type for $cat" );
 $username = $_SESSION['username'];
 
-
-$tik_color_day = get_tik_color_day($cat);
+$tik_color_day = isset($_GET['days']) ? $_GET['days'] : get_tik_color_day($cat);
 
 // create for tik
 if (isset($_POST['name_'])) {
@@ -87,10 +86,10 @@ page_top ();
 		<a href="?cat=todo">2do</a>&nbsp;&nbsp;
 	</p>	
 	<p>
-		<a href="?cat=KMS">KMS</a>&nbsp;&nbsp;
-		<a href="?cat=gym">GYM</a>&nbsp;&nbsp;
-		<a href="?cat=BOXING">BOXING</a>&nbsp;&nbsp;
-		<a href="?cat=LEARN">LEARN</a>&nbsp;&nbsp;
+		<a href="?cat=KMS&days=1">KMS</a>&nbsp;&nbsp;
+		<a href="?cat=gym&days=5">GYM</a>&nbsp;&nbsp;
+		<a href="?cat=BOXING&days=3">BOXING</a>&nbsp;&nbsp;
+		<a href="?cat=LEARN&days=2">LEARN</a>&nbsp;&nbsp;
 	</p>
 	<p>
 		<a href="?cat=f1d">TASK</a>&nbsp;&nbsp;
@@ -127,6 +126,10 @@ page_top ();
 		echo "(countdown)";
 	} else if ($type== "luna") {
 		echo "(luna)";
+	}
+	
+	if (isset($tik_color_day)) {
+		echo " <$tik_color_day day(s)>";
 	}
 ?>
 </h1>
