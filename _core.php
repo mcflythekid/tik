@@ -227,7 +227,7 @@ function ago2_date_diff($d1, $d2) {
 	$difference = $d1 - $d2;
 	return abs($difference/(60 * 60)/24);
 }
-function ago2($date_string, $color = false, $tik_color_day = 0)
+function ago2($date_string, $color = false, $tik_color_day = 0, $tik_color_type = "tik")
 {
     $today = new DateTime("now");
     $thatDay = new DateTime($date_string);
@@ -265,11 +265,19 @@ function ago2($date_string, $color = false, $tik_color_day = 0)
 		
 	} else if ($tik_color_day > 0) { // For tik day
 		$diff = date_diff($today, $thatDay)->days;
-		if ($diff >= $tik_color_day) {
-			return "<strong style='color:green'>$ret ago</strong>";
-		} else {
-			return "<span style='color:black'>$ret ago</span>";
-		}
+		if ($tik_color_type == "tik") {
+			if ($diff >= $tik_color_day) {
+				return "<strong style='color:green'>$ret ago</strong>";
+			} else {
+				return "<span style='color:black'>$ret ago</span>";
+			}
+		} else if ($tik_color_type == "luna") {
+			if ($diff <= $tik_color_day) {
+				return "<strong style='color:green'>Next $ret</strong>";
+			} else {
+				return "<span style='color:black'>Next $ret ago</span>";
+			}
+		} 
 		
 	} else {
 		if ($thatDay > $today) {

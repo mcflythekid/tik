@@ -1,13 +1,15 @@
 <?php
 session_start ();
 require_once ("_core.php");
+require_once ("luna.php");
 page_auth ();
 
 db_open ();
 $cat = isset($_GET['cat']) ? $_GET['cat'] : "TODO";
 $type = isset($_GET['type']) ? $_GET['type'] : "tik";
-if ($type != "tik") {
-	$type = "countdown";
+
+if ($type == 'luna') {
+	$luna = new luna();
 }
 
 page_title ( "$type for $cat" );
@@ -34,6 +36,16 @@ if (isset($_POST['countdown_name']) && isset($_POST['countdown_tik'])) {
 	exit;
 }
 
+// create for luna
+if (isset($_POST['luna_name']) && isset($_POST['luna_tik'])) {
+	$luna_name = $_POST['luna_name'];
+	$luna_tik  = $_POST['luna_tik'];
+	$tik_format = '%Y %m %d';
+	db_query("insert into tik (username, category, type_, name_, tik) values ('$username', '$cat', 'luna', '$luna_name', STR_TO_DATE('2000 $luna_tik', '$tik_format'))");
+	header("Refresh:0");
+	exit;
+}
+
 // do the tik
 if (isset($_POST['tik_id'])) {
 	$tik_id = $_POST['tik_id'];
@@ -50,12 +62,9 @@ if (isset($_POST['rm_id'])) {
 	exit;
 }
 
-$tiks = db_list("select id_, name_, tik from tik where username = '$username' and category = '$cat' and type_ = '$type' order by tik asc");
 
-function get_numerics ($str) {
-    preg_match_all('/\d+/', $str, $matches);
-    return $matches[0];
-}
+
+	$tiks = db_list("select id_, name_, tik from tik where username = '$username' and category = '$cat' and type_ = '$type' order by tik asc");
 
 
 page_top ();
@@ -67,6 +76,7 @@ page_top ();
 		<a href="?cat=connect">CONNECT</a>&nbsp;&nbsp;
 		<a href="?cat=maintain&type=countdown">MAINTAIN</a>&nbsp;&nbsp;
 		<a href="?cat=wishlist">WISHLIST</a>&nbsp;&nbsp;
+		<a href="?cat=luna&type=luna">LUNA</a>&nbsp;&nbsp;
 		<a href="/port.php?fund_type=FFA">PORTFOLIO</a>&nbsp;&nbsp;
 	</p>
 	<p>
@@ -89,6 +99,7 @@ page_top ();
 		<a href="?cat=f7d">F7</a>&nbsp;&nbsp;
 		<a href="?cat=f14d">F14</a>&nbsp;&nbsp;
 		<a href="?cat=f30d">F30</a>&nbsp;&nbsp;
+		<a href="?cat=f60d">F60</a>&nbsp;&nbsp;
 		<a href="?cat=f90d">F90</a>&nbsp;&nbsp;
 		<a href="?cat=f180d">F180</a>&nbsp;&nbsp;
 	</p>
@@ -110,7 +121,15 @@ page_top ();
 
 
 
-<h1><?=escape($cat)?> <?= $type != "tik" ? "(countdown)" : "" ?></h1>
+<h1><?=escape($cat)?>
+<?php 
+	if ($type == "countdown") {
+		echo "(countdown)";
+	} else if ($type== "luna") {
+		echo "(luna)";
+	}
+?>
+</h1>
 
 <div>
 	<?php if ($type == "tik") { ?>
@@ -118,10 +137,16 @@ page_top ();
 		<input required="true" name="name_" placeholder="Cần 1 cái tên ..."></input>
 		<input type="submit" value="Thêm"></input>
 	</form>
-	<?php } else { ?>
+	<?php } else if ($type == "countdown") { ?>
 		<form  method='post'>
 		<input required="true" name="countdown_name" placeholder="Cần 1 cái tên ..."></input>
 		<input required="true" name="countdown_tik" placeholder="yyyy mm dd [hh mi]"></input>
+		<input type="submit" value="Thêm"></input>
+	</form>
+	<?php } else if ($type == "luna"){ ?>
+		<form  method='post'>
+		<input required="true" name="luna_name" placeholder="Tên sự kiện âm lịch..."></input>
+		<input required="true" name="luna_tik" placeholder="mm dd (Âm lịch)"></input>
 		<input type="submit" value="Thêm"></input>
 	</form>
 	<?php } ?>
@@ -161,10 +186,44 @@ page_top ();
 				<input type="submit" value="Tik" />
 			</form>
 		</td>
-	<?php } else { 
+		
+		
+	<?php } else if ($type == 'countdown') { 
 		$tmp_date = str_replace(" 00:00:00", "", $tik['tik']);
 	?>
 		<td><?=ago2($tik['tik'], true)?> (<?=$tmp_date?>)</td>
+		
+		
+	<?php } else if ($type == 'luna') {
+		
+		$now_luna_obj = $luna->convertSolar2Lunar(idate("d"),idate("m"),idate("Y"),7);
+		$now_luna_year = $now_luna_obj[2];
+		$now_luna_leap = $now_luna_obj[3];
+		
+		$thatDayInLuna2000 = strtotime($tik['tik']);
+		$luna_day = date("d", $thatDayInLuna2000);
+		$luna_month = date("m", $thatDayInLuna2000);
+		
+		$sola_obj = $luna->convertLunar2Solar($luna_day, $luna_month, $now_luna_year,$now_luna_leap,7);
+		$sola_year = $sola_obj[2];
+		$sola_month = $sola_obj[1];
+		$sola_day = $sola_obj[0];
+		
+		$today = new DateTime("now");
+		$haha = new DateTime("$sola_year-$sola_month-$sola_day 12:00:00");
+		if ($today > $haha) {
+			
+			$tmp_luna_obj = $luna->convertSolar2Lunar(idate("d"),idate("m"),idate("Y") + 1,7);
+			$tmp_luna_leap = $tmp_luna_obj[3];
+			
+			$sola_obj = $luna->convertLunar2Solar($luna_day, $luna_month, $now_luna_year + 1,$tmp_luna_leap,7);
+			$sola_year = $sola_obj[2];
+			$sola_month = $sola_obj[1];
+			$sola_day = $sola_obj[0];
+		}
+	
+	?>
+		<td><?=ago2("$sola_year-$sola_month-$sola_day 12:00:00", false, 30, "luna")?> | <?="$sola_year-$sola_month-$sola_day | Nhằm ngày $luna_day tháng $luna_month âm"?></td>
 	<?php } ?>
 
 
