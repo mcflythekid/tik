@@ -111,6 +111,7 @@ foreach($coins as $coin ) {
 	$value = $quantity * $price;
 	$per_onhand = ($sum_sell + 0) / $sum_buy * 100.0;
 	$per_rug = ($sum_sell + $value) / $sum_buy * 100.0;
+	$usd_rug = $sum_sell + $value;
 	$delta_rug = (  ($sum_sell + $value) - $sum_buy  )  *  23333;
 	
 	$data = array();
@@ -120,6 +121,7 @@ foreach($coins as $coin ) {
 	$data["sum_sell"] = $sum_sell;
 	$data["per_onhand"] = $per_onhand;
 	$data["per_rug"] = $per_rug;
+	$data["usd_rug"] = $usd_rug;
 	$data["delta_rug"] = $delta_rug;
 	
 	$coin_data[$port_id] = $data;
@@ -191,10 +193,11 @@ page_top ();
 	<th>Name</th>
 	<th>Coin</th>
 	<th>Quantity</th>
-	<th>Value</th>
+	<th>$_Value</th>
 	<th>Σ_Buy</th>
 	<th>Σ_Sell</th>
 	<th>%_OnHand</th>
+	<th>$_Rug</th>
 	<th>%_Rug</th>
 	<th>Δ_RugVND</th>
 	<th>#</th>
@@ -213,6 +216,7 @@ page_top ();
 	<td><?=digit($coin_data[$coin["id_"]]["sum_buy"], 0)?></td>
 	<td><?=digit($coin_data[$coin["id_"]]["sum_sell"], 0)?></td>
 	<td><?=digit($coin_data[$coin["id_"]]["per_onhand"], 0)?>%</td>
+	<td><?=digit($coin_data[$coin["id_"]]["usd_rug"], 0)?></td>
 	<td><?=digit($coin_data[$coin["id_"]]["per_rug"], 0)?>%</td>
 	<td><?=money_color(digit($coin_data[$coin["id_"]]["delta_rug"], 0))?></td>
 	<td><a target="_self" href="/port_history.php?port_id=<?=$coin["id_"]?>">History</a></td>
