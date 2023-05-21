@@ -82,6 +82,8 @@ page_top ();
 </div>
 
 <p>
+Name: <?=$port_name?><br>
+COIN: <?=$port_coin_code?><br>
 Fund Type: <?=$port_fund_type?>
 </p>
 
