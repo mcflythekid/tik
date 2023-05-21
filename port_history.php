@@ -179,7 +179,7 @@ Fund Type: <?=$port_fund_type?>
 
 
 <?php function ui_toggle($tran) { ?>
-	<button onclick="toggle_<?=$tran['id_']?>()">Edit</button>
+	<button onclick="toggle_<?=$tran['id_']?>()">[...]</button>
 	<script>
 		function toggle_<?=$tran['id_']?>() {
 			var x = document.getElementById("act_<?=$tran['id_']?>");

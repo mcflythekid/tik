@@ -69,6 +69,14 @@ if (has_httppost("action_sell") == true) {
 	exit;
 }
 
+if (has_httppost("action_rename") == true) {
+	$req_port_id = get_httppost("port_id");
+	$req_name = get_httppost("name");
+	db_query("update portfolio set name_ = '$req_name' where id_ = '$req_port_id'");
+	header("Refresh:0");
+	exit;
+}
+
 $coins = db_list("select id_, name_, coin_code from portfolio where username = '$username' and fund_type = '$param_fund_type'");
 
 
@@ -214,6 +222,7 @@ page_top ();
 		<table>
 			<tr><td><?=ui_buy($coin)?></td></tr>
 			<tr><td><?=ui_sell($coin)?></td></tr>
+			<tr><td><?=ui_rename($coin)?></td></tr>
 		</table>
 	</td>
 </tr>
@@ -223,7 +232,7 @@ page_top ();
 
 
 <?php function ui_buy($coin) { ?>
-	<form method='post' onSubmit="return confirm('Ghi nhận MUA coin [<?=$coin['coin_code']?>] ?');">
+	<form method='post' onSubmit="return confirm('Ghi nhận MUA [<?=$coin['coin_code']?>] ?');">
 		<input type="hidden" name="action_buy" value="xxx" />
 		<input type="hidden" name="port_id" value="<?=$coin["id_"]?>" />
 		<input required="true" size="10" name="coin" placeholder="coin"></input>
@@ -235,7 +244,7 @@ page_top ();
 <?php } ?>
 
 <?php function ui_sell($coin) { ?>
-	<form method='post' onSubmit="return confirm('Ghi nhận BÁN coin [<?=$coin['coin_code']?>] ?');">
+	<form method='post' onSubmit="return confirm('Ghi nhận BÁN [<?=$coin['coin_code']?>] ?');">
 		<input type="hidden" name="action_sell" value="xxx" />
 		<input type="hidden" name="port_id" value="<?=$coin["id_"]?>" />
 		<input required="true" size="10" name="coin" placeholder="coin"></input>
@@ -246,8 +255,17 @@ page_top ();
 	</form>
 <?php } ?>
 
+<?php function ui_rename($coin) { ?>
+	<form method='post' onSubmit="return confirm('Ghi nhận RENAME [<?=$coin['name_']?>] ?');">
+		<input type="hidden" name="action_rename" value="xxx" />
+		<input type="hidden" name="port_id" value="<?=$coin["id_"]?>" />
+		<input required="true" size="10" name="name" placeholder="name"></input>
+		<input type="submit" value="RENAME" />
+	</form>
+<?php } ?>
+
 <?php function ui_del($coin) { ?>
-	<form method='post' onSubmit="return confirm('Xác nhận XÓA coin [<?=$coin['coin_code']?>] ?');">
+	<form method='post' onSubmit="return confirm('Xác nhận XÓA [<?=$coin['coin_code']?>] ?');">
 		<input type="hidden" name="action_del" value="xxx" />
 		<input type="hidden" name="port_id" value="<?=$coin["id_"]?>" />
 		<input type="submit" value="DEL" />
@@ -256,7 +274,7 @@ page_top ();
 
 
 <?php function ui_toggle($coin) { ?>
-	<button onclick="toggle_<?=$coin['id_']?>()">Add</button>
+	<button onclick="toggle_<?=$coin['id_']?>()">[...]</button>
 	<script>
 		function toggle_<?=$coin['id_']?>() {
 			var x = document.getElementById("act_<?=$coin['id_']?>");
