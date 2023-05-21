@@ -263,7 +263,7 @@ page_top ();
 	<form method='post' onSubmit="return confirm('Ghi nhận RENAME [<?=$coin['name_']?>] ?');">
 		<input type="hidden" name="action_rename" value="xxx" />
 		<input type="hidden" name="port_id" value="<?=$coin["id_"]?>" />
-		<input required="true" size="10" name="name" placeholder="name"></input>
+		<input required="true" size="10" name="name" placeholder="name" value="<?=$coin["name_"]?>"></input>
 		<input type="submit" value="RENAME" />
 	</form>
 <?php } ?>
