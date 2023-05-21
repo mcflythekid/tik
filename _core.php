@@ -299,3 +299,25 @@ function get_httpget($param, $default = "") {
 function get_httppost($param, $default = "") {
 	return isset($_POST[$param]) ? $_POST[$param] : $default;
 }
+
+
+
+function ts_or_now($datetime_str) {
+	if (empty($datetime_str)) {
+		return time();
+	}
+	return strtotime($datetime_str);
+}
+
+
+function digit($in, $count = 3) {
+	$nbr = number_format($in, $count, ".", ",");
+	return strpos($nbr,'.')!==false ? rtrim(rtrim($nbr,'0'),'.') : $nbr;
+}
+
+function money_color($num) {
+	if ($num <= 0) {
+		return $num;
+	}
+	return "<strong style='color: green;'>$num</strong>";
+}

@@ -7,18 +7,6 @@ $username = $_SESSION['username'];
 $param_fund_type = get_httpget("fund_type", "FFA");
 page_title("Portfolio");
 
-function digit($in, $count = 3) {
-	$nbr = number_format($in, $count, ".", ",");
-	return strpos($nbr,'.')!==false ? rtrim(rtrim($nbr,'0'),'.') : $nbr;
-}
-
-function money_color($num) {
-	if ($num <= 0) {
-		return $num;
-	}
-	return "<strong style='color: green;'>$num</strong>";
-}
-
 function update_price($code) {
 	$price_txt = file_get_contents("/home/mc/app/matrix/price-$code");
 	db_query("update portfolio_price set price = $price_txt where code = '$code'");
@@ -61,7 +49,10 @@ if (has_httppost("action_buy") == true) {
 	$req_port_id = get_httppost("port_id");
 	$req_coin = abs(get_httppost("coin"));
 	$req_usd = abs(get_httppost("usd"));
-	db_query("insert into portfolio_trans (username, port_id, type, amount_coin, amount_usd, note, ts)	values ('$username', '$req_port_id', 'buy', '$req_coin', '$req_usd', 'anynote', now())");
+	$req_note = get_httppost("note");
+	$req_ts = get_httppost("ts");
+	$cal_ts = ts_or_now($req_ts);
+	db_query("insert into portfolio_trans (username, port_id, type, amount_coin, amount_usd, note, ts)	values ('$username', '$req_port_id', 'buy', '$req_coin', '$req_usd', '$req_note', FROM_UNIXTIME($cal_ts))");
 	header("Refresh:0");
 	exit;
 }
@@ -70,7 +61,10 @@ if (has_httppost("action_sell") == true) {
 	$req_port_id = get_httppost("port_id");
 	$req_coin = abs(get_httppost("coin"));
 	$req_usd = abs(get_httppost("usd"));
-	db_query("insert into portfolio_trans (username, port_id, type, amount_coin, amount_usd, note, ts)	values ('$username', '$req_port_id', 'sell', '$req_coin', '$req_usd', 'anynote', now())");
+	$req_note = get_httppost("note");
+	$req_ts = get_httppost("ts");
+	$cal_ts = ts_or_now($req_ts);
+	db_query("insert into portfolio_trans (username, port_id, type, amount_coin, amount_usd, note, ts)	values ('$username', '$req_port_id', 'sell', '$req_coin', '$req_usd', '$req_usd', FROM_UNIXTIME($cal_ts))");
 	header("Refresh:0");
 	exit;
 }
@@ -147,7 +141,6 @@ page_top ();
 	<p>
 		<a href="/port.php?fund_type=FFA">FFA</a>&nbsp;&nbsp;
 		<a href="/port.php?fund_type=TRADE">TRADE</a>&nbsp;&nbsp;
-		<a href="/port.php?fund_type=RISK">RISK</a>&nbsp;&nbsp;
 	</p>
 </div>
 
@@ -199,6 +192,7 @@ page_top ();
 	<th>#</th>
 	<th>#</th>
 	<th>#</th>
+	<th>#</th>
 <tr>
 
 <!-- body -->
@@ -213,6 +207,7 @@ page_top ();
 	<td><?=digit($coin_data[$coin["id_"]]["per_onhand"], 0)?>%</td>
 	<td><?=digit($coin_data[$coin["id_"]]["per_rug"], 0)?>%</td>
 	<td><?=money_color(digit($coin_data[$coin["id_"]]["delta_rug"], 0))?></td>
+	<td><a target="_self" href="/port_history.php?port_id=<?=$coin["id_"]?>">History</a></td>
 	<td><?=ui_del($coin)?></td>
 	<td><?=ui_toggle($coin)?></td>
 	<td id="act_<?=$coin["id_"]?>" style="display: none;">
@@ -228,27 +223,31 @@ page_top ();
 
 
 <?php function ui_buy($coin) { ?>
-	<form method='post' onSubmit="return confirm('chắc chưa đại vương?');">
+	<form method='post' onSubmit="return confirm('Ghi nhận MUA coin [<?=$coin['coin_code']?>] ?');">
 		<input type="hidden" name="action_buy" value="xxx" />
 		<input type="hidden" name="port_id" value="<?=$coin["id_"]?>" />
 		<input required="true" size="10" name="coin" placeholder="coin"></input>
 		<input required="true" size="10" name="usd" placeholder="usd"></input>
+		<input required="true" size="10" name="note" placeholder="note"></input>
+		<input size="10" name="ts" placeholder="2023-05-21 19:30:30"></input>
 		<input type="submit" value="BUY" />
 	</form>
 <?php } ?>
 
 <?php function ui_sell($coin) { ?>
-	<form method='post' onSubmit="return confirm('chắc chưa đại vương?');">
+	<form method='post' onSubmit="return confirm('Ghi nhận BÁN coin [<?=$coin['coin_code']?>] ?');">
 		<input type="hidden" name="action_sell" value="xxx" />
 		<input type="hidden" name="port_id" value="<?=$coin["id_"]?>" />
 		<input required="true" size="10" name="coin" placeholder="coin"></input>
 		<input required="true"" size="10" name="usd" placeholder="usd"></input>
+		<input required="true" size="10" name="note" placeholder="note"></input>
+		<input size="10" name="ts" placeholder="2023-05-21 19:30:30"></input>
 		<input type="submit" value="SELL" />
 	</form>
 <?php } ?>
 
 <?php function ui_del($coin) { ?>
-	<form method='post' onSubmit="return confirm('chắc chưa đại vương?');">
+	<form method='post' onSubmit="return confirm('Xác nhận XÓA coin [<?=$coin['coin_code']?>] ?');">
 		<input type="hidden" name="action_del" value="xxx" />
 		<input type="hidden" name="port_id" value="<?=$coin["id_"]?>" />
 		<input type="submit" value="DEL" />
@@ -257,7 +256,7 @@ page_top ();
 
 
 <?php function ui_toggle($coin) { ?>
-	<button onclick="toggle_<?=$coin['id_']?>()">trans</button>
+	<button onclick="toggle_<?=$coin['id_']?>()">Add</button>
 	<script>
 		function toggle_<?=$coin['id_']?>() {
 			var x = document.getElementById("act_<?=$coin['id_']?>");
