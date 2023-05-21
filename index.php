@@ -72,17 +72,18 @@ page_top ();
 <div>
 	<p>
 		
-		<a href="?cat=connect30">CONNECT</a>&nbsp;&nbsp;
+		<a href="?cat=connect30">MEET</a>&nbsp;&nbsp;
 		<a href="?cat=maintain&type=countdown">MAINTAIN</a>&nbsp;&nbsp;
-		<a href="?cat=wishlist">WISHLIST</a>&nbsp;&nbsp;
+		<a href="?cat=wishlist">WISH</a>&nbsp;&nbsp;
 		<a href="?cat=luna&type=luna">LUNA</a>&nbsp;&nbsp;
-		<a href="/port.php?fund_type=FFA">PORTFOLIO</a>&nbsp;&nbsp;
+		<a href="/port.php?fund_type=FFA">FFA</a>&nbsp;&nbsp;
+		<a href="/port.php?fund_type=TRADE">TRADE</a>&nbsp;&nbsp;
 	</p>
 	<p>
-		<a href="?cat=MATTER-RUSH">MATTER-RUSH</a>&nbsp;&nbsp;
-		<a href="?cat=MATTER-DELAY">MATTER-DELAY</a>&nbsp;&nbsp;
-		<a href="?cat=RUSH-only">RUSH only</a>&nbsp;&nbsp;
-		<a href="?cat=NONSENSE">NONSENSE</a>&nbsp;&nbsp;
+		<a href="?cat=MATTER-RUSH">!!!</a>&nbsp;&nbsp;
+		<a href="?cat=MATTER-DELAY">!!!DELAY</a>&nbsp;&nbsp;
+		<a href="?cat=RUSH-only">RUSH</a>&nbsp;&nbsp;
+		<a href="?cat=NONSENSE">SUCK</a>&nbsp;&nbsp;
 		<a href="?cat=todo">2do</a>&nbsp;&nbsp;
 	</p>	
 	<p>
@@ -92,15 +93,15 @@ page_top ();
 		<a href="?cat=LEARN&days=2">LEARN</a>&nbsp;&nbsp;
 	</p>
 	<p>
-		<a href="?cat=f1d">TASK</a>&nbsp;&nbsp;
-		<a href="?cat=f1d_care">CARE</a>&nbsp;&nbsp;
-		<a href="?cat=f3d">F3</a>&nbsp;&nbsp;
-		<a href="?cat=f7d">F7</a>&nbsp;&nbsp;
-		<a href="?cat=f14d">F14</a>&nbsp;&nbsp;
-		<a href="?cat=f30d">F30</a>&nbsp;&nbsp;
-		<a href="?cat=f60d">F60</a>&nbsp;&nbsp;
-		<a href="?cat=f90d">F90</a>&nbsp;&nbsp;
-		<a href="?cat=f180d">F180</a>&nbsp;&nbsp;
+		<a href="?cat=f1d">TASK</a>&nbsp;
+		<a href="?cat=f1d_care">CARE</a>&nbsp;
+		<a href="?cat=f3d">F3</a>&nbsp;
+		<a href="?cat=f7d">F7</a>&nbsp;
+		<a href="?cat=f14d">F14</a>&nbsp;
+		<a href="?cat=f30d">F30</a>&nbsp;
+		<a href="?cat=f60d">F60</a>&nbsp;
+		<a href="?cat=f90d">F90</a>&nbsp;
+		<a href="?cat=f180d">F180</a>&nbsp;
 	</p>
 	<p>
 		<a href="?cat=f30d_15th">Monthly_15th</a>&nbsp;&nbsp;
