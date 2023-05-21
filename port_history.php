@@ -66,7 +66,6 @@ if (has_httppost("action_edit") == true) {
 	exit;
 }
 
-//$trans = db_list("select id_, type, amount_coin, amount_usd, note, ts, ((amount_usd + 0E0 ) / amount_coin) as price from portfolio_trans where username = '$session_username' and port_id = '$param_port_id' order by ts desc");
 $trans = db_list("select id_, type, amount_coin, amount_usd, note, ts, (amount_usd / amount_coin) as price from portfolio_trans where username = '$session_username' and port_id = '$param_port_id' order by ts desc");
 
 page_top ();
