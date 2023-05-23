@@ -179,8 +179,8 @@ page_top ();
 <form  method='post'>
 	<input type="hidden" name="action_create_coin" value="xxx"></input>
 	<input required="true" name="fund_type" placeholder="fund_type" value=<?=$param_fund_type?>></input>
-	<input required="true" name="coin_code" placeholder="coin_code"></input>
-	<input required="true" name="name" placeholder="name"></input>
+	<input required="true" name="coin_code" placeholder="Code" size="<?=INPUT_SIZE_COIN_CODE?>"></input>
+	<textarea required="true" rows="<?=INPUT_SIZE_H_NAME?>" cols="<?=INPUT_SIZE_W_NAME?>" name="name"  placeholder="<?=INPUT_HINT_NAME?>"></textarea>
 	<input type="submit" value="Thêm mã coin"></input>
 </form>
 
@@ -222,7 +222,7 @@ page_top ();
 	<td><?=money_color(digit($coin_data[$coin["id_"]]["delta_rug"], 0))?></td>
 	<td><a target="_self" href="/port_history.php?port_id=<?=$coin["id_"]?>">History</a></td>
 	<td><?=ui_del($coin)?></td>
-	<td><?=ui_toggle($coin)?></td>
+	
 	<td id="act_<?=$coin["id_"]?>" style="display: none;">
 		<table>
 			<tr><td><?=ui_buy($coin)?></td></tr>
@@ -230,6 +230,7 @@ page_top ();
 			<tr><td><?=ui_rename($coin)?></td></tr>
 		</table>
 	</td>
+	<td><?=ui_toggle($coin)?></td>
 </tr>
 <?php }?>
 
@@ -240,10 +241,10 @@ page_top ();
 	<form method='post' onSubmit="return confirm('Ghi nhận MUA [<?=$coin['coin_code']?>] ?');">
 		<input type="hidden" name="action_buy" value="xxx" />
 		<input type="hidden" name="port_id" value="<?=$coin["id_"]?>" />
-		<input required="true" size="10" name="coin" placeholder="coin"></input>
-		<input required="true" size="10" name="usd" placeholder="usd"></input>
-		<input required="true" size="10" name="note" placeholder="note"></input>
-		<input size="10" name="ts" placeholder="2023-05-21 19:30:30"></input>
+		<input required="true" size="<?=INPUT_SIZE_COUNTING?>" name="coin" placeholder="<?=INPUT_HINT_QUANTITY?>"></input>
+		<input required="true" size="<?=INPUT_SIZE_COUNTING?>" name="usd" placeholder="<?=INPUT_HINT_MONEY?>"></input>
+		<textarea required="true" rows="<?=INPUT_SIZE_H_NOTE?>" cols="<?=INPUT_SIZE_W_NOTE?>" name="note"  placeholder="<?=INPUT_HINT_NOTE?>"></textarea>
+		<input size="<?=INPUT_SIZE_DATETIME?>" name="ts" placeholder="<?=INPUT_HINT_DATETIME?>"></input>
 		<input type="submit" value="BUY" />
 	</form>
 <?php } ?>
@@ -252,10 +253,10 @@ page_top ();
 	<form method='post' onSubmit="return confirm('Ghi nhận BÁN [<?=$coin['coin_code']?>] ?');">
 		<input type="hidden" name="action_sell" value="xxx" />
 		<input type="hidden" name="port_id" value="<?=$coin["id_"]?>" />
-		<input required="true" size="10" name="coin" placeholder="coin"></input>
-		<input required="true"" size="10" name="usd" placeholder="usd"></input>
-		<input required="true" size="10" name="note" placeholder="note"></input>
-		<input size="10" name="ts" placeholder="2023-05-21 19:30:30"></input>
+		<input required="true" size="<?=INPUT_SIZE_COUNTING?>" name="coin" placeholder="<?=INPUT_HINT_QUANTITY?>"></input>
+		<input required="true"" size="<?=INPUT_SIZE_COUNTING?>" name="usd" placeholder="<?=INPUT_HINT_MONEY?>"></input>
+		<textarea required="true" rows="<?=INPUT_SIZE_H_NOTE?>" cols="<?=INPUT_SIZE_W_NOTE?>" name="note"  placeholder="<?=INPUT_HINT_NOTE?>"></textarea>
+		<input size="<?=INPUT_SIZE_DATETIME?>" name="ts" placeholder="<?=INPUT_HINT_DATETIME?>"></input>
 		<input type="submit" value="SELL" />
 	</form>
 <?php } ?>
@@ -264,7 +265,7 @@ page_top ();
 	<form method='post' onSubmit="return confirm('Ghi nhận RENAME [<?=$coin['name_']?>] ?');">
 		<input type="hidden" name="action_rename" value="xxx" />
 		<input type="hidden" name="port_id" value="<?=$coin["id_"]?>" />
-		<input required="true" size="10" name="name" placeholder="name" value="<?=$coin["name_"]?>"></input>
+		<textarea required="true" rows="<?=INPUT_SIZE_H_NAME?>" cols="<?=INPUT_SIZE_W_NAME?>" name="name"  placeholder="<?=INPUT_HINT_NAME?>"><?=escape($coin["name_"])?></textarea>
 		<input type="submit" value="RENAME" />
 	</form>
 <?php } ?>

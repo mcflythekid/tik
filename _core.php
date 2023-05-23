@@ -3,6 +3,19 @@
 //ini_set('display_startup_errors', 1);
 //error_reporting(E_ALL);
 
+define("INPUT_SIZE_COUNTING", 10);
+define("INPUT_SIZE_COIN_CODE", 4);
+define("INPUT_SIZE_DATETIME", 18);
+define("INPUT_HINT_DATETIME", "1999-12-31 23:59:59");
+define("INPUT_HINT_QUANTITY", "Quantity");
+define("INPUT_HINT_MONEY", "Money");
+define("INPUT_HINT_NOTE", "Note");
+define("INPUT_HINT_NAME", "Name");
+define("INPUT_SIZE_H_NOTE", 2);
+define("INPUT_SIZE_H_NAME", 2);
+define("INPUT_SIZE_W_NOTE", 45);
+define("INPUT_SIZE_W_NAME", 45);
+
 include_once("_conf.php");
 date_default_timezone_set($param_timezone);
 

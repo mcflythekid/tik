@@ -245,12 +245,12 @@ page_top ();
 	<?php } ?>
 
 	<td><?=ui_del($tik)?></td>
-	<td><?=ui_toggle($tik)?></td>
 	<td id="act_<?=$tik["id_"]?>" style="display: none;">
 		<table>
 			<tr><td><?=ui_edit($tik, $all_categories)?></td></tr>
 		</table>
 	</td>
+	<td><?=ui_toggle($tik)?></td>
 </tr>
 <?php }?>
 
@@ -272,9 +272,9 @@ page_top ();
 	<form method='post' onSubmit="return confirm('Ghi nhận SỬA <?=$tik_name?>?');">
 		<input type="hidden" name="action_edit" value="xxx" />
 		<input type="hidden" name="id" value="<?=$tik["id_"]?>" />
-		<input required="true" size="10" name="name" placeholder="name" value="<?=$tik_name?>"></input>
 		
-	
+		<textarea required="true" rows="<?=INPUT_SIZE_H_NAME?>" cols="<?=INPUT_SIZE_W_NAME?>" name="name"  placeholder="<?=INPUT_HINT_NAME?>"><?=escape($tik_name)?></textarea>
+		
 		<select name="category" id="ca">
 			<?php foreach($all_categories as $category ) {
 				$cat = $category["category"];
@@ -284,7 +284,7 @@ page_top ();
 		</select>
 		
 		
-		<input size="10" name="ts" placeholder="2023-05-21 19:30:30" value="<?=$tik['tik']?>"></input>
+		<input size="<?=INPUT_SIZE_DATETIME?>" name="ts" placeholder="<?=INPUT_HINT_DATETIME?>" value="<?=$tik['tik']?>"></input>
 		<input type="submit" value="Submit" />
 	</form>
 <?php } ?>

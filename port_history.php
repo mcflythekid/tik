@@ -93,10 +93,10 @@ Fund Type: <?=$port_fund_type?>
 		<form method='post' onSubmit="return confirm('Ghi nhận MUA?');">
 			<input type="hidden" name="action_buy" value="xxx" />
 			<input type="hidden" name="port_id" value="<?=$param_port_id?>" />
-			<input required="true" size="10" name="coin" placeholder="coin"></input>
-			<input required="true" size="10" name="usd" placeholder="usd"></input>
-			<input required="true" size="10" name="note" placeholder="note"></input>
-			<input size="10" name="ts" placeholder="2023-05-21 19:30:30"></input>
+			<input required="true" size="<?=INPUT_SIZE_COUNTING?>" name="coin" placeholder="<?=INPUT_HINT_QUANTITY?>"></input>
+			<input required="true" size="<?=INPUT_SIZE_COUNTING?>" name="usd" placeholder="<?=INPUT_HINT_MONEY?>"></input>
+			<textarea required="true" rows="<?=INPUT_SIZE_H_NOTE?>" cols="<?=INPUT_SIZE_W_NOTE?>" name="note" placeholder="<?=INPUT_HINT_NOTE?>"></textarea>
+			<input size="<?=INPUT_SIZE_DATETIME?>" name="ts" placeholder="<?=INPUT_HINT_DATETIME?>"></input>
 			<input type="submit" value="BUY" />
 		</form>
 	</td>
@@ -105,10 +105,10 @@ Fund Type: <?=$port_fund_type?>
 		<form method='post' onSubmit="return confirm('Ghi nhận BÁN?');">
 			<input type="hidden" name="action_sell" value="xxx" />
 			<input type="hidden" name="port_id" value="<?=$param_port_id?>" />
-			<input required="true" size="10" name="coin" placeholder="coin"></input>
-			<input required="true" size="10" name="usd" placeholder="usd"></input>
-			<input required="true" size="10" name="note" placeholder="note"></input>
-			<input size="10" name="ts" placeholder="2023-05-21 19:30:30"></input>
+			<input required="true" size="<?=INPUT_SIZE_COUNTING?>" name="coin" placeholder="<?=INPUT_HINT_QUANTITY?>"></input>
+			<input required="true" size="<?=INPUT_SIZE_COUNTING?>" name="usd" placeholder="<?=INPUT_HINT_MONEY?>"></input>
+			<textarea required="true" rows="<?=INPUT_SIZE_H_NOTE?>" cols="<?=INPUT_SIZE_W_NOTE?>" name="note" placeholder="<?=INPUT_HINT_NOTE?>"></textarea>
+			<input size="<?=INPUT_SIZE_DATETIME?>" name="ts" placeholder="<?=INPUT_HINT_DATETIME?>"></input>
 			<input type="submit" value="SELL" />
 		</form>
 	</td>
@@ -145,12 +145,13 @@ Fund Type: <?=$port_fund_type?>
 	<td><?=escape($tran['note'])?></td>
 	<td><?=escape($tran['ts'])?></td>
 	<td><?=ui_del($tran)?></td>
-	<td><?=ui_toggle($tran)?></td>
+	
 	<td id="act_<?=$tran["id_"]?>" style="display: none;">
 		<table>
 			<tr><td><?=ui_edit($tran)?></td></tr>
 		</table>
 	</td>
+	<td><?=ui_toggle($tran)?></td>
 </tr>
 <?php }?>
 
@@ -161,10 +162,10 @@ Fund Type: <?=$port_fund_type?>
 	<form method='post' onSubmit="return confirm('Ghi nhận SỬA?');">
 		<input type="hidden" name="action_edit" value="xxx" />
 		<input type="hidden" name="tran_id" value="<?=$tran["id_"]?>" />
-		<input required="true" size="10" name="coin" placeholder="coin" value="<?=$tran['amount_coin']?>"></input>
-		<input required="true"" size="10" name="usd" placeholder="usd" value="<?=$tran['amount_usd']?>"></input>
-		<input required="true" size="10" name="note" placeholder="note" value="<?=$tran['note']?>"></input>
-		<input size="10" name="ts" placeholder="2023-05-21 19:30:30" value="<?=$tran['ts']?>"></input>
+		<input required="true" size="<?=INPUT_SIZE_COUNTING?>" name="coin" placeholder="<?=INPUT_HINT_QUANTITY?>" value="<?=$tran['amount_coin']?>"></input>
+		<input required="true"" size="<?=INPUT_SIZE_COUNTING?>" name="usd" placeholder="<?=INPUT_HINT_MONEY?>" value="<?=$tran['amount_usd']?>"></input>
+		<textarea required="true" rows="<?=INPUT_SIZE_H_NOTE?>" cols="<?=INPUT_SIZE_W_NOTE?>" name="note"  placeholder="<?=INPUT_HINT_NOTE?>"><?=escape($tran['note'])?></textarea>
+		<input size="<?=INPUT_SIZE_DATETIME?>" name="ts" placeholder="<?=INPUT_HINT_DATETIME?>" value="<?=$tran['ts']?>"></input>
 		<input type="submit" value="Submit" />
 	</form>
 <?php } ?>
