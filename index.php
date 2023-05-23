@@ -61,10 +61,29 @@ if (isset($_POST['rm_id'])) {
 	exit;
 }
 
+// edit
+if (has_httppost("action_edit") == true) {
+	$req_id = get_httppost("id");
+	$req_cat = get_httppost("category");
+	$req_name = get_httppost("name");
+	$req_ts = get_httppost("ts");
+	$cal_ts = ts_or_now($req_ts);
+	
+	var_dump($req_id);
+	var_dump($req_cat);
+	var_dump($req_name);
+	var_dump($req_ts);
+	var_dump($cal_ts);
+
+	
+	db_query("update tik set category = '$req_cat', name_ = '$req_name', tik = FROM_UNIXTIME($cal_ts) where id_ = '$req_id'");
+	header("Refresh:0");
+	exit;
+}
 
 
-	$tiks = db_list("select id_, name_, tik from tik where username = '$username' and category = '$cat' and type_ = '$type' order by tik asc");
-
+$tiks = db_list("select id_, name_, tik, category from tik where username = '$username' and category = '$cat' and type_ = '$type' order by tik asc");
+$all_categories = db_list("select distinct category from tik order by category");
 
 page_top ();
 ?>
@@ -230,20 +249,67 @@ page_top ();
 		<td><?=ago2("$sola_year-$sola_month-$sola_day 12:00:00", false, 30, "luna")?> | <?="$sola_year-$sola_month-$sola_day | Nhằm ngày $luna_day tháng $luna_month âm"?></td>
 	<?php } ?>
 
-
-	<td>
-		<form 
-			method='post'
-			onSubmit="return confirm('XÓA LUÔN ĐÓ ANH? <?=escape($tik['name_'])?>');"
-		>
-			<input type="hidden" name="rm_id" value="<?=$tik['id_']?>" />
-			<input type="submit" value="Xóa" />
-		</form>
+	<td><?=ui_del($tik)?></td>
+	<td><?=ui_toggle($tik)?></td>
+	<td id="act_<?=$tik["id_"]?>" style="display: none;">
+		<table>
+			<tr><td><?=ui_edit($tik, $all_categories)?></td></tr>
+		</table>
 	</td>
 </tr>
 <?php }?>
 
 </table>
+
+
+<?php function ui_del($tik) { ?>
+	<form  method='post' onSubmit="return confirm('XÓA LUÔN ĐÓ ANH? <?=escape($tik['name_'])?>');" >
+		<input type="hidden" name="rm_id" value="<?=$tik['id_']?>" />
+		<input type="submit" value="Xóa" />
+	</form>
+<?php } ?>
+
+
+<?php function ui_edit($tik, $all_categories) { 
+	$tik_name = $tik["name_"];
+	$tik_cat = $tik["category"];
+?>
+	<form method='post' onSubmit="return confirm('Ghi nhận SỬA <?=$tik_name?>?');">
+		<input type="hidden" name="action_edit" value="xxx" />
+		<input type="hidden" name="id" value="<?=$tik["id_"]?>" />
+		<input required="true" size="10" name="name" placeholder="name" value="<?=$tik_name?>"></input>
+		
+	
+		<select name="category" id="ca">
+			<?php foreach($all_categories as $category ) {
+				$cat = $category["category"];
+			?>
+				<option <?=$tik_cat == $cat ? "selected " : " "?> value="<?=$cat?>"><?=$cat?></option>
+			<?php } ?>
+		</select>
+		
+		
+		<input size="10" name="ts" placeholder="2023-05-21 19:30:30" value="<?=$tik['tik']?>"></input>
+		<input type="submit" value="Submit" />
+	</form>
+<?php } ?>
+
+
+<?php function ui_toggle($tik) { ?>
+	<button onclick="toggle_<?=$tik['id_']?>()">[...]</button>
+	<script>
+		function toggle_<?=$tik['id_']?>() {
+			var x = document.getElementById("act_<?=$tik['id_']?>");
+			if (x.style.display === "none") {
+				x.style.display = "block";
+			} else {
+				x.style.display = "none";
+			}
+		}
+	</script>
+<?php } ?>
+
+
 
 <?php
 page_bot ();
