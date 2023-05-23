@@ -68,14 +68,7 @@ if (has_httppost("action_edit") == true) {
 	$req_name = get_httppost("name");
 	$req_ts = get_httppost("ts");
 	$cal_ts = ts_or_now($req_ts);
-	
-	var_dump($req_id);
-	var_dump($req_cat);
-	var_dump($req_name);
-	var_dump($req_ts);
-	var_dump($cal_ts);
-
-	
+		
 	db_query("update tik set category = '$req_cat', name_ = '$req_name', tik = FROM_UNIXTIME($cal_ts) where id_ = '$req_id'");
 	header("Refresh:0");
 	exit;
