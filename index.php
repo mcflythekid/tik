@@ -183,6 +183,8 @@ page_top ();
 		<th>!!!</th>
 	<?php } ?>
 
+	<th>#</th>
+	<th>#</th>
 
 <tr>
 
