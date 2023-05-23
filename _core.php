@@ -13,8 +13,8 @@ define("INPUT_HINT_NOTE", "Note");
 define("INPUT_HINT_NAME", "Name");
 define("INPUT_SIZE_H_NOTE", 2);
 define("INPUT_SIZE_H_NAME", 2);
-define("INPUT_SIZE_W_NOTE", 45);
-define("INPUT_SIZE_W_NAME", 45);
+define("INPUT_SIZE_W_NOTE", 30);
+define("INPUT_SIZE_W_NAME", 30);
 
 include_once("_conf.php");
 date_default_timezone_set($param_timezone);

@@ -96,7 +96,7 @@ page_top ();
 		<a href="?cat=MATTER-DELAY">!!!DELAY</a>&nbsp;&nbsp;
 		<a href="?cat=RUSH-only">RUSH</a>&nbsp;&nbsp;
 		<a href="?cat=NONSENSE">SUCK</a>&nbsp;&nbsp;
-		<a href="?cat=todo">2do</a>&nbsp;&nbsp;
+		<a href="https://www.lazylearn.com/deck.php">>>LZ</a>&nbsp;&nbsp;
 	</p>	
 	<p>
 		<a href="?cat=KMS&days=1">KMS</a>&nbsp;&nbsp;
