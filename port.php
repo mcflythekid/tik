@@ -21,6 +21,7 @@ update_price("NEO");
 update_price("GAS");
 update_price("WING");
 update_price("FIRO");
+update_price("LTC");
 
 //tier e
 update_price("PEPE");
