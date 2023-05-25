@@ -104,6 +104,7 @@ page_top ();
 		<a href="?cat=gym&days=5">GYM</a>&nbsp;&nbsp;
 		<a href="?cat=BOXING&days=3">BOXING</a>&nbsp;&nbsp;
 		<a href="?cat=LEARN&days=2">LEARN</a>&nbsp;&nbsp;
+		<a href="?cat=vocabulary&days=1">WORD</a>&nbsp;&nbsp;
 	</p>
 	<p>
 		<a href="?cat=f1d">TASK</a>&nbsp;
