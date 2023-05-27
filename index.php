@@ -108,6 +108,7 @@ page_top ();
 	</p>
 	<p>
 		<a href="?cat=f1d">TASK</a>&nbsp;
+		<a href="?cat=f1d_void">VOID</a>&nbsp;
 		<a href="?cat=f1d_care">CARE</a>&nbsp;
 		<a href="?cat=f3d">F3</a>&nbsp;
 		<a href="?cat=f7d">F7</a>&nbsp;
