@@ -153,18 +153,18 @@ page_top ();
 <div>
 	<?php if ($type == "tik") { ?>
 	<form  method='post'>
-		<input required="true" name="name_" placeholder="Cần 1 cái tên ..."></input>
+		<input autofocus required="true" name="name_" placeholder="Cần 1 cái tên ..."></input>
 		<input type="submit" value="Thêm"></input>
 	</form>
 	<?php } else if ($type == "countdown") { ?>
 		<form  method='post'>
-		<input required="true" name="countdown_name" placeholder="Cần 1 cái tên ..."></input>
+		<input autofocus required="true" name="countdown_name" placeholder="Cần 1 cái tên ..."></input>
 		<input required="true" name="countdown_tik" placeholder="yyyy mm dd [hh mi]"></input>
 		<input type="submit" value="Thêm"></input>
 	</form>
 	<?php } else if ($type == "luna"){ ?>
 		<form  method='post'>
-		<input required="true" name="luna_name" placeholder="Tên sự kiện âm lịch..."></input>
+		<input autofocus required="true" name="luna_name" placeholder="Tên sự kiện âm lịch..."></input>
 		<input required="true" name="luna_tik" placeholder="mm dd (Âm lịch)"></input>
 		<input type="submit" value="Thêm"></input>
 	</form>
