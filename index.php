@@ -94,22 +94,19 @@ page_top ();
 		<a href="/port.php?fund_type=TRADE">TRADE</a>&nbsp;&nbsp;
 	</p>
 	<p>
-		<a href="?cat=MATTER-RUSH">!!!</a>&nbsp;&nbsp;
-		<a href="?cat=MATTER-DELAY">!!!DELAY</a>&nbsp;&nbsp;
-		<a href="?cat=RUSH-only">RUSH</a>&nbsp;&nbsp;
-		<a href="?cat=NONSENSE">SUCK</a>&nbsp;&nbsp;
+		<a href="?cat=TODO">TODO</a>&nbsp;&nbsp;
+		<a href="?cat=TODO2">TODO_2</a>&nbsp;&nbsp;
+		<a href="?cat=CAMPAIGN">CAMPAIGN</a>&nbsp;&nbsp;
 		<a href="https://www.lazylearn.com/deck.php">>>LZ</a>&nbsp;&nbsp;
 	</p>	
 	<p>
 		<a href="?cat=KMS&days=1">KMS</a>&nbsp;&nbsp;
-		<a href="?cat=gym&days=5">GYM</a>&nbsp;&nbsp;
+		<a href="?cat=gym&days=6">GYM</a>&nbsp;&nbsp;
 		<a href="?cat=BOXING&days=3">BOXING</a>&nbsp;&nbsp;
 		<a href="?cat=LEARN&days=2">LEARN</a>&nbsp;&nbsp;
-		<a href="?cat=vocabulary&days=1">WORD</a>&nbsp;&nbsp;
 	</p>
 	<p>
 		<a href="?cat=f1d">TASK</a>&nbsp;
-		<a href="?cat=f1d_void">VOID</a>&nbsp;
 		<a href="?cat=f1d_care">CARE</a>&nbsp;
 		<a href="?cat=f3d">F3</a>&nbsp;
 		<a href="?cat=f7d">F7</a>&nbsp;
