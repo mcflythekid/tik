@@ -84,8 +84,9 @@ page_top ();
 <div>
 	<p>
 		
-		<a href="?cat=connect30_close">MEET_1</a>&nbsp;&nbsp;
-		<a href="?cat=connect30_loose">MEET_2</a>&nbsp;&nbsp;
+		<a href="?cat=connect30_1st">MEET_!</a>&nbsp;&nbsp;
+		<a href="?cat=connect30_close">MEET_2</a>&nbsp;&nbsp;
+		<a href="?cat=connect30_loose">MEET_3</a>&nbsp;&nbsp;
 		<a href="?cat=maintain&type=countdown">MAINTAIN</a>&nbsp;&nbsp;
 		<a href="?cat=events&type=countdown">EVENT</a>&nbsp;&nbsp;
 		<a href="?cat=wishlist">WISH</a>&nbsp;&nbsp;
