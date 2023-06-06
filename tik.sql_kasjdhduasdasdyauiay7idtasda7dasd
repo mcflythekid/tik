@@ -81,6 +81,7 @@ CREATE TABLE `tik` (
   `type_` varchar(100) NOT NULL,
   `name_` varchar(200) NOT NULL,
   `tik` datetime NOT NULL,
+  `counter` int NOT NULL DEFAULT '0'
   PRIMARY KEY (`id_`),
   KEY `username` (`username`)
 ) ENGINE=InnoDB AUTO_INCREMENT=251 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

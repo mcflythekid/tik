@@ -48,7 +48,7 @@ if (isset($_POST['luna_name']) && isset($_POST['luna_tik'])) {
 // do the tik
 if (isset($_POST['tik_id'])) {
 	$tik_id = $_POST['tik_id'];
-	db_query("update tik set tik = now() where id_ = $tik_id");
+	db_query("update tik set tik = now(), counter = counter + 1 where id_ = $tik_id");
 	header("Refresh:0");
 	exit;
 }
@@ -75,7 +75,7 @@ if (has_httppost("action_edit") == true) {
 }
 
 
-$tiks = db_list("select id_, name_, tik, category from tik where username = '$username' and category = '$cat' and type_ = '$type' order by tik asc");
+$tiks = db_list("select id_, name_, tik, category, counter from tik where username = '$username' and category = '$cat' and type_ = '$type' order by tik asc");
 $all_categories = db_list("select distinct category from tik order by category");
 
 page_top ();
@@ -179,6 +179,7 @@ page_top ();
 
 	<?php if ($type == "tik") { ?>
 		<th>Tik</th>
+		<th>Counter</th>
 		<th>#</th>
 		<th>!!!</th>
 	<?php } else { ?>
@@ -198,6 +199,7 @@ page_top ();
 
 	<?php if ($type == "tik") { ?>
 		<td><?=ago2($tik['tik'], false, $tik_color_day)?></td>
+		<td><?=$tik['counter']?></td>
 		<td>
 			<form 
 				method='post'
