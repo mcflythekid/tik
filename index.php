@@ -101,6 +101,7 @@ page_top ();
 		<a href="https://www.lazylearn.com/deck.php">>>LZ</a>&nbsp;&nbsp;
 	</p>	
 	<p>
+		<a href="?cat=KMS_LOOP&days=1">KMS_LOOP</a>&nbsp;&nbsp;
 		<a href="?cat=KMS&days=1">KMS</a>&nbsp;&nbsp;
 		<a href="?cat=gym&days=6">GYM</a>&nbsp;&nbsp;
 		<a href="?cat=BOXING&days=3">BOXING</a>&nbsp;&nbsp;
