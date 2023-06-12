@@ -78,7 +78,7 @@ if (has_httppost("action_rename") == true) {
 	exit;
 }
 
-$coins = db_list("select id_, name_, coin_code from portfolio where username = '$username' and fund_type = '$param_fund_type'");
+$coins = db_list("select id_, name_, coin_code from portfolio where username = '$username' and fund_type = '$param_fund_type' order by name_");
 
 
 
@@ -150,8 +150,7 @@ page_top ();
 		<a href="/index.php?cat=f1d">F1D</a>&nbsp;&nbsp;
 	</p>
 	<p>
-		<a href="/port.php?fund_type=FFA">FFA</a>&nbsp;&nbsp;
-		<a href="/port.php?fund_type=TRADE">TRADE</a>&nbsp;&nbsp;
+		<a href="/port.php?fund_type=FFA">Portfolio</a>&nbsp;&nbsp;
 	</p>
 </div>
 

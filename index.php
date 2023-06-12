@@ -91,8 +91,7 @@ page_top ();
 		<a href="?cat=events&type=countdown">EVENT</a>&nbsp;&nbsp;
 		<a href="?cat=wishlist">WISH</a>&nbsp;&nbsp;
 		<a href="?cat=luna&type=luna">LUNA</a>&nbsp;&nbsp;
-		<a href="/port.php?fund_type=FFA">FFA</a>&nbsp;&nbsp;
-		<a href="/port.php?fund_type=TRADE">TRADE</a>&nbsp;&nbsp;
+		<a href="/port.php?fund_type=FFA">Portfolio</a>&nbsp;&nbsp;
 	</p>
 	<p>
 		<a href="?cat=TODO">TODO</a>&nbsp;&nbsp;
