@@ -98,6 +98,7 @@ page_top ();
 		<a href="?cat=TODO2">TODO_2</a>&nbsp;&nbsp;
 		<a href="?cat=CAMPAIGN">CAMPAIGN</a>&nbsp;&nbsp;
 		<a href="https://www.lazylearn.com/deck.php">>>LZ</a>&nbsp;&nbsp;
+		<a href="?cat=park">park</a>&nbsp;&nbsp;
 	</p>	
 	<p>
 		<a href="?cat=KMS_LOOP&days=1">KMS_LOOP</a>&nbsp;&nbsp;
