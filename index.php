@@ -291,7 +291,7 @@ div#adding button {
 		<td>
 			<form method='post' onSubmit="return confirm('chắc chưa đại vương? <?=escape($tik['name_'])?>');">
 				<input type="hidden" name="tik_id" value="<?=$tik['id_']?>" />
-				<input type="submit" class="btn btn-success" value="Tik" />
+				<input type="submit" classz="btn btn-success" value="Tik" />
 			</form>
 		</td>
 		
@@ -327,7 +327,7 @@ div#adding button {
 <?php function ui_del($tik) { ?>
 	<form  method='post' onSubmit="return confirm('XÓA LUÔN ĐÓ ANH? <?=escape($tik['name_'])?>');" >
 		<input type="hidden" name="rm_id" value="<?=$tik['id_']?>" />
-		<input type="submit" value="Xóa" class="btn btn-danger"/>
+		<input type="submit" value="Xóa" classz="btn btn-danger"/>
 	</form>
 <?php } ?>
 
@@ -358,7 +358,7 @@ div#adding button {
 
 
 <?php function ui_toggle($tik) { ?>
-	<button class="btn btn-warning" onclick="toggle_<?=$tik['id_']?>()">[...]</button>
+	<button classz="btn btn-warning" onclick="toggle_<?=$tik['id_']?>()">[...]</button>
 	<script>
 		function toggle_<?=$tik['id_']?>() {
 			var x = document.getElementById("act_<?=$tik['id_']?>");
