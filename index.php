@@ -12,7 +12,7 @@ if ($type == 'luna') {
 	$luna = new luna();
 }
 
-page_title ( "$type for $cat" );
+page_title(strtoupper("$cat"));
 $username = $_SESSION['username'];
 
 $tik_color_day = isset($_GET['days']) ? $_GET['days'] : get_tik_color_day($cat);
@@ -78,99 +78,187 @@ if (has_httppost("action_edit") == true) {
 $tiks = db_list("select id_, name_, tik, category, counter from tik where username = '$username' and category = '$cat' and type_ = '$type' order by tik asc");
 $all_categories = db_list("select distinct category from tik order by category");
 
+foreach ($tiks as &$tik) {
+	if ($type == "luna"){
+		handle_luna($tik);
+	} else if ($type == "tik"){
+		handle_normal($tik);
+	}
+}
+function handle_normal(&$tik) {
+	$name = $tik["name_"];
+	$count = $tik["counter"];
+	$tik["tik_out_line"] = "[⟳$count] $name";
+}
+function handle_luna(&$tik) {
+	global $luna;
+	$now_luna_obj = $luna->convertSolar2Lunar(idate("d"),idate("m"),idate("Y"),7);
+	$now_luna_year = $now_luna_obj[2];
+	$now_luna_leap = $now_luna_obj[3];
+	
+	$thatDayInLuna2000 = strtotime($tik['tik']);
+	$luna_day = date("d", $thatDayInLuna2000);
+	$luna_month = date("m", $thatDayInLuna2000);
+	
+	$sola_obj = $luna->convertLunar2Solar($luna_day, $luna_month, $now_luna_year,$now_luna_leap,7);
+	$sola_year = $sola_obj[2];
+	$sola_month = $sola_obj[1];
+	$sola_day = $sola_obj[0];
+	
+	$today = new DateTime("now");
+	$haha = new DateTime("$sola_year-$sola_month-$sola_day 12:00:00");
+	
+	if ($today > $haha) {
+		
+		$tmp_luna_obj = $luna->convertSolar2Lunar(idate("d"),idate("m"),idate("Y") + 1,7);
+		$tmp_luna_leap = $tmp_luna_obj[3];
+		
+		$sola_obj = $luna->convertLunar2Solar($luna_day, $luna_month, $now_luna_year + 1,$tmp_luna_leap,7);
+		$sola_year = $sola_obj[2];
+		$sola_month = $sola_obj[1];
+		$sola_day = $sola_obj[0];
+	}
+	
+	$weekday = date('D', strtotime("$sola_year-$sola_month-$sola_day"));
+	//
+	$luna_out_ts = "$sola_year-$sola_month-$sola_day";
+	$luna_out_ago = ago2("$sola_year-$sola_month-$sola_day 12:00:00", false, 30, "luna");
+	$luna_out_display = "$weekday, $sola_year-$sola_month-$sola_day ($luna_day/$luna_month ÂL)";
+	//
+	$tik["luna_out_ts"] = strtotime($luna_out_ts);
+	$tik["luna_out_line"] = $luna_out_ago . " | " . $luna_out_display;
+	
+}
+
+if ($type == "luna"){
+	$collumnToSort = array_column($tiks, 'luna_out_ts');
+	array_multisort($collumnToSort, SORT_ASC, $tiks);
+}
+
+
+
 page_top ();
 ?>
 
 <div>
+	<?php function menu($type, $text, $href) { ?>
+		<a href="<?=$href?>"><span class="badge badge-<?=$type?>"><?=$text?></span></a>&nbsp;&nbsp;
+	<?php } ?>
+
 	<p>
+		<?=menu("primary", "C1", "?cat=connect30_1st")?>
+		<?=menu("primary", "C2", "?cat=connect30_close")?>
+		<?=menu("primary", "C3", "?cat=connect30_loose")?>
+		<?=menu("primary", "🔧", "?cat=maintain&type=countdown")?>
+		<?=menu("primary", "EVENT", "?cat=events&type=countdown")?>
+		<?=menu("primary", "WISH", "?cat=wishlist")?>
+		<?=menu("primary", "LUNA", "?cat=luna&type=luna")?>
+		<?=menu("primary", "PORT", "/port.php?fund_type=FFA")?>
+	</p>
+	
+	<p>
+		<?=menu("info", "TD", "?cat=TODO")?>
+		<?=menu("info", "TD2", "?cat=TODO2")?>
+		<?=menu("warning", "KMS", "?cat=KMS&days=1")?>
+		<?=menu("info", "CPG", "?cat=CAMPAIGN")?>
+		<?=menu("info", "LZ", "https://www.lazylearn.com/deck.php")?>
+		<?=menu("info", "PARK", "?cat=park")?>
 		
-		<a href="?cat=connect30_1st">MEET_!</a>&nbsp;&nbsp;
-		<a href="?cat=connect30_close">MEET_2</a>&nbsp;&nbsp;
-		<a href="?cat=connect30_loose">MEET_3</a>&nbsp;&nbsp;
-		<a href="?cat=maintain&type=countdown">MAINTAIN</a>&nbsp;&nbsp;
-		<a href="?cat=events&type=countdown">EVENT</a>&nbsp;&nbsp;
-		<a href="?cat=wishlist">WISH</a>&nbsp;&nbsp;
-		<a href="?cat=luna&type=luna">LUNA</a>&nbsp;&nbsp;
-		<a href="/port.php?fund_type=FFA">Portfolio</a>&nbsp;&nbsp;
-	</p>
-	<p>
-		<a href="?cat=TODO">TODO</a>&nbsp;&nbsp;
-		<a href="?cat=TODO2">TODO_2</a>&nbsp;&nbsp;
-		<a href="?cat=CAMPAIGN">CAMPAIGN</a>&nbsp;&nbsp;
-		<a href="https://www.lazylearn.com/deck.php">>>LZ</a>&nbsp;&nbsp;
-		<a href="?cat=park">park</a>&nbsp;&nbsp;
+		<?=menu("dark", "P15", "?cat=f30d_15th")?>
+		<?=menu("dark", "Pay", "?cat=f30d_payment")?>
 	</p>	
+	
 	<p>
-		<a href="?cat=KMS_LOOP&days=1">KMS_LOOP</a>&nbsp;&nbsp;
-		<a href="?cat=KMS&days=1">KMS</a>&nbsp;&nbsp;
-		<a href="?cat=gym&days=6">GYM</a>&nbsp;&nbsp;
-		<a href="?cat=BOXING&days=3">BOXING</a>&nbsp;&nbsp;
-		<a href="?cat=LEARN&days=2">LEARN</a>&nbsp;&nbsp;
+		<?=menu("success", "TASK", "?cat=f1d")?>
+		<?=menu("success", "CARE", "?cat=f1d_care")?>
+		<?=menu("warning", "KMS_L", "?cat=KMS_LOOP&days=1")?>
+		<?=menu("success", "GYM", "?cat=gym&days=6")?>
+		<?=menu("success", "BOX", "?cat=BOXING&days=3")?>
+		<?=menu("success", "LEARN", "?cat=LEARN&days=2")?>
 	</p>
+	
 	<p>
-		<a href="?cat=f1d">TASK</a>&nbsp;
-		<a href="?cat=f1d_care">CARE</a>&nbsp;
-		<a href="?cat=f3d">F3</a>&nbsp;
-		<a href="?cat=f7d">F7</a>&nbsp;
-		<a href="?cat=f14d">F14</a>&nbsp;
-		<a href="?cat=f30d">F30</a>&nbsp;
-		<a href="?cat=f60d">F60</a>&nbsp;
-		<a href="?cat=f90d">F90</a>&nbsp;
-		<a href="?cat=f180d">F180</a>&nbsp;
+		<?=menu("secondary", "F3", "?cat=f3d")?>
+		<?=menu("secondary", "F7", "?cat=f7d")?>
+		<?=menu("secondary", "F14", "?cat=f14d")?>
+		<?=menu("secondary", "F30", "?cat=f30d")?>
+		<?=menu("secondary", "F60", "?cat=f60d")?>
+		<?=menu("secondary", "F90", "?cat=f90d")?>
+		<?=menu("secondary", "F180", "?cat=f180d")?>
 	</p>
+	
 	<p>
-		<a href="?cat=f30d_15th">Monthly_15th</a>&nbsp;&nbsp;
-		<a href="?cat=f30d_payment">Monthly_Payment</a>&nbsp;&nbsp;
+
 	</p>
 </div>
 
 <div style="float:right; ">
-	<form 
-		action='/logout.php'
-		onSubmit="return confirm('thoát nha anh hai');"
-	>
-		<input type="submit" value=">logout" />
+	<form action='/logout.php' onSubmit="return confirm('thoát nha anh hai');">
+		<input type="submit" class="btn btn-sm btn-danger" value=">logout" />
 	</form>
 </div>
 
-
-
-
-<h1><?=escape($cat)?>
-<?php 
-	if ($type == "countdown") {
-		echo "(countdown)";
+<div class="alert alert-primary" role="alert">
+  <?=escape($cat)?>
+  <?php 
+  	if (isset($tik_color_day)) {
+		$suffix = $tik_color_day > 1 ? "days" : "day";
+		echo " [$tik_color_day $suffix]";
+	}
+  	if ($type == "countdown") {
+		echo " ⌛";
 	} else if ($type== "luna") {
-		echo "(luna)";
+		echo " 🌘";
 	}
-	
-	if (isset($tik_color_day)) {
-		echo " <$tik_color_day day(s)>";
-	}
-?>
-</h1>
+  ?>
+</div>
 
-<div>
+<style>
+div#adding button {
+  border-radius: 0 !important;
+}
+</style>
+
+<div id="adding">
 	<?php if ($type == "tik") { ?>
-	<form  method='post'>
-		<input autofocus required="true" name="name_" placeholder="Cần 1 cái tên ..."></input>
-		<input type="submit" value="Thêm"></input>
-	</form>
+		<form  method='post'>
+			<div class="row">
+				<div class="input-group col-lg-4 col-md-6 col-sm-8 col-xs-12">
+					<input class="form-control" autofocus required="true" name="name_" placeholder="Cần 1 cái tên ..."></input>
+					<span class="input-group-btn">
+						<button class="btn btn-success" type="submit">Add</button>
+					</span>
+				</div>
+			</div>	
+		</form>
 	<?php } else if ($type == "countdown") { ?>
 		<form  method='post'>
-		<input autofocus required="true" name="countdown_name" placeholder="Cần 1 cái tên ..."></input>
-		<input required="true" name="countdown_tik" placeholder="yyyy mm dd [hh mi]"></input>
-		<input type="submit" value="Thêm"></input>
-	</form>
+			<div class="row">
+				<div class="input-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
+					<input class="form-control" autofocus required="true" name="countdown_name" placeholder="Cần 1 cái tên ..."></input>
+					<input class="form-control" required="true" name="countdown_tik" placeholder="yyyy mm dd [hh mi]"></input>
+					<span class="input-group-btn">
+						<button class="btn btn-success" type="submit">Add</button>
+					</span>
+				</div>
+			</div>			
+		</form>
 	<?php } else if ($type == "luna"){ ?>
 		<form  method='post'>
-		<input autofocus required="true" name="luna_name" placeholder="Tên sự kiện âm lịch..."></input>
-		<input required="true" name="luna_tik" placeholder="mm dd (Âm lịch)"></input>
-		<input type="submit" value="Thêm"></input>
-	</form>
+			<div class="row">
+				<div class="input-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
+					<input class="form-control" autofocus required="true" name="luna_name" placeholder="Cần 1 cái tên ..."></input>
+					<input class="form-control" required="true" name="luna_tik" placeholder="mm dd (ÂL)"></input>
+					<span class="input-group-btn">
+						<button class="btn btn-success" type="submit">Add</button>
+					</span>
+				</div>
+			</div>				
+		</form>
 	<?php } ?>
 </div>
 
+<div style="margin-top: 15px;">
 <table class="table table-striped">
 
 <!-- header -->
@@ -179,34 +267,30 @@ page_top ();
 
 	<?php if ($type == "tik") { ?>
 		<th>Tik</th>
-		<th>Counter</th>
-		<th>#</th>
-		<th>!!!</th>
+		<th></th>
+		<th></th>
 	<?php } else { ?>
-		<th>Boom!!! on</th>
-		<th>!!!</th>
+		<th>Countdown</th>
+		<th></th>
 	<?php } ?>
 
-	<th>#</th>
-	<th>#</th>
+	<th></th>
+	<th></th>
 
 <tr>
 
 <!-- body -->
 <?php foreach($tiks as $tik ) {?>
 <tr>
-	<td><?=escape($tik['name_'])?></td>
+	
 
 	<?php if ($type == "tik") { ?>
+		<td><?=escape($tik['tik_out_line'])?></td>
 		<td><?=ago2($tik['tik'], false, $tik_color_day)?></td>
-		<td><?=$tik['counter']?></td>
 		<td>
-			<form 
-				method='post'
-				onSubmit="return confirm('chắc chưa đại vương? <?=escape($tik['name_'])?>');"
-			>
+			<form method='post' onSubmit="return confirm('chắc chưa đại vương? <?=escape($tik['name_'])?>');">
 				<input type="hidden" name="tik_id" value="<?=$tik['id_']?>" />
-				<input type="submit" value="Tik" />
+				<input type="submit" class="btn btn-success" value="Tik" />
 			</form>
 		</td>
 		
@@ -214,58 +298,35 @@ page_top ();
 	<?php } else if ($type == 'countdown') { 
 		$tmp_date = str_replace(" 00:00:00", "", $tik['tik']);
 	?>
+		<td><?=escape($tik['name_'])?></td>
 		<td><?=ago2($tik['tik'], true)?> (<?=$tmp_date?>)</td>
 		
 		
-	<?php } else if ($type == 'luna') {
-		
-		$now_luna_obj = $luna->convertSolar2Lunar(idate("d"),idate("m"),idate("Y"),7);
-		$now_luna_year = $now_luna_obj[2];
-		$now_luna_leap = $now_luna_obj[3];
-		
-		$thatDayInLuna2000 = strtotime($tik['tik']);
-		$luna_day = date("d", $thatDayInLuna2000);
-		$luna_month = date("m", $thatDayInLuna2000);
-		
-		$sola_obj = $luna->convertLunar2Solar($luna_day, $luna_month, $now_luna_year,$now_luna_leap,7);
-		$sola_year = $sola_obj[2];
-		$sola_month = $sola_obj[1];
-		$sola_day = $sola_obj[0];
-		
-		$today = new DateTime("now");
-		$haha = new DateTime("$sola_year-$sola_month-$sola_day 12:00:00");
-		if ($today > $haha) {
-			
-			$tmp_luna_obj = $luna->convertSolar2Lunar(idate("d"),idate("m"),idate("Y") + 1,7);
-			$tmp_luna_leap = $tmp_luna_obj[3];
-			
-			$sola_obj = $luna->convertLunar2Solar($luna_day, $luna_month, $now_luna_year + 1,$tmp_luna_leap,7);
-			$sola_year = $sola_obj[2];
-			$sola_month = $sola_obj[1];
-			$sola_day = $sola_obj[0];
-		}
-	
-	?>
-		<td><?=ago2("$sola_year-$sola_month-$sola_day 12:00:00", false, 30, "luna")?> | <?="$sola_year-$sola_month-$sola_day | Nhằm ngày $luna_day tháng $luna_month âm"?></td>
+	<?php } else if ($type == 'luna') { ?>
+		<td><?=escape($tik['name_'])?></td>
+		<td><?=$tik["luna_out_line"]?></td>
 	<?php } ?>
 
 	<td><?=ui_del($tik)?></td>
+	
 	<td id="act_<?=$tik["id_"]?>" style="display: none;">
 		<table>
 			<tr><td><?=ui_edit($tik, $all_categories)?></td></tr>
 		</table>
 	</td>
+	
 	<td><?=ui_toggle($tik)?></td>
 </tr>
 <?php }?>
 
 </table>
+</div>
 
 
 <?php function ui_del($tik) { ?>
 	<form  method='post' onSubmit="return confirm('XÓA LUÔN ĐÓ ANH? <?=escape($tik['name_'])?>');" >
 		<input type="hidden" name="rm_id" value="<?=$tik['id_']?>" />
-		<input type="submit" value="Xóa" />
+		<input type="submit" value="Xóa" class="btn btn-danger"/>
 	</form>
 <?php } ?>
 
@@ -296,7 +357,7 @@ page_top ();
 
 
 <?php function ui_toggle($tik) { ?>
-	<button onclick="toggle_<?=$tik['id_']?>()">[...]</button>
+	<button class="btn btn-warning" onclick="toggle_<?=$tik['id_']?>()">[...]</button>
 	<script>
 		function toggle_<?=$tik['id_']?>() {
 			var x = document.getElementById("act_<?=$tik['id_']?>");
