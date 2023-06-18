@@ -161,7 +161,6 @@ page_top ();
 	<p>
 		<?=menu("info", "TD", "?cat=TODO")?>
 		<?=menu("info", "TD2", "?cat=TODO2")?>
-		<?=menu("warning", "KMS", "?cat=KMS&days=1")?>
 		<?=menu("info", "CPG", "?cat=CAMPAIGN")?>
 		<?=menu("info", "LZ", "https://www.lazylearn.com/deck.php")?>
 		<?=menu("info", "PARK", "?cat=park")?>
@@ -173,10 +172,17 @@ page_top ();
 	<p>
 		<?=menu("success", "TASK", "?cat=f1d")?>
 		<?=menu("success", "CARE", "?cat=f1d_care")?>
-		<?=menu("warning", "KMS_L", "?cat=KMS_LOOP&days=1")?>
 		<?=menu("success", "GYM", "?cat=gym&days=6")?>
 		<?=menu("success", "BOX", "?cat=BOXING&days=3")?>
 		<?=menu("success", "LEARN", "?cat=LEARN&days=2")?>
+	</p>
+	
+	<p>
+		<?=menu("info", "SS", "?cat=SS")?>
+		<?=menu("warning", "SS1", "?cat=SS_01&days=1")?>
+		<?=menu("warning", "SS7", "?cat=SS_07&days=7")?>
+		<?=menu("warning", "SS14", "?cat=SS_14&days=14")?>
+		<?=menu("warning", "SS30", "?cat=SS_30&days=30")?>
 	</p>
 	
 	<p>
