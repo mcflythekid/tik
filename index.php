@@ -88,7 +88,7 @@ foreach ($tiks as &$tik) {
 function handle_normal(&$tik) {
 	$name = $tik["name_"];
 	$count = $tik["counter"];
-	$tik["tik_out_line"] = "[⟳$count] $name";
+	$tik["tik_out_line"] = $count > 0 ? "$name ⟳$count" : $name;
 }
 function handle_luna(&$tik) {
 	global $luna;
