@@ -288,7 +288,7 @@ function ago2($date_string, $color = false, $tik_color_day = 0, $tik_color_type 
 			if ($diff <= $tik_color_day) {
 				return "<strong style='color:green'>Next $ret</strong>";
 			} else {
-				return "<span style='color:black'>Next $ret ago</span>";
+				return "<span style='color:black'>Next $ret</span>";
 			}
 		} 
 		
