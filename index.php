@@ -84,7 +84,11 @@ foreach ($tiks as &$tik) {
 	} else if ($type == "tik"){
 		handle_normal($tik);
 	}
-}
+} 
+unset($tik); // https://stackoverflow.com/questions/7158741/why-php-iteration-by-reference-returns-a-duplicate-last-record
+// https://bugs.php.net/bug.php?id=29992
+
+
 function handle_normal(&$tik) {
 	$name = $tik["name_"];
 	$count = $tik["counter"];
@@ -134,8 +138,6 @@ if ($type == "luna"){
 	$collumnToSort = array_column($tiks, 'luna_out_ts');
 	array_multisort($collumnToSort, SORT_ASC, $tiks);
 }
-
-
 
 page_top ();
 ?>
@@ -268,12 +270,11 @@ div#adding button {
 	<?php if ($type == "tik") { ?>
 		<th>Tik</th>
 		<th></th>
-		<th></th>
 	<?php } else { ?>
 		<th>Countdown</th>
-		<th></th>
 	<?php } ?>
 
+	<th></th>
 	<th></th>
 	<th></th>
 
