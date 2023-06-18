@@ -5,7 +5,7 @@ require_once ("luna.php");
 page_auth ();
 
 db_open ();
-$cat = isset($_GET['cat']) ? $_GET['cat'] : "MATTER-RUSH";
+$cat = isset($_GET['cat']) ? $_GET['cat'] : "TODO";
 $type = isset($_GET['type']) ? $_GET['type'] : "tik";
 
 if ($type == 'luna') {
