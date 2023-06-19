@@ -152,7 +152,7 @@ page_top ();
 		<?=menu("primary", "C2", "?cat=connect30_close")?>
 		<?=menu("primary", "C3", "?cat=connect30_loose")?>
 		<?=menu("primary", "🔧", "?cat=maintain&type=countdown")?>
-		<?=menu("primary", "EVENT", "?cat=events&type=countdown")?>
+		<?=menu("primary", "EVT", "?cat=events&type=countdown")?>
 		<?=menu("primary", "WISH", "?cat=wishlist")?>
 		<?=menu("primary", "LUNA", "?cat=luna&type=luna")?>
 		<?=menu("primary", "PORT", "/port.php?fund_type=FFA")?>
