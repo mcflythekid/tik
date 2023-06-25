@@ -148,52 +148,57 @@ page_top ();
 	<?php } ?>
 
 	<p>
-		<?=menu("primary", "C1", "?cat=connect30_1st")?>
-		<?=menu("primary", "C2", "?cat=connect30_close")?>
-		<?=menu("primary", "C3", "?cat=connect30_loose")?>
-		<?=menu("primary", "🔧", "?cat=maintain&type=countdown")?>
-		<?=menu("primary", "EVT", "?cat=events&type=countdown")?>
-		<?=menu("primary", "WISH", "?cat=wishlist")?>
-		<?=menu("primary", "LUNA", "?cat=luna&type=luna")?>
-		<?=menu("primary", "PORT", "/port.php?fund_type=FFA")?>
+		<?=menu("primary", "⌛ 🔧", "?cat=maintain&type=countdown")?>
+		<?=menu("primary", "⌛ EVT", "?cat=events&type=countdown")?>
+		<?=menu("primary", "🌘", "?cat=luna&type=luna")?>
+		<?=menu("primary", "₿", "/port.php?fund_type=FFA")?>
+		<?=menu("primary", "🕮", "https://lazylearn.com/deck.php")?>
 	</p>
 	
 	<p>
-		<?=menu("info", "TD", "?cat=TODO")?>
-		<?=menu("info", "TD2", "?cat=TODO2")?>
-		<?=menu("info", "CPG", "?cat=CAMPAIGN")?>
-		<?=menu("info", "LZ", "https://www.lazylearn.com/deck.php")?>
-		<?=menu("info", "PARK", "?cat=park")?>
+		<?=menu("primary", "TD", "?cat=TODO")?>
+		<?=menu("primary", "TD2", "?cat=TODO2")?>
+		<?=menu("primary", "W", "?cat=wishlist")?>
 		
-		<?=menu("dark", "P15", "?cat=f30d_15th")?>
-		<?=menu("dark", "Pay", "?cat=f30d_payment")?>
+		<?=menu("info", "C3", "?cat=connect30_1st&days=3")?>
+		<?=menu("info", "C15", "?cat=connect30_close&days=15")?>
+		<?=menu("info", "C30", "?cat=connect30_loose&days=30")?>
+		
+		<?=menu("info", "P", "?cat=f30d_payment")?>
+		<?=menu("info", "P15", "?cat=f30d_15th")?>
 	</p>	
 	
 	<p>
-		<?=menu("success", "TASK", "?cat=f1d")?>
-		<?=menu("success", "CARE", "?cat=f1d_care")?>
-		<?=menu("success", "GYM", "?cat=gym&days=6")?>
-		<?=menu("success", "BOX", "?cat=BOXING&days=3")?>
-		<?=menu("success", "LEARN", "?cat=LEARN&days=2")?>
+		<?=menu("warning", "T", "?cat=f1task&days=1")?>
+		<?=menu("warning", "C", "?cat=f1care&days=1")?>
+		
+		
+		<?=menu("success", "T_b", "?cat=f1task_b&days=1")?>
+		<?=menu("success", "C_b", "?cat=f1care_b&days=1")?>
+		
+		<?=menu("secondary", "GYM", "?cat=gym&days=6")?>
+		<?=menu("secondary", "⚔️", "?cat=BOXING&days=3")?>
 	</p>
 	
 	<p>
-		<?=menu("info", "SS", "?cat=SS")?>
-		<?=menu("warning", "SS1", "?cat=SS_01&days=1")?>
-		<?=menu("warning", "SS7", "?cat=SS_07&days=7")?>
-		<?=menu("warning", "SS14", "?cat=SS_14&days=14")?>
-		<?=menu("warning", "SS30", "?cat=SS_30&days=30")?>
+		<?=menu("info", "F3", "?cat=f3d")?>
+		<?=menu("info", "F7", "?cat=f7d")?>
+		<?=menu("info", "F14", "?cat=f14d")?>
+		<?=menu("info", "F30", "?cat=f30d")?>
+		<?=menu("info", "F60", "?cat=f60d")?>
+		<?=menu("info", "F90", "?cat=f90d")?>
+		<?=menu("info", "F180", "?cat=f180d")?>
 	</p>
 	
 	<p>
-		<?=menu("secondary", "F3", "?cat=f3d")?>
-		<?=menu("secondary", "F7", "?cat=f7d")?>
-		<?=menu("secondary", "F14", "?cat=f14d")?>
-		<?=menu("secondary", "F30", "?cat=f30d")?>
-		<?=menu("secondary", "F60", "?cat=f60d")?>
-		<?=menu("secondary", "F90", "?cat=f90d")?>
-		<?=menu("secondary", "F180", "?cat=f180d")?>
+		<?=menu("warning", "SS", "?cat=SS&days=1")?>
+		<?=menu("warning", "SS_b", "?cat=SS_b&days=1")?>
+		<?=menu("info", "SS7", "?cat=SS_07&days=7")?>
+		<?=menu("info", "SS14", "?cat=SS_14&days=14")?>
+		<?=menu("info", "SS30", "?cat=SS_30&days=30")?>
 	</p>
+	
+
 	
 	<p>
 
