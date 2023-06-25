@@ -152,7 +152,7 @@ page_top ();
 		<?=menu("primary", "⌛ EVT", "?cat=events&type=countdown")?>
 		<?=menu("primary", "🌘", "?cat=luna&type=luna")?>
 		<?=menu("primary", "₿", "/port.php?fund_type=FFA")?>
-		<?=menu("primary", "🕮", "https://lazylearn.com/deck.php")?>
+		<?=menu("primary", "📖", "https://lazylearn.com/deck.php")?>
 	</p>
 	
 	<p>
@@ -191,11 +191,11 @@ page_top ();
 	</p>
 	
 	<p>
-		<?=menu("warning", "SS", "?cat=SS&days=1")?>
-		<?=menu("warning", "SS_b", "?cat=SS_b&days=1")?>
-		<?=menu("info", "SS7", "?cat=SS_07&days=7")?>
-		<?=menu("info", "SS14", "?cat=SS_14&days=14")?>
-		<?=menu("info", "SS30", "?cat=SS_30&days=30")?>
+		<?=menu("warning", "S", "?cat=SS1&days=1")?>
+		<?=menu("warning", "S_b", "?cat=SS1_b&days=1")?>
+		<?=menu("info", "S7", "?cat=SS_07&days=7")?>
+		<?=menu("info", "S14", "?cat=SS_14&days=14")?>
+		<?=menu("info", "S30", "?cat=SS_30&days=30")?>
 	</p>
 	
 
