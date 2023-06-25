@@ -348,7 +348,7 @@ div#adding button {
 	$tik_name = $tik["name_"];
 	$tik_cat = $tik["category"];
 ?>
-	<form method='post' onSubmit="return confirm('Ghi nhận SỬA <?=$tik_name?>?');">
+	<form method='post' onSubmitz="return confirm('Ghi nhận SỬA <?=$tik_name?>?');">
 		<input type="hidden" name="action_edit" value="xxx" />
 		<input type="hidden" name="id" value="<?=$tik["id_"]?>" />
 		
