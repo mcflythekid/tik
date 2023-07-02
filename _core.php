@@ -279,10 +279,18 @@ function ago2($date_string, $color = false, $tik_color_day = 0, $tik_color_type 
 	} else if ($tik_color_day > 0) { // For tik day
 		$diff = date_diff($today, $thatDay)->days;
 		if ($tik_color_type == "tik") {
-			if ($diff >= $tik_color_day) {
-				return "<strong style='color:green'>$ret ago</strong>";
-			} else {
-				return "<span style='color:black'>$ret ago</span>";
+			if ($tik_color_day == 1) { // For tik daily
+				$foo = $today->format('Y-m-d');
+				$bar = $thatDay->format('Y-m-d');
+				return $foo == $bar ?
+					"DONE" :
+					"<strong style='color:green'>$ret ago</strong>";
+			} else { // For tik more than daily
+				if ($diff >= $tik_color_day) {
+					return "<strong style='color:green'>$ret ago</strong>";
+				} else {
+					return "<span style='color:black'>$ret ago</span>";
+				}
 			}
 		} else if ($tik_color_type == "luna") {
 			if ($diff <= $tik_color_day) {
