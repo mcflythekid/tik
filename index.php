@@ -171,11 +171,10 @@ page_top ();
 	
 	<p>
 		<?=menu("warning", "T", "?cat=f1task&days=1")?>
+		<?=menu("warning", "T'", "?cat=f1task_b&days=1")?>
+		
 		<?=menu("warning", "C", "?cat=f1care&days=1")?>
-		
-		
-		<?=menu("success", "T_b", "?cat=f1task_b&days=1")?>
-		<?=menu("success", "C_b", "?cat=f1care_b&days=1")?>
+		<?=menu("warning", "C'", "?cat=f1care_b&days=1")?>
 		
 		<?=menu("secondary", "GYM", "?cat=gym&days=6")?>
 		<?=menu("secondary", "⚔️", "?cat=BOXING&days=3")?>
@@ -193,7 +192,7 @@ page_top ();
 	
 	<p>
 		<?=menu("warning", "S", "?cat=SS1&days=1")?>
-		<?=menu("warning", "S_b", "?cat=SS1_b&days=1")?>
+		<?=menu("warning", "S'", "?cat=SS1_b&days=1")?>
 		<?=menu("info", "S7", "?cat=SS_07&days=7")?>
 		<?=menu("info", "S14", "?cat=SS_14&days=14")?>
 		<?=menu("info", "S30", "?cat=SS_30&days=30")?>
