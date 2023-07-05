@@ -266,7 +266,7 @@ function ago2($date_string, $color = false, $tik_color_day = 0, $tik_color_type 
     } else if ($dt->s > 0) {
         $ret = ago2_unit($x_second, "second", 0, "");
     } else {
-		return "just now";
+		return $tik_color_day == 1 ? "DONE" : "just now";
 	}
 
 	if ($color) { // For maintain
