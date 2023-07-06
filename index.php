@@ -161,9 +161,8 @@ page_top ();
 		<?=menu("primary", "x^", "?cat=cpg")?>
 		<?=menu("primary", "W", "?cat=wishlist")?>
 		
-		<?=menu("info", "C3", "?cat=connect30_1st&days=3")?>
-		<?=menu("info", "C15", "?cat=connect30_close&days=15")?>
-		<?=menu("info", "C30", "?cat=connect30_loose&days=30")?>
+		<?=menu("info", "C4", "?cat=connect30_1st&days=4")?>
+		<?=menu("info", "C21", "?cat=connect30_close&days=21")?>
 		
 		<?=menu("info", "P", "?cat=f30d_payment")?>
 		<?=menu("info", "P15", "?cat=f30d_15th")?>
