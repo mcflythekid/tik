@@ -153,6 +153,7 @@ page_top ();
 		<?=menu("primary", "🌘", "?cat=luna&type=luna")?>
 		<?=menu("primary", "₿", "/port.php?fund_type=FFA")?>
 		<?=menu("primary", "📖", "https://lazylearn.com/deck.php")?>
+		<?=menu("primary", "W", "?cat=w&days=1")?>
 	</p>
 	
 	<p>
