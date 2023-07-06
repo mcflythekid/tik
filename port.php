@@ -147,7 +147,7 @@ page_top ();
 
 <div>
 	<p>
-		<a href="/index.php?cat=f1d">F1D</a>&nbsp;&nbsp;
+		<a href="/index.php?cat=TODO&days=1">TODO</a>&nbsp;&nbsp;
 	</p>
 	<p>
 		<a href="/port.php?fund_type=FFA">Portfolio</a>&nbsp;&nbsp;
