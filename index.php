@@ -193,6 +193,7 @@ page_top ();
 	<p>
 		<?=menu("warning", "S", "?cat=SS1&days=1")?>
 		<?=menu("warning", "S'", "?cat=SS1_b&days=1")?>
+		<?=menu("info", "S3", "?cat=SS_03&days=3")?>
 		<?=menu("info", "S7", "?cat=SS_07&days=7")?>
 		<?=menu("info", "S14", "?cat=SS_14&days=14")?>
 		<?=menu("info", "S30", "?cat=SS_30&days=30")?>
