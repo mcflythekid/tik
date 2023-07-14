@@ -302,7 +302,7 @@ div#adding button {
 		<td><?=escape($tik['tik_out_line'])?></td>
 		<td><?=ago2($tik['tik'], false, $tik_color_day)?></td>
 		<td>
-			<form method='post' onSubmitz="return confirm('chắc chưa đại vương? <?=escape($tik['name_'])?>');">
+			<form method='post' onSubmit="return confirm('chắc chưa đại vương? <?=escape($tik['name_'])?>');">
 				<input type="hidden" name="tik_id" value="<?=$tik['id_']?>" />
 				<input type="submit" classz="btn btn-success" value="Tik" />
 			</form>
@@ -349,7 +349,7 @@ div#adding button {
 	$tik_name = $tik["name_"];
 	$tik_cat = $tik["category"];
 ?>
-	<form method='post' onSubmitz="return confirm('Ghi nhận SỬA <?=$tik_name?>?');">
+	<form method='post' onSubmit="return confirm('Ghi nhận SỬA <?=$tik_name?>?');">
 		<input type="hidden" name="action_edit" value="xxx" />
 		<input type="hidden" name="id" value="<?=$tik["id_"]?>" />
 		
