@@ -300,7 +300,7 @@ div#adding button {
 		<td><?=escape($tik['tik_out_line'])?></td>
 		<td><?=ago2($tik['tik'], false, $tik_color_day)?></td>
 		<td>
-			<form method='post' onSubmit="return confirm('chắc chưa đại vương? <?=escape($tik['name_'])?>');">
+			<form method='post' onSubmitz="return confirm('chắc chưa đại vương? <?=escape($tik['name_'])?>');">
 				<input type="hidden" name="tik_id" value="<?=$tik['id_']?>" />
 				<input type="submit" classz="btn btn-success" value="Tik" />
 			</form>
