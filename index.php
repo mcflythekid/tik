@@ -175,6 +175,7 @@ page_top ();
 		
 		<?=menu("warning", "C", "?cat=f1care&days=1")?>
 		<?=menu("warning", "C'", "?cat=f1care_b&days=1")?>
+		<?=menu("warning", "L", "?cat=f1learn&days=1")?>
 		
 		<?=menu("secondary", "GYM", "?cat=gym&days=6")?>
 		<?=menu("secondary", "⚔️", "?cat=BOXING&days=3")?>
