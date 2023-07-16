@@ -224,17 +224,17 @@ function get_tik_color_day($cat) {
 
 
 function ago2_unit($value1, $unit1, $value2, $unit2) {
-	$suffix1 = $value1 > 1 ? $unit1 . "s" : $unit1;
-	$ret1 = "$value1 $suffix1";
+	$suffix1 = $value1 > 1 ? $unit1 . "" : $unit1; // S suffix
+	$ret1 = "$value1$suffix1";
 	
 	if ($value2 == 0) {
 		return $ret1;
 	}
 	
-	$suffix2 = $value2 > 1 ? $unit2 . "s" : $unit2;
-	$ret2 = "$value2 $suffix2";
+	$suffix2 = $value2 > 1 ? $unit2 . "" : $unit2; // S suffix
+	$ret2 = "$value2$suffix2";
 	
-	return "$ret1 $ret2";
+	return "$ret1$ret2";
 }
 function ago2_date_diff($d1, $d2) {
 	$difference = $d1 - $d2;
@@ -254,26 +254,29 @@ function ago2($date_string, $color = false, $tik_color_day = 0, $tik_color_type 
 	$x_second = $dt->s;
 
     if ($dt->y > 0){
-        $ret = ago2_unit($x_year, "year", $x_month, "month");
+        $ret = ago2_unit($x_year, "y", $x_month, "m");
     } else if ($dt->m > 0) {
-        $ret = ago2_unit($x_month, "month", $x_day, "day");
+        $ret = ago2_unit($x_month, "m", $x_day, "d");
     } else if ($dt->d > 0) {
-        $ret = ago2_unit($x_day, "day", $x_hour, "hour");
+        $ret = ago2_unit($x_day, "d", $x_hour, "h");
     } else if ($dt->h > 0) {
-        $ret = ago2_unit($x_hour, "hour", $x_minute, "minute");
+        $ret = ago2_unit($x_hour, "h", $x_minute, "mi");
     } else if ($dt->i > 0) {
-        $ret = ago2_unit($x_minute, "minute", $x_second, "second");
+        $ret = ago2_unit($x_minute, "mi", $x_second, "s");
     } else if ($dt->s > 0) {
-        $ret = ago2_unit($x_second, "second", 0, "");
+        $ret = ago2_unit($x_second, "s", 0, "");
     } else {
-		return $tik_color_day == 1 ? "DONE" : "just now";
+		return $tik_color_day == 1 ? "DONE" : "now";
 	}
+
+	$next = "→";
+	$ago = "⏎";
 
 	if ($color) { // For maintain
 		if ($thatDay > $today) {
-			return "<span style='color:green'>Next $ret</span>";
+			return "<span style='color:green'>$next$ret</span>";
 		} else {
-			return "<span style='color:red'>$ret ago</span>";
+			return "<span style='color:red'>$ret$ago</span>";
 		}
 		
 	} else if ($tik_color_day > 0) { // For tik day
@@ -284,27 +287,27 @@ function ago2($date_string, $color = false, $tik_color_day = 0, $tik_color_type 
 				$bar = $thatDay->format('Y-m-d');
 				return $foo == $bar ?
 					"DONE" :
-					"<strong style='color:green'>$ret ago</strong>";
+					"<strong style='color:green'>$ret$ago</strong>";
 			} else { // For tik more than daily
 				if ($diff >= $tik_color_day) {
-					return "<strong style='color:green'>$ret ago</strong>";
+					return "<strong style='color:green'>$ret$ago</strong>";
 				} else {
-					return "<span style='color:black'>$ret ago</span>";
+					return "<span style='color:black'>$ret$ago</span>";
 				}
 			}
 		} else if ($tik_color_type == "luna") {
 			if ($diff <= $tik_color_day) {
-				return "<strong style='color:green'>Next $ret</strong>";
+				return "<strong style='color:green'>$next$ret</strong>";
 			} else {
-				return "<span style='color:black'>Next $ret</span>";
+				return "<span style='color:black'>$next$ret</span>";
 			}
 		} 
 		
 	} else {
 		if ($thatDay > $today) {
-			return "Next $ret";
+			return "$next$ret";
 		} else {
-			return "$ret ago";
+			return "$ret$ago";
 		}
 	}
 }
