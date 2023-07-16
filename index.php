@@ -157,9 +157,9 @@ page_top ();
 	</p>
 	
 	<p>
-		<?=menu("primary", "x6", "?cat=TODO&days=1")?>
-		<?=menu("primary", "xN", "?cat=TODO2&days=3")?>
-		<?=menu("primary", "x^", "?cat=cpg")?>
+		<?=menu("primary", "x1", "?cat=TODO&days=1")?>
+		<?=menu("primary", "x6", "?cat=TODO2&days=3")?>
+		<?=menu("primary", "x^N", "?cat=cpg")?>
 		<?=menu("primary", "W", "?cat=wishlist")?>
 		
 		<?=menu("info", "C4", "?cat=connect30_1st&days=4")?>
