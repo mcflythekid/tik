@@ -74,8 +74,13 @@ if (has_httppost("action_edit") == true) {
 	exit;
 }
 
+$order_by = 'tik asc';
+if (in_array($cat, array("TODO", "TODO2", "cpg", "w"))) {
+    $order_by = 'name_ asc';
+}
+$tiks = db_list("select id_, name_, tik, category, counter from tik where username = '$username' and category = '$cat' and type_ = '$type' order by $order_by");
 
-$tiks = db_list("select id_, name_, tik, category, counter from tik where username = '$username' and category = '$cat' and type_ = '$type' order by tik asc");
+
 $all_categories = db_list("select distinct category from tik order by category");
 
 foreach ($tiks as &$tik) {
