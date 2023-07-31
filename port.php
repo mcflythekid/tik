@@ -96,11 +96,18 @@ foreach($coins as $coin ) {
 	$coin_code = $coin["coin_code"];
 	$price = $price_data[$coin_code];
 	
+	$tran_index = 0;
 	$quantity = 0;
 	$sum_buy = 0;
 	$sum_sell = 0;
 	$trans = db_list("select amount_coin, amount_usd, type from portfolio_trans where port_id = $port_id");
+	
+	$on_hand = 0;
+	$health_cost = 0;
+	
 	foreach($trans as $tran) {
+		
+		// For quantity, sum buy/sell
 		if ($tran["type"] == "sell") {
 			$quantity -= $tran["amount_coin"];
 			$sum_sell += $tran["amount_usd"];
@@ -108,22 +115,57 @@ foreach($coins as $coin ) {
 			$quantity += $tran["amount_coin"];
 			$sum_buy += $tran["amount_usd"];
 		}
+		
+		// For on hand, health cost
+		if ($tran_index++ > 0) {
+			
+			
+			if ($tran["type"] == "sell") { // sell
+				$on_hand += $tran["amount_usd"];
+				
+				
+			} else { // buy
+				$prev_on_hand = $on_hand;
+				$on_hand -= $tran["amount_usd"];
+				$on_hand = $on_hand < 0 ? 0 : $on_hand;
+				
+				if ($tran["amount_usd"] > $prev_on_hand) {
+					$health_cost += $tran["amount_usd"] - $prev_on_hand;
+				}
+				
+			}
+			
+			
+		} else { // First BUY transaction
+			$health_cost += $tran["amount_usd"];
+		}
 	}
+	
+	
 	$value = $quantity * $price;
-	$per_onhand = ($sum_sell + 0) / $sum_buy * 100.0;
-	$per_rug = ($sum_sell + $value) / $sum_buy * 100.0;
-	$usd_rug = $sum_sell + $value;
-	$delta_rug = (  ($sum_sell + $value) - $sum_buy  )  *  23333;
+	//
+	$usd_rug = $on_hand + $value;
+	$per_rug = $usd_rug / $health_cost * 100.0;
+	$delta_rug = ($usd_rug - $health_cost)  *  23500;
 	
 	$data = array();
 	$data["quantity"] = $quantity;
 	$data["value"] = $value;
+	//
 	$data["sum_buy"] = $sum_buy;
 	$data["sum_sell"] = $sum_sell;
-	$data["per_onhand"] = $per_onhand;
-	$data["per_rug"] = $per_rug;
+	$data["damages"] = $sum_buy - $sum_sell;
+	//
+	$data["on_hand"] = $on_hand;
+	$data["health_cost"] = $health_cost;
+	$data["per_recovered"] = $on_hand / $health_cost * 100.0;
+	//
 	$data["usd_rug"] = $usd_rug;
+	$data["per_rug"] = $per_rug;
+
 	$data["delta_rug"] = $delta_rug;
+	
+	
 	
 	$coin_data[$port_id] = $data;
 }
@@ -193,29 +235,107 @@ page_top ();
 	<th>Name</th>
 	<th>Coin</th>
 	<th>Quantity</th>
-	<th>$_Value</th>
-	<th>Σ_Buy</th>
-	<th>Σ_Sell</th>
-	<th>%_OnHand</th>
-	<th>$_Rug</th>
-	<th>%_Rug</th>
-	<th>Δ_RugVND</th>
+	<th>MarketValue</th>
+	
+	<th>HealthCost</th>
+	<th>OnHand</th>
+	<th>%Recover</th>
+	
+	<th>ΣBuy</th>
+	<th>ΣSell</th>
+	<!-- <th>Damages</th> -->
+	
+	<th>$RugValue</th>
+	<th>%RugRecover</th>
+	<th>ΔRugVND</th>
+	
 	<th>#</th>
 	<th>#</th>
 	<th>#</th>
 	<th>#</th>
 <tr>
 
+<style>
+.quantity { font-weight: bold; color: #fcba03 }
+.value { font-weight: bold; color: #fcba03 }
+.sum { font-weight: bold; color: grey }
+.damages { font-weight: normal; color: red }
+.on_hand { font-weight: normal; color: green }
+.health_cost { font-weight: bold; color: red }
+.per_recovered { font-weight: normal; color: green }
+
+</style>
+
 <!-- body -->
 <?php foreach($coins as $coin ) {?>
 <tr>
 	<td><?=escape($coin['name_'])?></td>
 	<td><?=escape($coin['coin_code'])?></td>
-	<td><?=digit($coin_data[$coin["id_"]]["quantity"], 5)?></td>
-	<td><?=digit($coin_data[$coin["id_"]]["value"], 0)?></td>
-	<td><?=digit($coin_data[$coin["id_"]]["sum_buy"], 0)?></td>
-	<td><?=digit($coin_data[$coin["id_"]]["sum_sell"], 0)?></td>
-	<td><?=digit($coin_data[$coin["id_"]]["per_onhand"], 0)?>%</td>
+	
+	
+	
+	<td class="quantity"><?=digit($coin_data[$coin["id_"]]["quantity"], 5)?></td>
+	<td class="value">$<?=digit($coin_data[$coin["id_"]]["value"], 0)?></td>
+	
+	
+	
+	<?php
+		$health_cost = $coin_data[$coin["id_"]]["health_cost"];
+		$health_cost = "$" . digit($health_cost, 0);
+	?>
+	<td class="health_cost"><?=$health_cost?></td>
+	<?php
+		$on_hand = $coin_data[$coin["id_"]]["on_hand"];
+		if ($on_hand > 0) {
+			$on_hand = "$" . digit($on_hand, 1);
+		} else {
+			$on_hand = "";
+		}
+	?>
+	<td class="on_hand"><?=$on_hand?></td>
+	<?php
+		$per_recovered = $coin_data[$coin["id_"]]["per_recovered"];
+		if ($per_recovered > 1) {
+			$per_recovered = digit($per_recovered, 0) . "%";
+		} else {
+			$per_recovered = "";
+		}
+	?>
+	<td class="per_recovered"><?=$per_recovered?></td>
+	
+	
+	
+	<td class="sum">$<?=digit($coin_data[$coin["id_"]]["sum_buy"], 0)?></td>
+	<?php
+		$sum_sell = $coin_data[$coin["id_"]]["sum_sell"];
+		if ($sum_sell > 0) {
+			$sum_sell = "$" . digit($sum_sell, 0);
+		} else {
+			$sum_sell = "";
+		}
+	?>
+	<td class="sum"><?=$sum_sell?></td>
+	
+	<!--
+	<?php
+		$damages = $coin_data[$coin["id_"]]["damages"];
+		if ($damages > 0) {
+			$damages = "$" . digit($damages, 0);
+		} else {
+			$damages = "";
+		}
+	?>
+	<td class="damages"><?=$damages?></td>
+	-->
+	
+
+	
+
+	
+
+	
+	
+	
 	<td><?=digit($coin_data[$coin["id_"]]["usd_rug"], 0)?></td>
 	<td><?=digit($coin_data[$coin["id_"]]["per_rug"], 0)?>%</td>
 	<td><?=money_color(digit($coin_data[$coin["id_"]]["delta_rug"], 0))?></td>
