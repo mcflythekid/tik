@@ -42,13 +42,15 @@ if (has_httppost("action_buy") == true) {
 }
 
 if (has_httppost("action_sell") == true) {
+	$cal_type = get_httppost("coin") == "withdraw" ? "withdraw" : "sell";
+	
 	$req_coin = abs(get_httppost("coin"));
 	$req_usd = abs(get_httppost("usd"));
 	$req_note = get_httppost("note");
 	$req_ts = get_httppost("ts");
 	$cal_ts = ts_or_now($req_ts);
 	
-	db_query("insert into portfolio_trans (username, port_id, type, amount_coin, amount_usd, note, ts)	values ('$session_username', '$param_port_id', 'sell', '$req_coin', '$req_usd', '$req_note', FROM_UNIXTIME($cal_ts))");
+	db_query("insert into portfolio_trans (username, port_id, type, amount_coin, amount_usd, note, ts)	values ('$session_username', '$param_port_id', '$cal_type', '$req_coin', '$req_usd', '$req_note', FROM_UNIXTIME($cal_ts))");
 	header("Refresh:0");
 	exit;
 }
@@ -66,7 +68,62 @@ if (has_httppost("action_edit") == true) {
 	exit;
 }
 
-$trans = db_list("select id_, type, amount_coin, amount_usd, note, ts, (amount_usd / amount_coin) as price from portfolio_trans where username = '$session_username' and port_id = '$param_port_id' order by ts desc");
+$trans = db_list("select id_, type, amount_coin, amount_usd, note, ts, (amount_usd / amount_coin) as price from portfolio_trans where username = '$session_username' and port_id = '$param_port_id' order by ts asc");
+
+
+$quantity = 0;
+$sum_sell = 0;
+$sum_buy = 0;
+$on_hand = 0;
+$health_cost = 0;
+$tran_index = 0;
+foreach($trans as $key => &$tran) {
+	
+	// For quantity, sum buy/sell
+	if ($tran["type"] == "withdraw") {
+		
+	} else if ($tran["type"] == "sell") {
+		$quantity -= $tran["amount_coin"];
+		$sum_sell += $tran["amount_usd"];
+	} else { // buy
+		$quantity += $tran["amount_coin"];
+		$sum_buy += $tran["amount_usd"];
+	}
+	
+	// For on hand, health cost
+	if ($tran_index++ > 0) {
+		if ($tran["type"] == "withdraw") { // With draw
+			$on_hand -= $tran["amount_usd"];
+			$on_hand = $on_hand < 0 ? 0 : $on_hand;
+			
+		} else if ($tran["type"] == "sell") { // sell
+			$on_hand += $tran["amount_usd"];
+			
+			
+		} else { // buy
+			$prev_on_hand = $on_hand;
+			$on_hand -= $tran["amount_usd"];
+			$on_hand = $on_hand < 0 ? 0 : $on_hand;
+			
+			if ($tran["amount_usd"] > $prev_on_hand) {
+				$health_cost += $tran["amount_usd"] - $prev_on_hand;
+			}
+			
+		}
+		
+		
+	} else { // First BUY transaction
+		$health_cost += $tran["amount_usd"];
+	}
+	
+	$tran["on_hand"] = $on_hand + 0;
+}
+unset($tran);
+
+function cmpx($a, $b) {
+    return strcmp($b["id_"], $a["id_"]);
+}
+usort($trans, "cmpx");
 
 page_top ();
 ?>
@@ -85,6 +142,15 @@ page_top ();
 Name: <?=$port_name?><br>
 COIN: <?=$port_coin_code?><br>
 Fund Type: <?=$port_fund_type?>
+</p>
+
+<p>
+quantity: <?=$quantity?>&nbsp;&nbsp;
+on_hand: <?=$on_hand?>&nbsp;&nbsp;
+health_cost: <?=$health_cost?>&nbsp;&nbsp;
+
+sum_sell: <?=$sum_sell?>&nbsp;&nbsp;
+sum_buy: <?=$sum_buy?>&nbsp;&nbsp;
 </p>
 
 <table>
@@ -128,6 +194,7 @@ Fund Type: <?=$port_fund_type?>
 	<th>Quantity</th>
 	<th>USD</th>
 	<th>~Price</th>
+	<th>PoztBalance</th>
 	<th>Note</th>
 	<th>Time</th>
 	<th>#</th>
@@ -142,6 +209,7 @@ Fund Type: <?=$port_fund_type?>
 	<td><?=digit($tran['amount_coin'], 9)?></td>
 	<td><?=digit($tran['amount_usd'])?></td>
 	<td><?=digit($tran['price'], 9)?></td>
+	<td><?=digit($tran['on_hand'], 9)?></td>
 	<td><?=escape($tran['note'])?></td>
 	<td><?=escape($tran['ts'])?></td>
 	<td><?=ui_del($tran)?></td>

@@ -59,13 +59,17 @@ if (has_httppost("action_buy") == true) {
 }
 
 if (has_httppost("action_sell") == true) {
+	$cal_type = get_httppost("coin") == "withdraw" ? "withdraw" : "sell";
+	
 	$req_port_id = get_httppost("port_id");
 	$req_coin = abs(get_httppost("coin"));
 	$req_usd = abs(get_httppost("usd"));
 	$req_note = get_httppost("note");
 	$req_ts = get_httppost("ts");
 	$cal_ts = ts_or_now($req_ts);
-	db_query("insert into portfolio_trans (username, port_id, type, amount_coin, amount_usd, note, ts)	values ('$username', '$req_port_id', 'sell', '$req_coin', '$req_usd', '$req_usd', FROM_UNIXTIME($cal_ts))");
+	
+	
+	db_query("insert into portfolio_trans (username, port_id, type, amount_coin, amount_usd, note, ts)	values ('$username', '$req_port_id', '$cal_type', '$req_coin', '$req_usd', '$req_usd', FROM_UNIXTIME($cal_ts))");
 	header("Refresh:0");
 	exit;
 }
@@ -108,7 +112,9 @@ foreach($coins as $coin ) {
 	foreach($trans as $tran) {
 		
 		// For quantity, sum buy/sell
-		if ($tran["type"] == "sell") {
+		if ($tran["type"] == "withdraw") {
+			
+		} else if ($tran["type"] == "sell") {
 			$quantity -= $tran["amount_coin"];
 			$sum_sell += $tran["amount_usd"];
 		} else { // buy
@@ -118,9 +124,11 @@ foreach($coins as $coin ) {
 		
 		// For on hand, health cost
 		if ($tran_index++ > 0) {
-			
-			
-			if ($tran["type"] == "sell") { // sell
+			if ($tran["type"] == "withdraw") { // With draw
+				$on_hand -= $tran["amount_usd"];
+				$on_hand = $on_hand < 0 ? 0 : $on_hand;
+				
+			} else if ($tran["type"] == "sell") { // sell
 				$on_hand += $tran["amount_usd"];
 				
 				
@@ -234,6 +242,12 @@ page_top ();
 <tr>
 	<th>Name</th>
 	<th>Coin</th>
+
+	
+	<th>$Rug</th>
+	<th>%Rug</th>
+	<th>ΔRug</th>
+	
 	<th>Quantity</th>
 	<th>MarketValue</th>
 	
@@ -245,9 +259,7 @@ page_top ();
 	<th>ΣSell</th>
 	<!-- <th>Damages</th> -->
 	
-	<th>$RugValue</th>
-	<th>%RugRecover</th>
-	<th>ΔRugVND</th>
+
 	
 	<th>#</th>
 	<th>#</th>
@@ -267,16 +279,17 @@ page_top ();
 </style>
 
 <!-- body -->
-<?php foreach($coins as $coin ) {?>
+<?php foreach($coins as $coin) {?>
 <tr>
 	<td><?=escape($coin['name_'])?></td>
 	<td><?=escape($coin['coin_code'])?></td>
 	
-	
+	<td><?=digit($coin_data[$coin["id_"]]["usd_rug"], 0)?></td>
+	<td><?=digit($coin_data[$coin["id_"]]["per_rug"], 0)?>%</td>
+	<td><?=money_color(digit($coin_data[$coin["id_"]]["delta_rug"], 0))?></td>
 	
 	<td class="quantity"><?=digit($coin_data[$coin["id_"]]["quantity"], 5)?></td>
 	<td class="value">$<?=digit($coin_data[$coin["id_"]]["value"], 0)?></td>
-	
 	
 	
 	<?php
@@ -316,17 +329,7 @@ page_top ();
 	?>
 	<td class="sum"><?=$sum_sell?></td>
 	
-	<!--
-	<?php
-		$damages = $coin_data[$coin["id_"]]["damages"];
-		if ($damages > 0) {
-			$damages = "$" . digit($damages, 0);
-		} else {
-			$damages = "";
-		}
-	?>
-	<td class="damages"><?=$damages?></td>
-	-->
+
 	
 
 	
@@ -336,10 +339,8 @@ page_top ();
 	
 	
 	
-	<td><?=digit($coin_data[$coin["id_"]]["usd_rug"], 0)?></td>
-	<td><?=digit($coin_data[$coin["id_"]]["per_rug"], 0)?>%</td>
-	<td><?=money_color(digit($coin_data[$coin["id_"]]["delta_rug"], 0))?></td>
-	<td><a target="_self" href="/port_history.php?port_id=<?=$coin["id_"]?>">History</a></td>
+
+	<td><a target="_blank" href="/port_history.php?port_id=<?=$coin["id_"]?>">History</a></td>
 	<td><?=ui_del($coin)?></td>
 	
 	<td id="act_<?=$coin["id_"]?>" style="display: none;">
