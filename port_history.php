@@ -121,7 +121,7 @@ foreach($trans as $key => &$tran) {
 unset($tran);
 
 function cmpx($a, $b) {
-    return strcmp($b["id_"], $a["id_"]);
+    return $b["id_"] > $a["id_"];
 }
 usort($trans, "cmpx");
 
