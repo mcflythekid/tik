@@ -164,7 +164,7 @@ page_top ();
 	<p>
 		<?=menu("primary", "x1", "?cat=TODO&days=1")?>
 		<?=menu("primary", "x6", "?cat=TODO2&days=3")?>
-		<?=menu("primary", "x^N", "?cat=cpg")?>
+		<?=menu("primary", "CPG", "?cat=cpg")?>
 		<?=menu("primary", "W", "?cat=wishlist")?>
 		
 		<?=menu("info", "C4", "?cat=connect30_1st&days=4")?>
@@ -172,6 +172,11 @@ page_top ();
 		
 		<?=menu("info", "P", "?cat=f30d_payment")?>
 		<?=menu("info", "P15", "?cat=f30d_15th")?>
+	</p>	
+	
+	<p>
+		<?=menu("warning", "Adversary", "?cat=adversary")?>
+		<?=menu("warning", "SG todo", "?cat=sg")?>
 	</p>	
 	
 	<p>
@@ -197,6 +202,7 @@ page_top ();
 	</p>
 	
 	<p>
+		<?=menu("warning", "SS", "?cat=SS&days=1")?>
 		<?=menu("warning", "S", "?cat=SS1&days=1")?>
 		<?=menu("warning", "S'", "?cat=SS1_b&days=1")?>
 		<?=menu("info", "S3", "?cat=SS_03&days=3")?>
