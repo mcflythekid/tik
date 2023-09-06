@@ -7,6 +7,7 @@ page_auth ();
 db_open ();
 $cat = isset($_GET['cat']) ? $_GET['cat'] : "TODO";
 $type = isset($_GET['type']) ? $_GET['type'] : "tik";
+$kind = isset($_GET['kind']) ? $_GET['kind'] : "html";
 
 if ($type == 'luna') {
 	$luna = new luna();
@@ -144,12 +145,53 @@ if ($type == "luna"){
 	array_multisort($collumnToSort, SORT_ASC, $tiks);
 }
 
+
+if ($kind == "xhr") {
+	
+	$green = 0;
+	foreach($tiks as $tik ) {
+		if ($type == "tik") {
+			$line = ago2($tik['tik'], false, $tik_color_day);
+			if (strpos($line, "green") !== false) {
+				$green += 1;
+			}
+			
+		} else if ($type == 'countdown') { 
+			$line = ago2($tik['tik'], true);
+			if (strpos($line, "red") !== false) {
+				$green += 1;
+			}
+			
+		} else if ($type == 'luna') {
+			if (strpos($line, "green") !== false) {
+				$green += 1;
+			}
+			$line = $tik["luna_out_line"];
+		}
+	}
+
+
+	$data = array("badge" => $green);
+	header("Content-Type: application/json");
+	echo json_encode($data);
+	exit();
+}
+
+
+
 page_top ();
 ?>
 
+<style>
+	a:hover { text-decoration: none; }
+</style>
+
 <div>
 	<?php function menu($type, $text, $href) { ?>
-		<a href="<?=$href?>"><span class="badge badge-<?=$type?>"><?=$text?></span></a>&nbsp;&nbsp;
+		<a href="<?=$href?>">
+			<span class="hed badge badge-<?=$type?>"><?=$text?></span>
+			<span style="vertical-align: super; color: red;"></span>
+		</a>&nbsp;&nbsp;
 	<?php } ?>
 
 	<p>
@@ -400,3 +442,27 @@ div#adding button {
 <?php
 page_bot ();
 db_close ();
+?>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+<script>
+
+
+
+	$(".hed").each(function(index) {
+		var ref = $(this).parent().attr("href");
+		if (ref.includes("http")) {
+			return;
+		}
+		
+		var el = $(this);
+		$.ajax(`./${ref}&kind=xhr`).done(function(res) {
+			var badge = res.badge;
+			if (badge) {
+				el.next().html(`${badge}`);
+			}
+		});
+		
+	});
+
+</script>
