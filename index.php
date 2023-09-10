@@ -49,7 +49,7 @@ if (isset($_POST['luna_name']) && isset($_POST['luna_tik'])) {
 // do the tik
 if (isset($_POST['tik_id'])) {
 	$tik_id = $_POST['tik_id'];
-	db_query("update tik set tik = now(), counter = counter + 1 where id_ = $tik_id");
+	db_query("update tik set tik = now(), counter = counter + 1, skip = NULL where id_ = $tik_id");
 	header("Refresh:0");
 	exit;
 }
@@ -75,11 +75,23 @@ if (has_httppost("action_edit") == true) {
 	exit;
 }
 
+// skip
+if (has_httppost("action_skip") == true) {
+	$req_id = get_httppost("id");
+
+	$endString = date('Y-m-d 23:59:59', time());
+	$endMillis = strtotime($endString);
+	
+	db_query("update tik set skip = FROM_UNIXTIME($endMillis) where id_ = '$req_id'");
+	header("Refresh:0");
+	exit;
+}
+
 $order_by = 'tik asc';
 if (in_array($cat, array("TODO", "TODO2", "cpg", "w"))) {
     $order_by = 'name_ asc';
 }
-$tiks = db_list("select id_, name_, tik, category, counter from tik where username = '$username' and category = '$cat' and type_ = '$type' order by $order_by");
+$tiks = db_list("select id_, name_, tik, category, counter, skip from tik where username = '$username' and category = '$cat' and type_ = '$type' order by $order_by");
 
 
 $all_categories = db_list("select distinct category from tik order by category");
@@ -150,14 +162,16 @@ if ($kind == "xhr") {
 	
 	$green = 0;
 	foreach($tiks as $tik ) {
+		$skipMillis = strtotime($tik["skip"]);
+
 		if ($type == "tik") {
-			$line = ago2($tik['tik'], false, $tik_color_day);
+			$line = ago2($tik['tik'], false, $tik_color_day, "tik", $skipMillis);
 			if (strpos($line, "green") !== false) {
 				$green += 1;
 			}
 			
 		} else if ($type == 'countdown') { 
-			$line = ago2($tik['tik'], true);
+			$line = ago2($tik['tik'], true, 0, "xx", $skipMillis);
 			if (strpos($line, "red") !== false) {
 				$green += 1;
 			}
@@ -347,27 +361,42 @@ div#adding button {
 <tr>
 
 <!-- body -->
-<?php foreach($tiks as $tik ) {?>
+<?php foreach($tiks as $tik ) {
+	$skipMillis = strtotime($tik['skip']);
+?>
 <tr>
 	
 
 	<?php if ($type == "tik") { ?>
 		<td><?=escape($tik['tik_out_line'])?></td>
-		<td><?=ago2($tik['tik'], false, $tik_color_day)?></td>
+		<td><?=ago2($tik['tik'], false, $tik_color_day, "tik", $skipMillis)?></td>
 		<td>
 			<form method='post' onSubmitz="return confirm('chắc chưa đại vương? <?=escape($tik['name_'])?>');">
 				<input type="hidden" name="tik_id" value="<?=$tik['id_']?>" />
 				<input type="submit" classz="btn btn-success" value="Tik" />
 			</form>
 		</td>
-		
+		<td>
+			<form method='post'>
+				<input type="hidden" name="action_skip" value="xxx" />
+				<input type="hidden" name="id" value="<?=$tik['id_']?>" />
+				<input type="submit" classz="btn btn-warning" value="Skip" />
+			</form>
+		</td>
 		
 	<?php } else if ($type == 'countdown') { 
 		$tmp_date = str_replace(" 00:00:00", "", $tik['tik']);
 	?>
 		<td><?=escape($tik['name_'])?></td>
-		<td><?=ago2($tik['tik'], true)?> (<?=$tmp_date?>)</td>
+		<td><?=ago2($tik['tik'], true, 0, "xx", $skipMillis)?> (<?=$tmp_date?>)</td>
 		
+		<td>
+			<form method='post'>
+				<input type="hidden" name="action_skip" value="xxx" />
+				<input type="hidden" name="id" value="<?=$tik['id_']?>" />
+				<input type="submit" classz="btn btn-warning" value="Skip" />
+			</form>
+		</td>
 		
 	<?php } else if ($type == 'luna') { ?>
 		<td><?=escape($tik['name_'])?></td>

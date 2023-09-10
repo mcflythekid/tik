@@ -240,7 +240,7 @@ function ago2_date_diff($d1, $d2) {
 	$difference = $d1 - $d2;
 	return abs($difference/(60 * 60)/24);
 }
-function ago2($date_string, $color = false, $tik_color_day = 0, $tik_color_type = "tik")
+function ago2($date_string, $color = false, $tik_color_day = 0, $tik_color_type = "tik", $skipMillis = -1)
 {
     $today = new DateTime("now");
     $thatDay = new DateTime($date_string);
@@ -273,6 +273,9 @@ function ago2($date_string, $color = false, $tik_color_day = 0, $tik_color_type 
 	$ago = "⏎";
 
 	if ($color) { // For maintain
+		if ($skipMillis > 0 && $skipMillis > time()) { // Skipped
+			return "<span style='color:pink'>$ret$ago</span>";
+		}		
 		if ($thatDay > $today) {
 			return "<span style='color:green'>$next$ret</span>";
 		} else {
@@ -282,6 +285,9 @@ function ago2($date_string, $color = false, $tik_color_day = 0, $tik_color_type 
 	} else if ($tik_color_day > 0) { // For tik day
 		$diff = date_diff($today, $thatDay)->days;
 		if ($tik_color_type == "tik") {
+			if ($skipMillis > 0 && $skipMillis > time()) { // Skipped
+				return "<span style='color:pink'>$ret$ago</span>";
+			}
 			if ($tik_color_day == 1) { // For tik daily
 				$foo = $today->format('Y-m-d');
 				$bar = $thatDay->format('Y-m-d');
