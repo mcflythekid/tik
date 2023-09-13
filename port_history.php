@@ -168,10 +168,10 @@ sum_buy: <?=$sum_buy?>&nbsp;&nbsp;
 	</td>
 	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 	<td>
-		<form method='post' onSubmit="return confirm('Ghi nhận BÁN?');">
+		<form method='post' onSubmit="return confirm('Ghi nhận BÁN/Rút?');">
 			<input type="hidden" name="action_sell" value="xxx" />
 			<input type="hidden" name="port_id" value="<?=$param_port_id?>" />
-			<input required="true" size="<?=INPUT_SIZE_COUNTING?>" name="coin" placeholder="<?=INPUT_HINT_QUANTITY?>"></input>
+			<input required="true" size="<?=INPUT_SIZE_COUNTING?>" name="coin" placeholder="<?=INPUT_HINT_QUANTITY_WITHDRAW?>"></input>
 			<input required="true" size="<?=INPUT_SIZE_COUNTING?>" name="usd" placeholder="<?=INPUT_HINT_MONEY?>"></input>
 			<textarea required="true" rows="<?=INPUT_SIZE_H_NOTE?>" cols="<?=INPUT_SIZE_W_NOTE?>" name="note" placeholder="<?=INPUT_HINT_NOTE?>"></textarea>
 			<input size="<?=INPUT_SIZE_DATETIME?>" name="ts" placeholder="<?=INPUT_HINT_DATETIME?>"></input>

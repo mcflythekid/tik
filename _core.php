@@ -15,6 +15,8 @@ define("INPUT_SIZE_H_NOTE", 2);
 define("INPUT_SIZE_H_NAME", 2);
 define("INPUT_SIZE_W_NOTE", 30);
 define("INPUT_SIZE_W_NAME", 30);
+//
+define("INPUT_HINT_QUANTITY_WITHDRAW", "quant/'withdraw'");
 
 include_once("_conf.php");
 date_default_timezone_set($param_timezone);
