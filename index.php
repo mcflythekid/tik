@@ -228,6 +228,8 @@ page_top ();
 		
 		<?=menu("info", "P", "?cat=f30d_payment")?>
 		<?=menu("info", "P15", "?cat=f30d_15th")?>
+		<?=menu("info", "USDT", "?cat=USDT")?>
+		<?=menu("info", "BORROW", "?cat=BORROW")?>
 	</p>	
 	
 	<p>
