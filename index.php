@@ -326,7 +326,7 @@ div#adding button {
 	<?php } ?>
 </div>
 
-<div style="margin-top: 15px;">
+<div style="margin-top: 15px;" class="col-lg-6">
 <table class="table table-striped table-bordered">
 
 <!-- header -->
