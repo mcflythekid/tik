@@ -198,82 +198,66 @@ page_top ();
 
 <style>
 	a:hover { text-decoration: none; }
+	.menu-item { margin-left: 2px; }
+	.td-min { width: 1%; padding: 0px !important; }
 </style>
 
 <div>
 	<?php function menu($type, $text, $href) { ?>
-		<a href="<?=$href?>">
+		<a class="menu-item" href="<?=$href?>">
 			<span class="hed badge badge-<?=$type?>"><?=$text?></span>
 			<span style="vertical-align: super; color: red;"></span>
-		</a>&nbsp;&nbsp;
+		</a>
 	<?php } ?>
 
 	<p>
 		<?=menu("primary", "⌛ 🔧", "?cat=maintain&type=countdown")?>
 		<?=menu("primary", "⌛ EVT", "?cat=events&type=countdown")?>
 		<?=menu("primary", "🌘", "?cat=luna&type=luna")?>
-		<?=menu("primary", "₿", "/port.php?fund_type=FFA")?>
-		<?=menu("primary", "📖", "https://lazylearn.com/deck.php")?>
-		<?=menu("primary", "W", "?cat=w&days=1")?>
+		<?=menu("primary", "CPG", "?cat=cpg")?>
+		<?=menu("primary", "Wish", "?cat=wishlist")?>
+		<?=menu("primary", "₿^1", "/port.php?fund_type=FG1")?>
+		<?=menu("primary", "₿^2", "/port.php?fund_type=FG2")?>		<!-- secondary -->
+	</p>
+	
+	<p>
+		<?=menu("warning", "Begin", "?cat=daily_begin&days=1")?>
+		<?=menu("warning", "All day", "?cat=daily_all&days=1")?>
+		<?=menu("warning", "End", "?cat=daily_end&days=1")?>
+		
+		<?=menu("secondary", "⚔️GYM", "?cat=gym&days=6")?>
+		<?=menu("secondary", "⚔️FGT", "?cat=BOXING&days=3")?>
 	</p>
 	
 	<p>
 		<?=menu("primary", "x1", "?cat=TODO&days=1")?>
 		<?=menu("primary", "x6", "?cat=TODO2&days=3")?>
-		<?=menu("primary", "CPG", "?cat=cpg")?>
-		<?=menu("primary", "W", "?cat=wishlist")?>
-		
-		<?=menu("info", "C4", "?cat=connect30_1st&days=4")?>
-		<?=menu("info", "C21", "?cat=connect30_close&days=21")?>
-		
-		<?=menu("info", "P", "?cat=f30d_payment")?>
-		<?=menu("info", "P15", "?cat=f30d_15th")?>
-		<?=menu("info", "USDT", "?cat=USDT")?>
-		<?=menu("info", "BORROW", "?cat=BORROW")?>
+		<?=menu("primary", "Word", "?cat=w&days=1")?>
+		<?=menu("primary", "📖LZ", "https://lazylearn.com/deck.php")?>
+		<?=menu("secondary", "Payment", "?cat=f30d_payment")?>
+
 	</p>	
 	
-	<p>
-		<?=menu("warning", "Adversary", "?cat=adversary")?>
-		<?=menu("warning", "SG todo", "?cat=sg")?>
-	</p>	
-	
-	<p>
-		<?=menu("warning", "T", "?cat=f1task&days=1")?>
-		<?=menu("warning", "T'", "?cat=f1task_b&days=1")?>
-		
-		<?=menu("warning", "C", "?cat=f1care&days=1")?>
-		<?=menu("warning", "C'", "?cat=f1care_b&days=1")?>
-		<?=menu("warning", "L", "?cat=f1learn&days=1")?>
-		
-		<?=menu("secondary", "GYM", "?cat=gym&days=6")?>
-		<?=menu("secondary", "⚔️", "?cat=BOXING&days=3")?>
-	</p>
-	
-	<p>
-		<?=menu("info", "F3", "?cat=f3d")?>
-		<?=menu("info", "F7", "?cat=f7d")?>
-		<?=menu("info", "F14", "?cat=f14d")?>
-		<?=menu("info", "F30", "?cat=f30d")?>
-		<?=menu("info", "F60", "?cat=f60d")?>
-		<?=menu("info", "F90", "?cat=f90d")?>
-		<?=menu("info", "F180", "?cat=f180d")?>
-	</p>
-	
-	<p>
-		<?=menu("warning", "SS", "?cat=SS&days=1")?>
-		<?=menu("warning", "S", "?cat=SS1&days=1")?>
-		<?=menu("warning", "S'", "?cat=SS1_b&days=1")?>
-		<?=menu("info", "S3", "?cat=SS_03&days=3")?>
-		<?=menu("info", "S7", "?cat=SS_07&days=7")?>
-		<?=menu("info", "S14", "?cat=SS_14&days=14")?>
-		<?=menu("info", "S30", "?cat=SS_30&days=30")?>
-	</p>
+
 	
 
 	
 	<p>
-
-	</p>
+		<?=menu("info", "C7", "?cat=connect_07d")?>
+		<?=menu("info", "C15", "?cat=connect_15d")?>
+		<?=menu("info", "C30", "?cat=connect_30d")?>
+		<?=menu("info", "C60", "?cat=connect_60d")?>
+	</p>	
+	<p>
+		<?=menu("info", "3D", "?cat=f003d")?>
+		<?=menu("info", "W", "?cat=f007d")?>
+		<?=menu("info", "2W", "?cat=f014d")?>
+		<?=menu("info", "1M", "?cat=f030d")?>
+		<?=menu("info", "3M", "?cat=f090d")?>
+		<?=menu("info", "6M", "?cat=f180d")?>
+		<?=menu("info", "Y", "?cat=f360d")?>
+	</p>	
+	
 </div>
 
 <div style="float:right; ">
@@ -343,7 +327,7 @@ div#adding button {
 </div>
 
 <div style="margin-top: 15px;">
-<table class="table table-striped">
+<table class="table table-striped table-bordered">
 
 <!-- header -->
 <tr>
@@ -351,14 +335,12 @@ div#adding button {
 
 	<?php if ($type == "tik") { ?>
 		<th>Tik</th>
-		<th></th>
 	<?php } else { ?>
 		<th>Countdown</th>
 	<?php } ?>
 
-	<th></th>
-	<th></th>
-	<th></th>
+
+	
 
 <tr>
 
@@ -371,14 +353,13 @@ div#adding button {
 
 	<?php if ($type == "tik") { ?>
 		<td><?=escape($tik['tik_out_line'])?></td>
-		<td><?=ago2($tik['tik'], false, $tik_color_day, "tik", $skipMillis)?></td>
-		<td>
+		<td class="td-min"><?=ago2($tik['tik'], false, $tik_color_day, "tik", $skipMillis)?></td>
+		<td class="td-min">
 			<form method='post' onSubmitz="return confirm('chắc chưa đại vương? <?=escape($tik['name_'])?>');">
 				<input type="hidden" name="tik_id" value="<?=$tik['id_']?>" />
 				<input type="submit" classz="btn btn-success" value="Tik" />
 			</form>
-		</td>
-		<td>
+
 			<form method='post'>
 				<input type="hidden" name="action_skip" value="xxx" />
 				<input type="hidden" name="id" value="<?=$tik['id_']?>" />
@@ -390,9 +371,9 @@ div#adding button {
 		$tmp_date = str_replace(" 00:00:00", "", $tik['tik']);
 	?>
 		<td><?=escape($tik['name_'])?></td>
-		<td><?=ago2($tik['tik'], true, 0, "xx", $skipMillis)?> (<?=$tmp_date?>)</td>
+		<td class="td-min"><?=ago2($tik['tik'], true, 0, "xx", $skipMillis)?> (<?=$tmp_date?>)</td>
 		
-		<td>
+		<td class="td-min">
 			<form method='post'>
 				<input type="hidden" name="action_skip" value="xxx" />
 				<input type="hidden" name="id" value="<?=$tik['id_']?>" />
@@ -402,18 +383,19 @@ div#adding button {
 		
 	<?php } else if ($type == 'luna') { ?>
 		<td><?=escape($tik['name_'])?></td>
-		<td><?=$tik["luna_out_line"]?></td>
+		<td class="td-min"><?=$tik["luna_out_line"]?></td>
 	<?php } ?>
 
-	<td><?=ui_del($tik)?></td>
-	
-	<td id="act_<?=$tik["id_"]?>" style="display: none;">
+	<td class="td-min" id="act_<?=$tik["id_"]?>" style="display: none;">
 		<table>
 			<tr><td><?=ui_edit($tik, $all_categories)?></td></tr>
 		</table>
 	</td>
 	
-	<td><?=ui_toggle($tik)?></td>
+	<td class="td-min">
+		<?=ui_del($tik)?>
+		<?=ui_toggle($tik)?>
+	</td>
 </tr>
 <?php }?>
 

@@ -1,0 +1,1 @@
+scp fwd.php heo:~/app/tik/

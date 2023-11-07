@@ -25,8 +25,8 @@ update_price("LTC");
 
 //tier e
 update_price("PEPE");
-update_price("TATE");
-update_price("BOBO");
+//update_price("TATE");
+//update_price("BOBO");
 
 if (has_httppost("action_create_coin") == true) {
 	$req_name = get_httppost("name");
@@ -197,10 +197,11 @@ page_top ();
 
 <div>
 	<p>
-		<a href="/index.php?cat=TODO&days=1">TODO</a>&nbsp;&nbsp;
+		<a href="/index.php?cat=TODO&days=1">Dashboard</a>&nbsp;&nbsp;
 	</p>
 	<p>
-		<a href="/port.php?fund_type=FFA">Portfolio</a>&nbsp;&nbsp;
+		<a href="/port.php?fund_type=FG1">FG1</a>&nbsp;&nbsp;
+		<a href="/port.php?fund_type=FG2">FG2</a>&nbsp;&nbsp;
 	</p>
 </div>
 
@@ -210,7 +211,7 @@ page_top ();
 ?>
 <p>
 	<strong>Binance: <?=$ts_cz?></strong>&nbsp;&nbsp;
-	<strong>ERC20: <?=$ts_erc?></strong>
+	<!-- <strong>ERC20: <?=$ts_erc?></strong> -->
 </p>
 <hr/>
 
