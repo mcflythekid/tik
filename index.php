@@ -87,8 +87,20 @@ if (has_httppost("action_skip") == true) {
 	exit;
 }
 
+// skipAll
+if (has_httppost("action_skipAll") == true) {
+	$req_category = get_httppost("category");
+
+	$endString = date('Y-m-d 23:59:59', time());
+	$endMillis = strtotime($endString);
+	
+	db_query("update tik set skip = FROM_UNIXTIME($endMillis) where category = '$req_category'");
+	header("Refresh:0");
+	exit;
+}
+
 $order_by = 'tik asc';
-if (in_array($cat, array("TODO", "TODO2", "cpg", "w"))) {
+if (in_array($cat, array("TODO", "TODO2", "cpg", "w"))) { // No tik
     $order_by = 'name_ asc';
 }
 $tiks = db_list("select id_, name_, tik, category, counter, skip from tik where username = '$username' and category = '$cat' and type_ = '$type' order by $order_by");
@@ -200,9 +212,12 @@ page_top ();
 	a:hover { text-decoration: none; }
 	.menu-item { margin-left: 2px; }
 	.td-min { width: 1%; padding: 0px !important; }
+	div.menu > p { margin-bottom: 1px; }
+	div.menu > hr { margin-bottom: 1px; margin-top: 1px;}
+	div.menu > h5 { margin-bottom: 1px;}
 </style>
 
-<div>
+<div class="menu">
 	<?php function menu($type, $text, $href) { ?>
 		<a class="menu-item" href="<?=$href?>">
 			<span class="hed badge badge-<?=$type?>"><?=$text?></span>
@@ -210,44 +225,48 @@ page_top ();
 		</a>
 	<?php } ?>
 
+    ↓ →
+	<?=menu("danger", "#1", "#")?>
+	<?=menu("warning", "#2", "#")?>
+	<?=menu("info", "#3", "#")?>
+	Follow the order, sir!
+	<hr>
+
+	<h5>IMPORTANT-RUSH</h5>
 	<p>
-		<?=menu("primary", "⌛ 🔧", "?cat=maintain&type=countdown")?>
-		<?=menu("primary", "⌛ EVT", "?cat=events&type=countdown")?>
-		<?=menu("primary", "🌘", "?cat=luna&type=luna")?>
-		<?=menu("primary", "CPG", "?cat=cpg")?>
-		<?=menu("primary", "Wish", "?cat=wishlist")?>
-		<?=menu("primary", "₿^1", "/port.php?fund_type=FG1")?>
-		<?=menu("primary", "₿^2", "/port.php?fund_type=FG2")?>		<!-- secondary -->
-	</p>
-	
+		<?=menu("danger", "OVERRIDER", "?cat=OVERRIDER&days=1")?>
+	</p>	
 	<p>
+	    <i><10AM</i>
 		<?=menu("warning", "Begin", "?cat=daily_begin&days=1")?>
-		<?=menu("warning", "All day", "?cat=daily_all&days=1")?>
+		<?=menu("warning", "3D_Care", "?cat=care_f003d")?>
+		<?=menu("warning", "2W_Care", "?cat=care_f014d")?>
+		<?=menu("warning", "Payment", "?cat=f30d_payment")?>
+	</p>
+	<p>
+		<?=menu("danger", "TODO", "?cat=TODO&days=1")?>
+		<?=menu("info", "Anytime", "?cat=daily_all&days=1")?>
+	</p>	
+	<p>
+	    <i>>4PM</i>
+		<?=menu("warning", "⚔LEARN", "?cat=LEARN&days=1")?>
+		<?=menu("warning", "⚔️GYM", "?cat=gym&days=6")?>
+		<?=menu("warning", "⚔️FGT", "?cat=BOXING&days=6")?>
+	</p>
+	<p>
+	    <i><9PM</i>
 		<?=menu("warning", "End", "?cat=daily_end&days=1")?>
-		
-		<?=menu("secondary", "⚔️GYM", "?cat=gym&days=6")?>
-		<?=menu("secondary", "⚔️FGT", "?cat=BOXING&days=3")?>
 	</p>
 	
+	
+	<hr>
+	<h5>IMPORTANT-SLOW</h5>
 	<p>
-		<?=menu("primary", "x1", "?cat=TODO&days=1")?>
-		<?=menu("primary", "x6", "?cat=TODO2&days=3")?>
-		<?=menu("primary", "Word", "?cat=w&days=1")?>
-		<?=menu("primary", "📖LZ", "https://lazylearn.com/deck.php")?>
-		<?=menu("secondary", "Payment", "?cat=f30d_payment")?>
-
-	</p>	
-	
-
-	
-
-	
-	<p>
-		<?=menu("info", "C7", "?cat=connect_07d")?>
-		<?=menu("info", "C15", "?cat=connect_15d")?>
-		<?=menu("info", "C30", "?cat=connect_30d")?>
-		<?=menu("info", "C60", "?cat=connect_60d")?>
-	</p>	
+		
+		<?=menu("info", "L7_RideOrDie", "?cat=connect_07d")?>
+		<?=menu("info", "L30_Milk", "?cat=connect_30d")?>
+		<?=menu("info", "L60_Candidate", "?cat=connect_60d")?>
+	</p>
 	<p>
 		<?=menu("info", "3D", "?cat=f003d")?>
 		<?=menu("info", "W", "?cat=f007d")?>
@@ -256,8 +275,26 @@ page_top ();
 		<?=menu("info", "3M", "?cat=f090d")?>
 		<?=menu("info", "6M", "?cat=f180d")?>
 		<?=menu("info", "Y", "?cat=f360d")?>
-	</p>	
-	
+	</p>
+	<p>
+		<?=menu("info", "⌛ 🔧", "?cat=maintain&type=countdown")?>
+		<?=menu("info", "⌛ EVT", "?cat=events&type=countdown")?>
+		<?=menu("info", "🌘", "?cat=luna&type=luna")?>
+	</p>
+
+	<hr>
+	<h5>Records</h5>
+	<p>
+	    <?=menu("secondary", "☠Toxic", "?cat=toxic")?>
+		<?=menu("secondary", "TODO", "?cat=TODO2&days=1")?>
+		<?=menu("secondary", "CPG", "?cat=cpg")?>
+		<?=menu("secondary", "Wish", "?cat=wishlist")?>
+		<?=menu("secondary", "DEBT", "?cat=DEBT&days=14")?>
+		<?=menu("secondary", "₿^1", "/port.php?fund_type=FG1")?>
+		<?=menu("secondary", "₿^2", "/port.php?fund_type=FG2")?>		<!-- secondary -->
+		<?=menu("secondary", "📖LZ", "https://lazylearn.com/deck.php")?>
+	</p>
+	<br>
 </div>
 
 <div style="float:right; ">
@@ -281,9 +318,22 @@ page_top ();
   ?>
 </div>
 
+<?php if ($type == "tik") { ?>
+<div id="skipAll">
+	<form method='post'>
+		<input type="hidden" name="action_skipAll" value="xxx" />
+		<input type="hidden" name="category" value="<?=$cat?>" />
+		<input type="submit" class="btn btn-sm btn-warning" value="Skip All" />
+	</form>
+</div>
+<?php } ?>
+
 <style>
 div#adding button {
   border-radius: 0 !important;
+}
+div#skipAll {
+	margin-bottom: 10px;
 }
 </style>
 
@@ -292,7 +342,7 @@ div#adding button {
 		<form  method='post'>
 			<div class="row">
 				<div class="input-group col-lg-4 col-md-6 col-sm-8 col-xs-12">
-					<input class="form-control" autofocus required="true" name="name_" placeholder="Cần 1 cái tên ..."></input>
+					<input class="form-control" autofocusz required="true" name="name_" placeholder="Cần 1 cái tên ..."></input>
 					<span class="input-group-btn">
 						<button class="btn btn-success" type="submit">Add</button>
 					</span>
@@ -303,7 +353,7 @@ div#adding button {
 		<form  method='post'>
 			<div class="row">
 				<div class="input-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
-					<input class="form-control" autofocus required="true" name="countdown_name" placeholder="Cần 1 cái tên ..."></input>
+					<input class="form-control" autofocusz required="true" name="countdown_name" placeholder="Cần 1 cái tên ..."></input>
 					<input class="form-control" required="true" name="countdown_tik" placeholder="yyyy mm dd [hh mi]"></input>
 					<span class="input-group-btn">
 						<button class="btn btn-success" type="submit">Add</button>
@@ -315,7 +365,7 @@ div#adding button {
 		<form  method='post'>
 			<div class="row">
 				<div class="input-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
-					<input class="form-control" autofocus required="true" name="luna_name" placeholder="Cần 1 cái tên ..."></input>
+					<input class="form-control" autofocusz required="true" name="luna_name" placeholder="Cần 1 cái tên ..."></input>
 					<input class="form-control" required="true" name="luna_tik" placeholder="mm dd (ÂL)"></input>
 					<span class="input-group-btn">
 						<button class="btn btn-success" type="submit">Add</button>
@@ -451,7 +501,11 @@ div#adding button {
 <?php } ?>
 
 
-
+<br>
+<br>
+<br>
+<br>
+<br>
 <?php
 page_bot ();
 db_close ();
