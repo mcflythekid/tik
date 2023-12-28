@@ -22,6 +22,7 @@ update_price("GAS");
 update_price("WING");
 update_price("FIRO");
 update_price("LTC");
+update_price("FLM");
 
 //tier e
 update_price("PEPE");
@@ -202,6 +203,7 @@ page_top ();
 	<p>
 		<a href="/port.php?fund_type=FG1">FG1</a>&nbsp;&nbsp;
 		<a href="/port.php?fund_type=FG2">FG2</a>&nbsp;&nbsp;
+		<a href="/port.php?fund_type=closed">CLOSED</a>
 	</p>
 </div>
 
