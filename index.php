@@ -98,6 +98,16 @@ if (has_httppost("action_skipAll") == true) {
 	header("Refresh:0");
 	exit;
 }
+if (has_httppost("action_skipAllGroup") == true) {
+	$req_category_prefix = get_httppost("category_prefix");
+
+	$endString = date('Y-m-d 23:59:59', time());
+	$endMillis = strtotime($endString);
+	
+	db_query("update tik set skip = FROM_UNIXTIME($endMillis) where category LIKE '$req_category_prefix%'");
+	header("Refresh:0");
+	exit;
+}
 
 $order_by = 'tik asc';
 if (in_array($cat, array("TODO", "TODO2", "cpg", "w"))) { // No tik
@@ -203,18 +213,48 @@ if ($kind == "xhr") {
 	exit();
 }
 
-
+$weather = db_object("select * from weather where id = 'main'");
+// var_dump($weather);
+// exit;
 
 page_top ();
 ?>
 
+
+
 <style>
 	a:hover { text-decoration: none; }
-	.menu-item { margin-left: 2px; }
+	.menu-item { margin-left: 1px; }
 	.td-min { width: 1%; padding: 0px !important; }
 	div.menu > p { margin-bottom: 1px; }
-	div.menu > hr { margin-bottom: 1px; margin-top: 1px;}
+	div.menu > hr { margin-bottom: 1px; margin-top: 1px;
+	
+	
+			border: none;
+			height: 1px;
+			/* Set the hr color */
+			color: #333;  /* old IE */
+			background-color: #333;  /* Modern Browsers */
+
+
+	}
 	div.menu > h5 { margin-bottom: 1px;}
+</style>
+
+<style>
+span.line-head {
+    font-weight: bold;
+    position: relative;
+	color: #4CAF50; /* Change the color value as needed */
+	/* fixed width */
+	width: 40px; /* Adjust width as needed */
+    display: inline-block;
+}
+span.line-head-skipable {
+	font-style: italic;
+	text-decoration: underline;
+}
+
 </style>
 
 <div class="menu">
@@ -224,109 +264,138 @@ page_top ();
 			<span style="vertical-align: super; color: red;"></span>
 		</a>
 	<?php } ?>
-
-    ↓ →
-	<?=menu("danger", "#1", "#")?>
-	<?=menu("warning", "#2", "#")?>
-	<?=menu("info", "#3", "#")?>
-	Follow the order, sir!
-	<hr>
-
-	<h5>IMPORTANT-RUSH</h5>
+	
+	<div style="float:right; ">
+		<form action='/logout.php' onSubmit="return confirm('thoát nha anh hai');">
+			<input type="submit" class="btn btn-sm btn-warning" value="🌚" />
+		</form>
+	</div>
+	
+	
+	<hr />
 	<p>
-		<?=menu("danger", "OVERRIDER", "?cat=OVERRIDER&days=1")?>
-	</p>	
-	<p>
-	    <i><10AM</i>
-		<?=menu("warning", "Begin", "?cat=daily_begin&days=1")?>
-		<?=menu("warning", "3D_Care", "?cat=care_f003d")?>
-		<?=menu("warning", "2W_Care", "?cat=care_f014d")?>
-		<?=menu("warning", "Payment", "?cat=f30d_payment")?>
+		<span class="line-head"></span>
+		<?=menu("info", $weather["temp"] . "℃", "#")?>
+		<?=menu("info",  ($weather["hum"] - 9.2) . "%", "#")?>
+		<?=menu("info",  date("H:i:s", strtotime($weather["ts"])), "#")?>
 	</p>
 	<p>
-		<?=menu("danger", "TODO", "?cat=TODO&days=1")?>
-		<?=menu("info", "Anytime", "?cat=daily_all&days=1")?>
-	</p>	
+		<span class="line-head">!!!</span>
+		<?=menu("danger", "🌞 Begin", "?cat=daily_begin&days=1")?>
+		<?=menu("danger", "🌞 End", "?cat=daily_end&days=1")?>
+		<?=menu("info", "Conn", "?cat=connect_all&days=30")?>
+	</p>
 	<p>
-	    <i>>4PM</i>
-		<?=menu("warning", "⚔LEARN", "?cat=LEARN&days=1")?>
-		<?=menu("warning", "⚔️GYM", "?cat=gym&days=6")?>
+		<span class="line-head">!!</span>
+		<?=menu("warning", "⚔️GYM", "?cat=gym&days=7")?>
 		<?=menu("warning", "⚔️FGT", "?cat=BOXING&days=6")?>
+		<?=menu("warning", "⚔LEARN", "?cat=LEARN&days=1")?>
+		<?=menu("warning", "⚔Pay", "?cat=f30d_payment")?>
 	</p>
 	<p>
-	    <i><9PM</i>
-		<?=menu("warning", "End", "?cat=daily_end&days=1")?>
+		<span class="line-head">!</span>
+		<?=menu("success", "3dCare", "?cat=care_f003d")?>
+		<?=menu("success", "1wCare", "?cat=care_f007d")?>
+		<?=menu("success", "2wCare", "?cat=care_f014d")?>
 	</p>
-	
-	
-	<hr>
-	<h5>IMPORTANT-SLOW</h5>
-	<p>
 		
-		<?=menu("info", "L7_RideOrDie", "?cat=connect_07d")?>
-		<?=menu("info", "L30_Milk", "?cat=connect_30d")?>
-		<?=menu("info", "L60_Candidate", "?cat=connect_60d")?>
-	</p>
+		
+	<hr/>
 	<p>
-		<?=menu("info", "3D", "?cat=f003d")?>
-		<?=menu("info", "W", "?cat=f007d")?>
-		<?=menu("info", "2W", "?cat=f014d")?>
-		<?=menu("info", "1M", "?cat=f030d")?>
-		<?=menu("info", "3M", "?cat=f090d")?>
-		<?=menu("info", "6M", "?cat=f180d")?>
-		<?=menu("info", "Y", "?cat=f360d")?>
-	</p>
-	<p>
-		<?=menu("info", "⌛ 🔧", "?cat=maintain&type=countdown")?>
-		<?=menu("info", "⌛ EVT", "?cat=events&type=countdown")?>
-		<?=menu("info", "🌘", "?cat=luna&type=luna")?>
+		<span class="line-head">KSS</span>
+		<?=menu("danger", "3D",  "?cat=WORK_003d")?>
+		<?=menu("danger", "1W",  "?cat=WORK_007d")?>
+		<?=menu("danger", "1M", "?cat=WORK_030d")?>
+		<?=menu("danger", "3M", "?cat=WORK_180d")?>
 	</p>
 
-	<hr>
-	<h5>Records</h5>
+
+	<hr/>
 	<p>
-	    <?=menu("secondary", "☠Toxic", "?cat=toxic")?>
-		<?=menu("secondary", "TODO", "?cat=TODO2&days=1")?>
-		<?=menu("secondary", "CPG", "?cat=cpg")?>
-		<?=menu("secondary", "Wish", "?cat=wishlist")?>
-		<?=menu("secondary", "DEBT", "?cat=DEBT&days=14")?>
-		<?=menu("secondary", "₿^1", "/port.php?fund_type=FG1")?>
-		<?=menu("secondary", "₿^2", "/port.php?fund_type=FG2")?>		<!-- secondary -->
-		<?=menu("secondary", "📖LZ", "https://lazylearn.com/deck.php")?>
+		<form method='post' id="skip-all-t7cn-form">
+			<input type="hidden" name="action_skipAllGroup" value="xxx" />
+			<input type="hidden" name="category_prefix" value="WEEKEND_" />
+		</form>
+		<span class="line-head line-head-skipable" onclick="document.getElementById('skip-all-t7cn-form').submit();">T7CN</span>
+	    <?=menu("info", "1W", "?cat=WEEKEND_007d")?>
+	    <?=menu("info", "2W", "?cat=WEEKEND_014d")?>
+	    <?=menu("info", "1M", "?cat=WEEKEND_030d")?>
+	    <?=menu("info", "2M", "?cat=WEEKEND_060d")?>
+	    <?=menu("info", "6M", "?cat=WEEKEND_180d")?>
+	    <?=menu("info", "1Y", "?cat=WEEKEND_360d")?>
+	    <?=menu("info", "2Y", "?cat=WEEKEND_720d")?>
 	</p>
+	<p>
+		<form method='post' id="skip-all-ocd-form">
+			<input type="hidden" name="action_skipAllGroup" value="xxx" />
+			<input type="hidden" name="category_prefix" value="OCD_" />
+		</form>
+		<span class="line-head line-head-skipable" onclick="document.getElementById('skip-all-ocd-form').submit();">OSD</span>
+	    <?=menu("info", "1W", "?cat=OCD_007d")?>
+	    <?=menu("info", "2W", "?cat=OCD_014d")?>
+	    <?=menu("info", "1M", "?cat=OCD_030d")?>
+	    <?=menu("info", "2M", "?cat=OCD_060d")?>
+	    <?=menu("info", "6M", "?cat=OCD_180d")?>
+	    <?=menu("info", "1Y", "?cat=OCD_360d")?>
+	    <?=menu("info", "2Y", "?cat=OCD_720d")?>
+	</p>
+	<p>
+		<span class="line-head">REC</span>
+		<?=menu("secondary", "⌛🔧", "?cat=maintain&type=countdown")?>
+		<?=menu("secondary", "⌛☇", "?cat=events&type=countdown")?>
+		<?=menu("secondary", "⌛🌘", "?cat=luna&type=luna")?>	
+		<?=menu("secondary", "☑CPG", "?cat=cpg")?>
+		<?=menu("secondary", "☑Wsh", "?cat=wishlist")?>
+		<?=menu("secondary", "☑🤑", "?cat=DEBT&days=14")?>
+		<?=menu("secondary", "☑💊", "?cat=toxic")?>
+	</p>
+	
+	
+	<hr/>
+	<p>
+		<?=menu("danger", "ASAP", "?cat=TODO&days=1")?>
+		<?=menu("success", "POOL", "?cat=POOL&days=1")?>
+		<?=menu("secondary", "> ₿^1", "/port.php?fund_type=FG1")?>
+		<?=menu("secondary", "> ₿^2", "/port.php?fund_type=FG2")?>
+	</p>
+	
+	
 	<br>
 </div>
 
-<div style="float:right; ">
-	<form action='/logout.php' onSubmit="return confirm('thoát nha anh hai');">
-		<input type="submit" class="btn btn-sm btn-danger" value=">logout" />
-	</form>
+<div class="row">
+	<div class="col-9">
+		<div class="alert alert-primary" role="alert">
+		  <?=escape($cat)?>
+		  <?php 
+			if (isset($tik_color_day)) {
+				$suffix = $tik_color_day > 1 ? "days" : "day";
+				echo " [$tik_color_day $suffix]";
+			}
+			if ($type == "countdown") {
+				echo " ⌛";
+			} else if ($type== "luna") {
+				echo " 🌘";
+			}
+		  ?>
+		</div>
+	</div>
+	<div class="col-3">
+		<?php if ($type == "tik") { ?>
+		<div id="skipAll">
+			<form method='post'>
+				<input type="hidden" name="action_skipAll" value="xxx" />
+				<input type="hidden" name="category" value="<?=$cat?>" />
+				<input type="submit" class="btn btn-sm btn-warning" value="Skip All" />
+			</form>
+		</div>
+		<?php } ?>
+	</div>
 </div>
 
-<div class="alert alert-primary" role="alert">
-  <?=escape($cat)?>
-  <?php 
-  	if (isset($tik_color_day)) {
-		$suffix = $tik_color_day > 1 ? "days" : "day";
-		echo " [$tik_color_day $suffix]";
-	}
-  	if ($type == "countdown") {
-		echo " ⌛";
-	} else if ($type== "luna") {
-		echo " 🌘";
-	}
-  ?>
-</div>
 
-<?php if ($type == "tik") { ?>
-<div id="skipAll">
-	<form method='post'>
-		<input type="hidden" name="action_skipAll" value="xxx" />
-		<input type="hidden" name="category" value="<?=$cat?>" />
-		<input type="submit" class="btn btn-sm btn-warning" value="Skip All" />
-	</form>
-</div>
-<?php } ?>
+
+
 
 <style>
 div#adding button {
@@ -377,80 +446,97 @@ div#skipAll {
 </div>
 
 <div style="margin-top: 15px;" class="col-lg-6">
-<table class="table table-striped table-bordered">
-
-<!-- header -->
-<tr>
-	<th>Item</th>
-
-	<?php if ($type == "tik") { ?>
-		<th>Tik</th>
-	<?php } else { ?>
-		<th>Countdown</th>
-	<?php } ?>
-
-
-	
-
-<tr>
-
-<!-- body -->
-<?php foreach($tiks as $tik ) {
-	$skipMillis = strtotime($tik['skip']);
-?>
-<tr>
-	
-
-	<?php if ($type == "tik") { ?>
-		<td><?=escape($tik['tik_out_line'])?></td>
-		<td class="td-min"><?=ago2($tik['tik'], false, $tik_color_day, "tik", $skipMillis)?></td>
-		<td class="td-min">
-			<form method='post' onSubmitz="return confirm('chắc chưa đại vương? <?=escape($tik['name_'])?>');">
-				<input type="hidden" name="tik_id" value="<?=$tik['id_']?>" />
-				<input type="submit" classz="btn btn-success" value="Tik" />
-			</form>
-
-			<form method='post'>
-				<input type="hidden" name="action_skip" value="xxx" />
-				<input type="hidden" name="id" value="<?=$tik['id_']?>" />
-				<input type="submit" classz="btn btn-warning" value="Skip" />
-			</form>
-		</td>
+	<table class="table table-striped table-bordered" id="dataz">
 		
-	<?php } else if ($type == 'countdown') { 
-		$tmp_date = str_replace(" 00:00:00", "", $tik['tik']);
-	?>
-		<td><?=escape($tik['name_'])?></td>
-		<td class="td-min"><?=ago2($tik['tik'], true, 0, "xx", $skipMillis)?> (<?=$tmp_date?>)</td>
-		
-		<td class="td-min">
-			<form method='post'>
-				<input type="hidden" name="action_skip" value="xxx" />
-				<input type="hidden" name="id" value="<?=$tik['id_']?>" />
-				<input type="submit" classz="btn btn-warning" value="Skip" />
-			</form>
-		</td>
-		
-	<?php } else if ($type == 'luna') { ?>
-		<td><?=escape($tik['name_'])?></td>
-		<td class="td-min"><?=$tik["luna_out_line"]?></td>
-	<?php } ?>
+		<thead>
+			<tr>
+				<th>Item</th>
 
-	<td class="td-min" id="act_<?=$tik["id_"]?>" style="display: none;">
-		<table>
-			<tr><td><?=ui_edit($tik, $all_categories)?></td></tr>
-		</table>
-	</td>
+				<?php if ($type == "tik") { ?>
+					<th>Tik</th>
+				<?php } else { ?>
+					<th>Countdown</th>
+				<?php } ?>
+
+				<th>&nbsp;</th>
+				<th>&nbsp;</th>
+				<th style="display: none;"></th>
+			</tr>
+		</thead>
+
+		<tbody>
+		<?php foreach($tiks as $tik ) {
+			$skipMillis = strtotime($tik['skip']);
+		?>
+			<tr>
+				<?php if ($type == "tik") { ?>
+					<td><?=escape($tik['tik_out_line'])?></td>
+					<td class="td-min"><?=ago2($tik['tik'], false, $tik_color_day, "tik", $skipMillis)?></td>
+					<td class="td-min">
+						<form method='post' onSubmitz="return confirm('chắc chưa đại vương? <?=escape($tik['name_'])?>');">
+							<input type="hidden" name="tik_id" value="<?=$tik['id_']?>" />
+							<input type="submit" classz="btn btn-success" value="Tik" />
+						</form>
+
+						<form method='post'>
+							<input type="hidden" name="action_skip" value="xxx" />
+							<input type="hidden" name="id" value="<?=$tik['id_']?>" />
+							<input type="submit" classz="btn btn-warning" value="Skip" />
+						</form>
+					</td>
+		
+				<?php } else if ($type == 'countdown') { 
+					$tmp_date = str_replace(" 00:00:00", "", $tik['tik']);
+				?>
+					<td><?=escape($tik['name_'])?></td>
+					<td class="td-min"><?=ago2($tik['tik'], true, 0, "xx", $skipMillis)?> (<?=$tmp_date?>)</td>
+					
+					<td class="td-min">
+						<form method='post'>
+							<input type="hidden" name="action_skip" value="xxx" />
+							<input type="hidden" name="id" value="<?=$tik['id_']?>" />
+							<input type="submit" classz="btn btn-warning" value="Skip" />
+						</form>
+					</td>
+		
+				<?php } else if ($type == 'luna') { ?>
+					<td><?=escape($tik['name_'])?></td>
+					<td class="td-min"><?=$tik["luna_out_line"]?></td>
+				<?php } ?>
+
+				<td class="td-min" id="act_<?=$tik["id_"]?>" style="display: none;">
+					<table>
+						<tr><td><?=ui_edit($tik, $all_categories)?></td></tr>
+					</table>
+				</td>
 	
-	<td class="td-min">
-		<?=ui_del($tik)?>
-		<?=ui_toggle($tik)?>
-	</td>
-</tr>
-<?php }?>
+				<td class="td-min">
+					<?=ui_del($tik)?>
+					<?=ui_toggle($tik)?>
+				</td>
+			</tr>
+		<?php }?>
+		</tbody>
 
-</table>
+	</table>
 </div>
+
+<?php if (startsWith($cat, "connect_")) { ?>
+	<script>
+		$(document).ready(function() {
+			$.extend($.fn.dataTable.defaults, {
+				searching: {
+					caseInsensitive: true
+				}
+			});
+			
+			$("#dataz").DataTable({
+				"pageLength": 100,
+				"ordering": false
+			});
+		});
+	</script>
+<?php } ?>
 
 
 <?php function ui_del($tik) { ?>
@@ -511,11 +597,7 @@ page_bot ();
 db_close ();
 ?>
 
-<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 <script>
-
-
-
 	$(".hed").each(function(index) {
 		var ref = $(this).parent().attr("href");
 		if (ref.includes("http")) {
@@ -531,5 +613,4 @@ db_close ();
 		});
 		
 	});
-
 </script>

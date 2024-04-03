@@ -353,3 +353,9 @@ function money_color($num) {
 	}
 	return "<strong style='color: green;'>$num</strong>";
 }
+
+function startsWith($string, $substring) {
+    // Using substr() to get the substring from the start of the string
+    // and comparing it with the given substring
+    return strpos($string, $substring) === 0;
+}

@@ -23,6 +23,7 @@ update_price("WING");
 update_price("FIRO");
 update_price("LTC");
 update_price("FLM");
+update_price("ARB");
 
 //tier e
 update_price("PEPE");
@@ -155,7 +156,7 @@ foreach($coins as $coin ) {
 	//
 	$usd_rug = $on_hand + $value;
 	$per_rug = $usd_rug / $health_cost * 100.0;
-	$delta_rug = ($usd_rug - $health_cost)  *  23500;
+	$delta_rug = ($usd_rug - $health_cost)  *  24950;
 	
 	$data = array();
 	$data["quantity"] = $quantity;
@@ -185,7 +186,6 @@ foreach($coins as $coin ) {
 
 page_top ();
 ?>
-
 
 <div style="float:right; ">
 	<form 
@@ -236,40 +236,6 @@ page_top ();
 	<input type="submit" value="Thêm mã coin"></input>
 </form>
 
-
-
-
-<table class="table table-striped">
-
-<!-- header -->
-<tr>
-	<th>Name</th>
-	<th>Coin</th>
-
-	
-	<th>$Rug</th>
-	<th>%Rug</th>
-	<th>ΔRug</th>
-	
-	<th>Quantity</th>
-	<th>MarketValue</th>
-	
-	<th>HealthCost</th>
-	<th>OnHand</th>
-	<th>%Recover</th>
-	
-	<th>ΣBuy</th>
-	<th>ΣSell</th>
-	<!-- <th>Damages</th> -->
-	
-
-	
-	<th>#</th>
-	<th>#</th>
-	<th>#</th>
-	<th>#</th>
-<tr>
-
 <style>
 .quantity { font-weight: bold; color: #fcba03 }
 .value { font-weight: bold; color: #fcba03 }
@@ -281,17 +247,53 @@ page_top ();
 
 </style>
 
+
+<table class="table table-striped" id="portz">
+	<thead>
+		<tr>
+			<th>Name</th>
+			<th>Coin</th>
+
+			
+			
+			
+			<th>%Rug</th>
+			<th>ΔRug</th>
+			<th>Quantity</th>
+			<th>$Rug</th>
+			
+			<th>MarketValue</th>
+			
+			<th>HealthCost</th>
+			<th>OnHand</th>
+			<th>%Recover</th>
+			
+			<th>ΣBuy</th>
+			<th>ΣSell</th>
+			<!-- <th>Damages</th> -->
+			
+
+			
+			<th>#</th>
+			<th>#</th>
+			<th>#</th>
+			<th>#</th>
+		</tr>
+	</thead>
+
+<tbody>
 <!-- body -->
 <?php foreach($coins as $coin) {?>
 <tr>
 	<td><?=escape($coin['name_'])?></td>
 	<td><?=escape($coin['coin_code'])?></td>
 	
-	<td><?=digit($coin_data[$coin["id_"]]["usd_rug"], 0)?></td>
+	
+	
 	<td><?=digit($coin_data[$coin["id_"]]["per_rug"], 0)?>%</td>
 	<td><?=money_color(digit($coin_data[$coin["id_"]]["delta_rug"], 0))?></td>
-	
 	<td class="quantity"><?=digit($coin_data[$coin["id_"]]["quantity"], 5)?></td>
+	<td><?=digit($coin_data[$coin["id_"]]["usd_rug"], 0)?></td>
 	<td class="value">$<?=digit($coin_data[$coin["id_"]]["value"], 0)?></td>
 	
 	
@@ -347,16 +349,16 @@ page_top ();
 	<td><?=ui_del($coin)?></td>
 	
 	<td id="act_<?=$coin["id_"]?>" style="display: none;">
-		<table>
-			<tr><td><?=ui_buy($coin)?></td></tr>
-			<tr><td><?=ui_sell($coin)?></td></tr>
-			<tr><td><?=ui_rename($coin)?></td></tr>
-		</table>
+		<div>
+			<div><div><?=ui_buy($coin)?></div></div>
+			<div><div><?=ui_sell($coin)?></div></div>
+			<div><div><?=ui_rename($coin)?></div></div>
+		</div>
 	</td>
 	<td><?=ui_toggle($coin)?></td>
 </tr>
 <?php }?>
-
+</tbody>
 </table>
 
 
@@ -415,6 +417,16 @@ page_top ();
 		}
 	</script>
 <?php } ?>
+
+
+
+<script>
+	$(document).ready(function() {
+		$('#portz').DataTable({
+			"pageLength": 50
+		});
+	});
+</script>
 
 
 <?php

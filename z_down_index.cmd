@@ -1,0 +1,1 @@
+scp heo:~/app/tik/index.php .
