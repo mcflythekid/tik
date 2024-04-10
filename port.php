@@ -266,34 +266,35 @@ page_top ();
 <hr/>
 
 <?php if (isset($param_fund_type)) { ?>
+<div style="margin-bottom: 20px;">
 	<form  method='post'>
 		<input type="hidden" name="action_create_coin" value="xxx"></input>
 		<input required="true" name="fund_type" placeholder="fund_type" value=<?=$param_fund_type?>></input>
 		<input required="true" name="coin_code" placeholder="Code" size="<?=INPUT_SIZE_COIN_CODE?>"></input>
-		<textarea required="true" rows="<?=INPUT_SIZE_H_NAME?>" cols="<?=INPUT_SIZE_W_NAME?>" name="name"  placeholder="<?=INPUT_HINT_NAME?>"></textarea>
+		<input required="true" size="<?=INPUT_SIZE_W_NAME?>" name="name"  placeholder="<?=INPUT_HINT_NAME?>"></input>
 		<input type="submit" value="Thêm mã coin"></input>
 	</form>
+</div>
 <?php } ?>
 
 <table class="table table-striped" id="portz">
 	<thead>
 		<tr>
-			<th>ID</th>
-
-			<?php if (!isset($param_fund_type)) { ?><th>Fund</th><?php } ?>
-
+			<th>#</th>
 			<th>Name</th>
 			<th>Coin</th>
 
-			<th>%Exit (T)</th>
-			<th>ΔExit (T)</th>
-			<th>$Exit (A)</th>
+			<th>%Exit T</th>
+			<th>ΔExit T</th>
+			<th>$Exit A</th>
+
+			<?php if (!isset($param_fund_type)) { ?><th>Fund</th><?php } ?>
 
 			<th>Quantity</th>
 			<th>Market</th>
 			<th>Health</th>
 	
-			<th>Cash (A)</th>
+			<th>Cash A</th>
 			<th>%Recover</th>
 			
 			<th>#</th>
@@ -310,13 +311,14 @@ foreach($coins as $coin) {
 ?>
 <tr>
 	<td><?=escape($coin['id_'])?></td>
-	<?php if (!isset($param_fund_type)) { ?><td><?=escape($coin['fund_type'])?></td><?php } ?>
 	<td><?=escape($coin['name_'])?></td>
-	<td><?=escape($coin['coin_code'])?></td>
+	<td><a href="/port_history.php?port_id=<?=$coin["id_"]?>"><?=escape($coin['coin_code'])?></a></td>
 
 	<td><?=digit($coin_data_tmp["rugpull_per_theorycal"], 0)?>%</td>
 	<td><?=money_color(digit($coin_data_tmp["rugpull_delta_theorycal_vnd"], 0))?></td>
 	<td class="value"><?=digit($coin_data_tmp["rugpull_value_avaiable"] * $rate, 0)?></td>
+
+	<?php if (!isset($param_fund_type)) { ?><td><?=escape($coin['fund_type'])?></td><?php } ?>
 
 	<td class="quantity">  <?=digit($coin_data_tmp["quantity"], 5)?>   </td>
 	<td class="market_value">$<?=digit($coin_data_tmp["market_value"], 0)?>   </td>
@@ -412,7 +414,7 @@ foreach($coins as $coin) {
 	$(document).ready(function() {
 		$('#portz').DataTable({
 			"pageLength": 50,
-			"order": [[4, 'desc']]
+			"order": [[3, 'desc']]
 		});
 	});
 </script>

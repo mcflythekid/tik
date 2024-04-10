@@ -162,6 +162,7 @@ page_top ();
 </div>
 
 <p>
+UUID: <?=$param_port_id?><br>
 Name: <?=$port_name?><br>
 COIN: <?=$port_coin_code?><br>
 Fund Type: <?=$port_fund_type?>
