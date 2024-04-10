@@ -194,9 +194,9 @@ foreach($coins as $coin ) {
 	$data["rugpull_per_avaiable"]  = $rugpull_per_avaiable;
 	$data["rugpull_per_theorycal"] = $rugpull_per_theorycal;
 	//
-	$data["rugpull_delta_avaiable"]      = $rugpull_delta_avaiable;
+	$data["rugpull_delta_avaiable"]      = $rugpull_delta_avaiable; // troll
 	$data["rugpull_delta_theorycal"]     = $rugpull_delta_theorycal;
-	$data["rugpull_delta_avaiable_vnd"]  = $rugpull_delta_avaiable_vnd;
+	$data["rugpull_delta_avaiable_vnd"]  = $rugpull_delta_avaiable_vnd; //troll
 	$data["rugpull_delta_theorycal_vnd"] = $rugpull_delta_theorycal_vnd;
 	
 	$coin_data[$port_id] = $data;
@@ -226,13 +226,13 @@ page_top ();
 		<a href="/port.php?fund_type=HELL">HELL</a>&nbsp;&nbsp;
 		<a href="/port.php?fund_type=closed">CLOSED</a>
 	</p>
-	<p>
+	<!-- <p>
 		<a href="/port0.php?fund_type=MEGA">MEGA</a>&nbsp;&nbsp;
 		<a href="/port0.php?fund_type=FG1">FG1</a>&nbsp;&nbsp;
 		<a href="/port0.php?fund_type=FG2">FG2</a>&nbsp;&nbsp;
 		<a href="/port0.php?fund_type=HELL">HELL</a>&nbsp;&nbsp;
 		<a href="/port0.php?fund_type=closed">CLOSED</a>
-	</p>
+	</p> -->
 </div>
 
 <?php
@@ -240,13 +240,10 @@ page_top ();
 	$ts_erc = file_get_contents("/home/mc/app/matrix/price-ts-erc");
 ?>
 <p>
-	<strong>Binance: <?=$ts_cz?></strong>&nbsp;&nbsp;
-	<!-- <strong>ERC20: <?=$ts_erc?></strong> -->
+	<strong>Binance: <?=$ts_cz?></strong>&nbsp;&nbsp;&nbsp;&nbsp;
+	<strong><?= "type=$param_fund_type" ?></strong>&nbsp;&nbsp;&nbsp;&nbsp;
+	<strong><?= "1 USDT=$rate VND" ?></strong>
 </p>
-<hr/>
-
-<p><strong><?= "param_fund_type=$param_fund_type" ?></strong></p>
-<hr/>
 
 <p>
 <?php foreach($prices as $price ) {?>
@@ -271,8 +268,9 @@ page_top ();
 			<th>Name</th>
 			<th>Coin</th>
 
-			<th>%Exit</th>
-			<th>ΔExit</th>
+			<th>%Exit (T)</th>
+			<th>ΔExit (T)</th>
+			<th>$Exit (A)</th>
 
 			<th>Quantity</th>
 			<th>Market</th>
@@ -300,6 +298,7 @@ foreach($coins as $coin) {
 
 	<td><?=digit($coin_data_tmp["rugpull_per_theorycal"], 0)?>%</td>
 	<td><?=money_color(digit($coin_data_tmp["rugpull_delta_theorycal_vnd"], 0))?></td>
+	<td class="value"><?=digit($coin_data_tmp["rugpull_value_avaiable"] * $rate, 0)?></td>
 
 	<td class="quantity">  <?=digit($coin_data_tmp["quantity"], 5)?>   </td>
 	<td class="market_value">$<?=digit($coin_data_tmp["market_value"], 0)?>   </td>
@@ -309,7 +308,7 @@ foreach($coins as $coin) {
 	<td class="normal_green"><?=$coin_data_tmp["recover_per_theorycal"] > 1 ? digit($coin_data_tmp["recover_per_theorycal"], 0) . "%": ""?></td>
 
 	
-	<td><a target="_blank" href="/port_history.php?port_id=<?=$coin["id_"]?>">History</a></td>
+	<td><a href="/port_history.php?port_id=<?=$coin["id_"]?>">History</a></td>
 	<td><?=ui_del($coin)?></td>
 	
 	<td id="act_<?=$coin["id_"]?>" style="display: none;">
@@ -328,7 +327,7 @@ foreach($coins as $coin) {
 <style>
 	.quantity { font-weight: bold; color: #fcba03 }
 	.market_value { font-weight: bold; color: #fcba03 }
-	.sum { font-weight: bold; color: grey }
+	.value { font-style: normal; color: green }
 	.normal_green { font-weight: normal; color: green }
 	.health_cost { font-weight: bold; color: red }
 </style>
