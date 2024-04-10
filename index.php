@@ -276,7 +276,7 @@ span.line-head-skipable {
 	<p>
 		<span class="line-head"></span>
 		<?=menu("info", $weather["temp"] . "℃", "#")?>
-		<?=menu("info",  ($weather["hum"] - 9.2) . "%", "#")?>
+		<?=menu("info",  ($weather["hum"] - 0) . "%", "#")?>
 		<?=menu("info",  date("H:i:s", strtotime($weather["ts"])), "#")?>
 	</p>
 	<p>
