@@ -435,7 +435,8 @@ page_top ();
 <script>
 	$(document).ready(function() {
 		$('#portz').DataTable({
-			"pageLength": 50
+			"pageLength": 50,
+            "order": [[4, 'desc']]
 		});
 	});
 </script>

@@ -270,15 +270,16 @@ page_top ();
 			<th>ID</th>
 			<th>Name</th>
 			<th>Coin</th>
-			<th>Quan</th>
+
+			<th>%Exit</th>
+			<th>ΔExit</th>
+
+			<th>Quantity</th>
 			<th>Market</th>
 			<th>Health</th>
 	
 			<th>Cash (A)</th>
-			<th>%Rugpull (T)</th>
-			<th>ΔRugpull (T)</th>
-			<th>ΔRugpullVND (T)</th>
-			<th>%Recover (T)</th>
+			<th>%Recover</th>
 			
 			<th>#</th>
 			<th>#</th>
@@ -296,15 +297,16 @@ foreach($coins as $coin) {
 	<td><?=escape($coin['id_'])?></td>
 	<td><?=escape($coin['name_'])?></td>
 	<td><?=escape($coin['coin_code'])?></td>
+
+	<td><?=digit($coin_data_tmp["rugpull_per_theorycal"], 0)?>%</td>
+	<td><?=money_color(digit($coin_data_tmp["rugpull_delta_theorycal_vnd"], 0))?></td>
+
 	<td class="quantity">  <?=digit($coin_data_tmp["quantity"], 5)?>   </td>
 	<td class="market_value">$<?=digit($coin_data_tmp["market_value"], 0)?>   </td>
 	<td class="health_cost">$<?=digit($coin_data_tmp["health_cost"], 0)?>    </td>
 	
-	<td class="normal_green">$<?=digit($coin_data_tmp["sum_cash_avaiable"], 0)?>    </td>
-	<td class="ss"><?=digit($coin_data_tmp["rugpull_per_theorycal"], 0)?> %   </td> 
-	<td class="ss">$<?=digit($coin_data_tmp["rugpull_delta_theorycal"], 0)?>    </td>
-	<td class="ss"><?=digit($coin_data_tmp["rugpull_delta_theorycal_vnd"], 0)?> VND   </td>
-	<td class="ss"><?=digit($coin_data_tmp["recover_per_theorycal"], 0)?> %   </td>
+	<td class="normal_green"><?=$coin_data_tmp["sum_cash_avaiable"] > 0 ? "$" . digit($coin_data_tmp["sum_cash_avaiable"], 0) : ""?></td>
+	<td class="normal_green"><?=$coin_data_tmp["recover_per_theorycal"] > 1 ? digit($coin_data_tmp["recover_per_theorycal"], 0) . "%": ""?></td>
 
 	
 	<td><a target="_blank" href="/port_history.php?port_id=<?=$coin["id_"]?>">History</a></td>
@@ -329,7 +331,6 @@ foreach($coins as $coin) {
 	.sum { font-weight: bold; color: grey }
 	.normal_green { font-weight: normal; color: green }
 	.health_cost { font-weight: bold; color: red }
-	.per_recovered { font-weight: normal; color: green }
 </style>
 
 <?php function ui_buy($coin) { ?>
@@ -394,7 +395,7 @@ foreach($coins as $coin) {
 	$(document).ready(function() {
 		$('#portz').DataTable({
 			"pageLength": 50,
-			// "order": [[4, 'desc']]
+			"order": [[4, 'desc']]
 		});
 	});
 </script>
