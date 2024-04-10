@@ -355,8 +355,8 @@ span.line-head-skipable {
 	<p>
 		<?=menu("danger", "ASAP", "?cat=TODO&days=1")?>
 		<?=menu("success", "POOL", "?cat=POOL&days=1")?>
+		<?=menu("secondary", "> ₿^ALL", "/port.php")?>
 		<?=menu("secondary", "> ₿^1", "/port.php?fund_type=FG1")?>
-		<?=menu("secondary", "> ₿^2", "/port.php?fund_type=FG2")?>
 	</p>
 	
 	

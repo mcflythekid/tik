@@ -5,7 +5,9 @@ global $rate;
 page_auth ();
 db_open ();
 $username = $_SESSION['username'];
-$param_fund_type = get_httpget("fund_type", "FFA");
+
+$param_fund_type = $_GET["fund_type"];
+
 page_title("Portfolio");
 function update_price($code) {
 	$price_txt = file_get_contents("/home/mc/app/matrix/price-$code");
@@ -84,7 +86,12 @@ if (has_httppost("action_rename") == true) {
 	exit;
 }
 
-$coins = db_list("select id_, name_, coin_code from portfolio where username = '$username' and fund_type = '$param_fund_type' order by name_");
+if (isset($param_fund_type)) {
+	$coins = db_list("select id_, name_, coin_code, fund_type from portfolio where username = '$username' and fund_type = '$param_fund_type' order by name_");
+} else {
+	$coins = db_list("select id_, name_, coin_code, fund_type from portfolio where username = '$username' and fund_type <> 'closed' order by name_");
+}
+
 
 
 
@@ -220,6 +227,7 @@ page_top ();
 		<a href="/index.php?cat=TODO&days=1">Dashboard</a>&nbsp;&nbsp;
 	</p>
 	<p>
+		<a href="/port.php">ALL</a>&nbsp;&nbsp;
 		<a href="/port.php?fund_type=MEGA">MEGA</a>&nbsp;&nbsp;
 		<a href="/port.php?fund_type=FG1">FG1</a>&nbsp;&nbsp;
 		<a href="/port.php?fund_type=FG2">FG2</a>&nbsp;&nbsp;
@@ -241,7 +249,12 @@ page_top ();
 ?>
 <p>
 	<strong>Binance: <?=$ts_cz?></strong>&nbsp;&nbsp;&nbsp;&nbsp;
-	<strong><?= "type=$param_fund_type" ?></strong>&nbsp;&nbsp;&nbsp;&nbsp;
+
+	<?php if (isset($param_fund_type)) { ?>
+		<strong><?= "type=$param_fund_type" ?></strong>&nbsp;&nbsp;&nbsp;&nbsp;
+	<?php } ?>
+
+
 	<strong><?= "1 USDT=$rate VND" ?></strong>
 </p>
 
@@ -252,19 +265,23 @@ page_top ();
 </p>
 <hr/>
 
-
-<form  method='post'>
-	<input type="hidden" name="action_create_coin" value="xxx"></input>
-	<input required="true" name="fund_type" placeholder="fund_type" value=<?=$param_fund_type?>></input>
-	<input required="true" name="coin_code" placeholder="Code" size="<?=INPUT_SIZE_COIN_CODE?>"></input>
-	<textarea required="true" rows="<?=INPUT_SIZE_H_NAME?>" cols="<?=INPUT_SIZE_W_NAME?>" name="name"  placeholder="<?=INPUT_HINT_NAME?>"></textarea>
-	<input type="submit" value="Thêm mã coin"></input>
-</form>
+<?php if (isset($param_fund_type)) { ?>
+	<form  method='post'>
+		<input type="hidden" name="action_create_coin" value="xxx"></input>
+		<input required="true" name="fund_type" placeholder="fund_type" value=<?=$param_fund_type?>></input>
+		<input required="true" name="coin_code" placeholder="Code" size="<?=INPUT_SIZE_COIN_CODE?>"></input>
+		<textarea required="true" rows="<?=INPUT_SIZE_H_NAME?>" cols="<?=INPUT_SIZE_W_NAME?>" name="name"  placeholder="<?=INPUT_HINT_NAME?>"></textarea>
+		<input type="submit" value="Thêm mã coin"></input>
+	</form>
+<?php } ?>
 
 <table class="table table-striped" id="portz">
 	<thead>
 		<tr>
 			<th>ID</th>
+
+			<?php if (!isset($param_fund_type)) { ?><th>Fund</th><?php } ?>
+
 			<th>Name</th>
 			<th>Coin</th>
 
@@ -293,6 +310,7 @@ foreach($coins as $coin) {
 ?>
 <tr>
 	<td><?=escape($coin['id_'])?></td>
+	<?php if (!isset($param_fund_type)) { ?><td><?=escape($coin['fund_type'])?></td><?php } ?>
 	<td><?=escape($coin['name_'])?></td>
 	<td><?=escape($coin['coin_code'])?></td>
 
