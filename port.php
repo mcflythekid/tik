@@ -1,7 +1,7 @@
 <?php
 session_start ();
-$rate = 25600;
 require_once ("_core.php");
+global $rate;
 page_auth ();
 db_open ();
 $username = $_SESSION['username'];
@@ -226,6 +226,13 @@ page_top ();
 		<a href="/port.php?fund_type=HELL">HELL</a>&nbsp;&nbsp;
 		<a href="/port.php?fund_type=closed">CLOSED</a>
 	</p>
+	<p>
+		<a href="/port0.php?fund_type=MEGA">MEGA</a>&nbsp;&nbsp;
+		<a href="/port0.php?fund_type=FG1">FG1</a>&nbsp;&nbsp;
+		<a href="/port0.php?fund_type=FG2">FG2</a>&nbsp;&nbsp;
+		<a href="/port0.php?fund_type=HELL">HELL</a>&nbsp;&nbsp;
+		<a href="/port0.php?fund_type=closed">CLOSED</a>
+	</p>
 </div>
 
 <?php
@@ -387,7 +394,7 @@ foreach($coins as $coin) {
 	$(document).ready(function() {
 		$('#portz').DataTable({
 			"pageLength": 50,
-			"order": [[4, 'desc']]
+			// "order": [[4, 'desc']]
 		});
 	});
 </script>

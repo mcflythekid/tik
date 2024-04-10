@@ -3,6 +3,8 @@
 //ini_set('display_startup_errors', 1);
 //error_reporting(E_ALL);
 
+$rate = 25600;
+
 define("INPUT_SIZE_COUNTING", 10);
 define("INPUT_SIZE_COIN_CODE", 4);
 define("INPUT_SIZE_DATETIME", 18);
