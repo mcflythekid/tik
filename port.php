@@ -1,12 +1,12 @@
 <?php
 session_start ();
+$rate = 25600;
 require_once ("_core.php");
 page_auth ();
 db_open ();
 $username = $_SESSION['username'];
 $param_fund_type = get_httpget("fund_type", "FFA");
 page_title("Portfolio");
-
 function update_price($code) {
 	$price_txt = file_get_contents("/home/mc/app/matrix/price-$code");
 	db_query("update portfolio_price set price = $price_txt where code = '$code'");
@@ -61,7 +61,7 @@ if (has_httppost("action_buy") == true) {
 }
 
 if (has_httppost("action_sell") == true) {
-	$cal_type = get_httppost("coin") == "withdraw" ? "withdraw" : "sell";
+	$cal_type = get_httppost("coin") == "spent" ? "spent" : "sell";
 	
 	$req_port_id = get_httppost("port_id");
 	$req_coin = abs(get_httppost("coin"));
@@ -108,80 +108,99 @@ foreach($coins as $coin ) {
 	$sum_sell = 0;
 	$trans = db_list("select amount_coin, amount_usd, type from portfolio_trans where port_id = $port_id");
 	
-	$on_hand = 0;
 	$health_cost = 0;
+
+	$sum_cash_theorycal = 0;
+	$sum_cash_avaiable = 0;
 	
 	foreach($trans as $tran) {
+		$tran_amount = $tran["amount_usd"];
+		$tran_quantity = $tran["amount_coin"];
 		
 		// For quantity, sum buy/sell
-		if ($tran["type"] == "withdraw") {
-			
-		} else if ($tran["type"] == "sell") {
-			$quantity -= $tran["amount_coin"];
-			$sum_sell += $tran["amount_usd"];
-		} else { // buy
-			$quantity += $tran["amount_coin"];
-			$sum_buy += $tran["amount_usd"];
+		if ($tran["type"] == "sell") {
+			$quantity -= $tran_quantity;
+			$sum_sell += $tran_amount;
+		} else if ($tran["type"] == "buy") { // buy
+			$quantity += $tran_quantity;
+			$sum_buy += $tran_amount;
 		}
 		
 		// For on hand, health cost
 		if ($tran_index++ > 0) {
-			if ($tran["type"] == "withdraw") { // With draw
-				$on_hand -= $tran["amount_usd"];
-				$on_hand = $on_hand < 0 ? 0 : $on_hand;
+			if ($tran["type"] == "spent") { // External
+				reduceToZero($sum_cash_theorycal, $tran_amount);
+				reduceToZero($sum_cash_avaiable, $tran_amount);
+
+			} else if ($tran["type"] == "move") { // Internal
+				reduceToZero($sum_cash_avaiable, $tran_amount);
 				
 			} else if ($tran["type"] == "sell") { // sell
-				$on_hand += $tran["amount_usd"];
+				$sum_cash_theorycal += $tran_amount;
+				$sum_cash_avaiable += $tran_amount;
 				
 				
 			} else { // buy
-				$prev_on_hand = $on_hand;
-				$on_hand -= $tran["amount_usd"];
-				$on_hand = $on_hand < 0 ? 0 : $on_hand;
-				
-				if ($tran["amount_usd"] > $prev_on_hand) {
-					$health_cost += $tran["amount_usd"] - $prev_on_hand;
+				if ($tran_amount > $sum_cash_avaiable) {
+					$health_cost += $tran_amount - $sum_cash_avaiable;
 				}
-				
+	
+				reduceToZero($sum_cash_theorycal, $tran_amount);
+				reduceToZero($sum_cash_avaiable, $tran_amount);
 			}
 			
 			
 		} else { // First BUY transaction
-			$health_cost += $tran["amount_usd"];
+			$health_cost += $tran_amount;
 		}
 	}
 	
-	
-	$value = $quantity * $price;
-	//
-	$usd_rug = $on_hand + $value;
-	$per_rug = $usd_rug / $health_cost * 100.0;
-	$delta_rug = ($usd_rug - $health_cost)  *  24950;
-	
-	$data = array();
-	$data["quantity"] = $quantity;
-	$data["value"] = $value;
-	//
-	$data["sum_buy"] = $sum_buy;
-	$data["sum_sell"] = $sum_sell;
-	$data["damages"] = $sum_buy - $sum_sell;
-	//
-	$data["on_hand"] = $on_hand;
-	$data["health_cost"] = $health_cost;
-	$data["per_recovered"] = $on_hand / $health_cost * 100.0;
-	//
-	$data["usd_rug"] = $usd_rug;
-	$data["per_rug"] = $per_rug;
 
-	$data["delta_rug"] = $delta_rug;
-	
-	
+
+	// $data["per_recovered"] = 1 / $health_cost * 100.0;
+	// Calculations
+	$market_value = $quantity * $price; // Market value of remaining coins
+	// Amount if rugpull
+	$rugpull_value_avaiable  = $sum_cash_avaiable  + $market_value; // Real
+	$rugpull_value_theorycal = $sum_cash_theorycal + $market_value; // Virtual
+	//
+	$recover_per_avaiable  = $sum_cash_avaiable  / $health_cost * 100.0;
+	$recover_per_theorycal = $sum_cash_theorycal / $health_cost * 100.0;
+	// % Profit if rugpull
+	$rugpull_per_avaiable  = $rugpull_value_avaiable  / $health_cost * 100.0;
+	$rugpull_per_theorycal = $rugpull_value_theorycal / $health_cost * 100.0;
+	// Δ Profit if rugpull
+	$rugpull_delta_avaiable      = $rugpull_value_avaiable  - $health_cost;
+	$rugpull_delta_theorycal     = $rugpull_value_theorycal - $health_cost;
+	$rugpull_delta_avaiable_vnd  = $rugpull_delta_avaiable * $rate;
+	$rugpull_delta_theorycal_vnd = $rugpull_delta_theorycal * $rate;
+
+	// Assign data
+	$data = array();
+	//
+	$data["quantity"]     = $quantity;
+	$data["market_value"] = $market_value;
+	$data["health_cost"]  = $health_cost;
+	//
+	$data["sum_cash_avaiable"]  = $sum_cash_avaiable;
+	$data["sum_cash_theorycal"] = $sum_cash_theorycal;
+	//
+	$data["rugpull_value_avaiable"]  = $rugpull_value_avaiable;
+	$data["rugpull_value_theorycal"] = $rugpull_value_theorycal;
+	//
+	$data["recover_per_avaiable"] = $recover_per_avaiable;
+	$data["recover_per_theorycal"] = $recover_per_theorycal;
+	//
+	$data["rugpull_per_avaiable"]  = $rugpull_per_avaiable;
+	$data["rugpull_per_theorycal"] = $rugpull_per_theorycal;
+	//
+	$data["rugpull_delta_avaiable"]      = $rugpull_delta_avaiable;
+	$data["rugpull_delta_theorycal"]     = $rugpull_delta_theorycal;
+	$data["rugpull_delta_avaiable_vnd"]  = $rugpull_delta_avaiable_vnd;
+	$data["rugpull_delta_theorycal_vnd"] = $rugpull_delta_theorycal_vnd;
 	
 	$coin_data[$port_id] = $data;
 }
-
-
-
 
 
 page_top ();
@@ -201,8 +220,10 @@ page_top ();
 		<a href="/index.php?cat=TODO&days=1">Dashboard</a>&nbsp;&nbsp;
 	</p>
 	<p>
+		<a href="/port.php?fund_type=MEGA">MEGA</a>&nbsp;&nbsp;
 		<a href="/port.php?fund_type=FG1">FG1</a>&nbsp;&nbsp;
 		<a href="/port.php?fund_type=FG2">FG2</a>&nbsp;&nbsp;
+		<a href="/port.php?fund_type=HELL">HELL</a>&nbsp;&nbsp;
 		<a href="/port.php?fund_type=closed">CLOSED</a>
 	</p>
 </div>
@@ -223,7 +244,7 @@ page_top ();
 <p>
 <?php foreach($prices as $price ) {?>
 	<span><?=$price["code"]?>=<?=digit($price["price"], 10)?></span>&nbsp;&nbsp;
-<?php }?>
+<?php } ?>
 </p>
 <hr/>
 
@@ -236,43 +257,21 @@ page_top ();
 	<input type="submit" value="Thêm mã coin"></input>
 </form>
 
-<style>
-.quantity { font-weight: bold; color: #fcba03 }
-.value { font-weight: bold; color: #fcba03 }
-.sum { font-weight: bold; color: grey }
-.damages { font-weight: normal; color: red }
-.on_hand { font-weight: normal; color: green }
-.health_cost { font-weight: bold; color: red }
-.per_recovered { font-weight: normal; color: green }
-
-</style>
-
-
 <table class="table table-striped" id="portz">
 	<thead>
 		<tr>
+			<th>ID</th>
 			<th>Name</th>
 			<th>Coin</th>
-
-			
-			
-			
-			<th>%Rug</th>
-			<th>ΔRug</th>
-			<th>Quantity</th>
-			<th>$Rug</th>
-			
-			<th>MarketValue</th>
-			
-			<th>HealthCost</th>
-			<th>OnHand</th>
-			<th>%Recover</th>
-			
-			<th>ΣBuy</th>
-			<th>ΣSell</th>
-			<!-- <th>Damages</th> -->
-			
-
+			<th>Quan</th>
+			<th>Market</th>
+			<th>Health</th>
+	
+			<th>Cash (A)</th>
+			<th>%Rugpull (T)</th>
+			<th>ΔRugpull (T)</th>
+			<th>ΔRugpullVND (T)</th>
+			<th>%Recover (T)</th>
 			
 			<th>#</th>
 			<th>#</th>
@@ -280,71 +279,27 @@ page_top ();
 			<th>#</th>
 		</tr>
 	</thead>
-
 <tbody>
 <!-- body -->
-<?php foreach($coins as $coin) {?>
+<?php 
+foreach($coins as $coin) {
+	$coin_data_tmp = $coin_data[$coin["id_"]];
+?>
 <tr>
+	<td><?=escape($coin['id_'])?></td>
 	<td><?=escape($coin['name_'])?></td>
 	<td><?=escape($coin['coin_code'])?></td>
+	<td class="quantity">  <?=digit($coin_data_tmp["quantity"], 5)?>   </td>
+	<td class="market_value">$<?=digit($coin_data_tmp["market_value"], 0)?>   </td>
+	<td class="health_cost">$<?=digit($coin_data_tmp["health_cost"], 0)?>    </td>
 	
-	
-	
-	<td><?=digit($coin_data[$coin["id_"]]["per_rug"], 0)?>%</td>
-	<td><?=money_color(digit($coin_data[$coin["id_"]]["delta_rug"], 0))?></td>
-	<td class="quantity"><?=digit($coin_data[$coin["id_"]]["quantity"], 5)?></td>
-	<td><?=digit($coin_data[$coin["id_"]]["usd_rug"], 0)?></td>
-	<td class="value">$<?=digit($coin_data[$coin["id_"]]["value"], 0)?></td>
-	
-	
-	<?php
-		$health_cost = $coin_data[$coin["id_"]]["health_cost"];
-		$health_cost = "$" . digit($health_cost, 0);
-	?>
-	<td class="health_cost"><?=$health_cost?></td>
-	<?php
-		$on_hand = $coin_data[$coin["id_"]]["on_hand"];
-		if ($on_hand > 0) {
-			$on_hand = "$" . digit($on_hand, 1);
-		} else {
-			$on_hand = "";
-		}
-	?>
-	<td class="on_hand"><?=$on_hand?></td>
-	<?php
-		$per_recovered = $coin_data[$coin["id_"]]["per_recovered"];
-		if ($per_recovered > 1) {
-			$per_recovered = digit($per_recovered, 0) . "%";
-		} else {
-			$per_recovered = "";
-		}
-	?>
-	<td class="per_recovered"><?=$per_recovered?></td>
-	
-	
-	
-	<td class="sum">$<?=digit($coin_data[$coin["id_"]]["sum_buy"], 0)?></td>
-	<?php
-		$sum_sell = $coin_data[$coin["id_"]]["sum_sell"];
-		if ($sum_sell > 0) {
-			$sum_sell = "$" . digit($sum_sell, 0);
-		} else {
-			$sum_sell = "";
-		}
-	?>
-	<td class="sum"><?=$sum_sell?></td>
-	
+	<td class="normal_green">$<?=digit($coin_data_tmp["sum_cash_avaiable"], 0)?>    </td>
+	<td class="ss"><?=digit($coin_data_tmp["rugpull_per_theorycal"], 0)?> %   </td> 
+	<td class="ss">$<?=digit($coin_data_tmp["rugpull_delta_theorycal"], 0)?>    </td>
+	<td class="ss"><?=digit($coin_data_tmp["rugpull_delta_theorycal_vnd"], 0)?> VND   </td>
+	<td class="ss"><?=digit($coin_data_tmp["recover_per_theorycal"], 0)?> %   </td>
 
 	
-
-	
-
-	
-
-	
-	
-	
-
 	<td><a target="_blank" href="/port_history.php?port_id=<?=$coin["id_"]?>">History</a></td>
 	<td><?=ui_del($coin)?></td>
 	
@@ -357,10 +312,18 @@ page_top ();
 	</td>
 	<td><?=ui_toggle($coin)?></td>
 </tr>
-<?php }?>
+<?php } ?>
 </tbody>
 </table>
 
+<style>
+	.quantity { font-weight: bold; color: #fcba03 }
+	.market_value { font-weight: bold; color: #fcba03 }
+	.sum { font-weight: bold; color: grey }
+	.normal_green { font-weight: normal; color: green }
+	.health_cost { font-weight: bold; color: red }
+	.per_recovered { font-weight: normal; color: green }
+</style>
 
 <?php function ui_buy($coin) { ?>
 	<form method='post' onSubmit="return confirm('Ghi nhận MUA [<?=$coin['coin_code']?>] ?');">
@@ -423,7 +386,8 @@ page_top ();
 <script>
 	$(document).ready(function() {
 		$('#portz').DataTable({
-			"pageLength": 50
+			"pageLength": 50,
+			"order": [[4, 'desc']]
 		});
 	});
 </script>
@@ -432,3 +396,5 @@ page_top ();
 <?php
 page_bot ();
 db_close ();
+
+?>

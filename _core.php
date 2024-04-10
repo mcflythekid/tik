@@ -16,7 +16,7 @@ define("INPUT_SIZE_H_NAME", 2);
 define("INPUT_SIZE_W_NOTE", 30);
 define("INPUT_SIZE_W_NAME", 30);
 //
-define("INPUT_HINT_QUANTITY_WITHDRAW", "quant/'withdraw'");
+define("INPUT_HINT_QUANTITY_WITHDRAW", "N|spent|move");
 
 include_once("_conf.php");
 date_default_timezone_set($param_timezone);
@@ -358,4 +358,11 @@ function startsWith($string, $substring) {
     // Using substr() to get the substring from the start of the string
     // and comparing it with the given substring
     return strpos($string, $substring) === 0;
+}
+
+function reduceToZero(&$target, $deduction) {
+	$target -= $deduction;
+	if ($target < 0) {
+		$target = 0;
+	}
 }

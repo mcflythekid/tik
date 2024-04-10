@@ -13,6 +13,14 @@ $session_username = $_SESSION['username'];
 $param_port_id = get_httpget("port_id", "FFA");
 
 
+$fund_types = db_list("select distinct(fund_type) from portfolio");
+if (isset($_POST["fund_type"])) {
+	$fund_type_param = $_POST["fund_type"];
+	db_query("update portfolio set fund_type = '$fund_type_param' where id_ = '$param_port_id'");
+	header("refresh: 0");
+	exit;
+}
+
 // ##
 $port = db_object("select name_, coin_code, fund_type from portfolio where id_ = '$param_port_id'");
 $port_name = $port["name_"];
@@ -42,7 +50,12 @@ if (has_httppost("action_buy") == true) {
 }
 
 if (has_httppost("action_sell") == true) {
-	$cal_type = get_httppost("coin") == "withdraw" ? "withdraw" : "sell";
+	$cal_type = "sell";
+	if (get_httppost("coin") == "spent") {
+		$cal_type = "spent";
+	} else if (get_httppost("coin") == "move") {
+		$cal_type = "move";
+	}
 	
 	$req_coin = abs(get_httppost("coin"));
 	$req_usd = abs(get_httppost("usd"));
@@ -71,52 +84,62 @@ if (has_httppost("action_edit") == true) {
 $trans = db_list("select id_, type, amount_coin, amount_usd, note, ts, (amount_usd / amount_coin) as price from portfolio_trans where username = '$session_username' and port_id = '$param_port_id' order by ts asc");
 
 
+
+
 $quantity = 0;
+//
 $sum_sell = 0;
 $sum_buy = 0;
-$on_hand = 0;
+//
+$sum_cash_theorycal = 0;
+$sum_cash_avaiable = 0;
+//
 $health_cost = 0;
 $tran_index = 0;
+//
 foreach($trans as $key => &$tran) {
-	
+	$tran_amount = $tran["amount_usd"];
+	$tran_quantity = $tran["amount_coin"];
+
 	// For quantity, sum buy/sell
-	if ($tran["type"] == "withdraw") {
-		
-	} else if ($tran["type"] == "sell") {
-		$quantity -= $tran["amount_coin"];
-		$sum_sell += $tran["amount_usd"];
-	} else { // buy
-		$quantity += $tran["amount_coin"];
-		$sum_buy += $tran["amount_usd"];
+	if ($tran["type"] == "sell") {
+		$quantity -= $tran_quantity;
+		$sum_sell += $tran_amount;
+	} else if ($tran["type"] == "buy") {
+		$quantity += $tran_quantity;
+		$sum_buy += $tran_amount;
 	}
 	
 	// For on hand, health cost
 	if ($tran_index++ > 0) {
-		if ($tran["type"] == "withdraw") { // With draw
-			$on_hand -= $tran["amount_usd"];
-			$on_hand = $on_hand < 0 ? 0 : $on_hand;
+		if ($tran["type"] == "spent") { // Spending (move external. e.g. buying a car)
+			reduceToZero($sum_cash_theorycal, $tran_amount);
+			reduceToZero($sum_cash_avaiable, $tran_amount);
 			
-		} else if ($tran["type"] == "sell") { // sell
-			$on_hand += $tran["amount_usd"];
+		} else if ($tran["type"] == "move") { // Moving funds internal
+			reduceToZero($sum_cash_avaiable, $tran_amount);
+
+		} else if ($tran["type"] == "sell") { // Sell
+			$sum_cash_theorycal += $tran_amount;
+			$sum_cash_avaiable += $tran_amount;
 			
 			
-		} else { // buy
-			$prev_on_hand = $on_hand;
-			$on_hand -= $tran["amount_usd"];
-			$on_hand = $on_hand < 0 ? 0 : $on_hand;
-			
-			if ($tran["amount_usd"] > $prev_on_hand) {
-				$health_cost += $tran["amount_usd"] - $prev_on_hand;
+		} else { // Buy
+			if ($tran_amount > $sum_cash_avaiable) {
+				$health_cost += $tran_amount - $sum_cash_avaiable;
 			}
-			
+
+			reduceToZero($sum_cash_theorycal, $tran_amount);
+			reduceToZero($sum_cash_avaiable, $tran_amount);
 		}
 		
 		
 	} else { // First BUY transaction
-		$health_cost += $tran["amount_usd"];
+		$health_cost += $tran_amount;
 	}
 	
-	$tran["on_hand"] = $on_hand + 0;
+	$tran["sum_cash_theorycal"] = $sum_cash_theorycal + 0;
+	$tran["sum_cash_avaiable"] = $sum_cash_avaiable + 0;
 }
 unset($tran);
 
@@ -145,13 +168,29 @@ Fund Type: <?=$port_fund_type?>
 </p>
 
 <p>
-quantity: <?=$quantity?>&nbsp;&nbsp;
-on_hand: <?=$on_hand?>&nbsp;&nbsp;
-health_cost: <?=$health_cost?>&nbsp;&nbsp;
+<strong>Quantity:</strong> <?=$quantity?>&nbsp;&nbsp;
+<!-- on_hand: <?=$sum_cash_theorycal?>&nbsp;&nbsp; -->
+<strong>HealthCost:</strong> <?=$health_cost?>&nbsp;&nbsp;
 
-sum_sell: <?=$sum_sell?>&nbsp;&nbsp;
-sum_buy: <?=$sum_buy?>&nbsp;&nbsp;
+<!-- sum_sell: <?=$sum_sell?>&nbsp;&nbsp; -->
+<!-- sum_buy: <?=$sum_buy?>&nbsp;&nbsp; -->
 </p>
+
+<div>
+	<form method="post">
+		<select name="fund_type">
+			<?php
+			var_dump($fund_types);
+			foreach ($fund_types as $fund_type) {
+				$item = $fund_type["fund_type"];
+				echo "<option value=\"$item\">$item</option>";
+			}
+			?>
+		</select>
+		<button type="submit">CHange category</button>
+	</form>
+</div>
+
 
 <table>
 <tr>
@@ -194,7 +233,8 @@ sum_buy: <?=$sum_buy?>&nbsp;&nbsp;
 	<th>Quantity</th>
 	<th>USD</th>
 	<th>~Price</th>
-	<th>PoztBalance</th>
+	<th>Σ $Theorycal</th>
+	<th>Σ $Avaiable</th>
 	<th>Note</th>
 	<th>Time</th>
 	<th>#</th>
@@ -205,11 +245,25 @@ sum_buy: <?=$sum_buy?>&nbsp;&nbsp;
 <!-- body -->
 <?php foreach($trans as $tran ) {?>
 <tr>
-	<td><?=escape($tran['type'])?></td>
+	<td>
+		<?php 
+			$type = $tran['type'];
+
+			if ($type == "buy") {
+				echo '<strong style="color: red;">Buy</strong>';
+			} else if ($type == "sell") {
+				echo '<strong style="color: Green;">Sell</strong>';
+			} else {
+				echo $type;
+			}
+		?>
+	</td>
+
 	<td><?=digit($tran['amount_coin'], 9)?></td>
 	<td><?=digit($tran['amount_usd'])?></td>
 	<td><?=digit($tran['price'], 9)?></td>
-	<td><?=digit($tran['on_hand'], 9)?></td>
+	<td><?=digit($tran['sum_cash_theorycal'], 9)?></td>
+	<td><?=digit($tran['sum_cash_avaiable'], 9)?></td>
 	<td><?=escape($tran['note'])?></td>
 	<td><?=escape($tran['ts'])?></td>
 	<td><?=ui_del($tran)?></td>
