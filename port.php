@@ -308,6 +308,7 @@ page_top ();
 <?php 
 foreach($coins as $coin) {
 	$coin_data_tmp = $coin_data[$coin["id_"]];
+	$vnd_round = -4;
 ?>
 <tr>
 	<!-- <td><?=escape($coin['id_'])?></td> -->
@@ -315,8 +316,8 @@ foreach($coins as $coin) {
 	<td><a href="/port_history.php?port_id=<?=$coin["id_"]?>"><?=escape($coin['coin_code'])?></a></td>
 
 	<td><?=digit($coin_data_tmp["rugpull_per_theorycal"], 0)?>%</td>
-	<td><?=money_color(digit($coin_data_tmp["rugpull_delta_theorycal_vnd"], 0))?></td>
-	<td class="value"><?=digit($coin_data_tmp["rugpull_value_avaiable"] * $rate, 0)?></td>
+	<td><?=money_color(digit(round($coin_data_tmp["rugpull_delta_theorycal_vnd"], $vnd_round), 0))?></td>
+	<td class="value"><?=digit(round($coin_data_tmp["rugpull_value_avaiable"] * $rate, $vnd_round), 0)?></td>
 
 	<?php if (!isset($param_fund_type)) { ?><td><?=escape($coin['fund_type'])?></td><?php } ?>
 
