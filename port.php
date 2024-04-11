@@ -280,7 +280,7 @@ page_top ();
 <table class="table table-striped" id="portz">
 	<thead>
 		<tr>
-			<th>#</th>
+			<!-- <th>#</th> -->
 			<th>Name</th>
 			<th>Coin</th>
 
@@ -310,7 +310,7 @@ foreach($coins as $coin) {
 	$coin_data_tmp = $coin_data[$coin["id_"]];
 ?>
 <tr>
-	<td><?=escape($coin['id_'])?></td>
+	<!-- <td><?=escape($coin['id_'])?></td> -->
 	<td><?=escape($coin['name_'])?></td>
 	<td><a href="/port_history.php?port_id=<?=$coin["id_"]?>"><?=escape($coin['coin_code'])?></a></td>
 
