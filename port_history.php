@@ -161,22 +161,6 @@ page_top ();
 	</form>
 </div>
 
-<p>
-UUID: <?=$param_port_id?><br>
-Name: <?=$port_name?><br>
-COIN: <?=$port_coin_code?><br>
-Fund Type: <?=$port_fund_type?>
-</p>
-
-<p>
-<strong>Quantity:</strong> <?=$quantity?>&nbsp;&nbsp;
-<!-- on_hand: <?=$sum_cash_theorycal?>&nbsp;&nbsp; -->
-<strong>HealthCost:</strong> <?=$health_cost?>&nbsp;&nbsp;
-
-<!-- sum_sell: <?=$sum_sell?>&nbsp;&nbsp; -->
-<!-- sum_buy: <?=$sum_buy?>&nbsp;&nbsp; -->
-</p>
-
 <div>
 	<form method="post">
 		<select name="fund_type">
@@ -192,6 +176,24 @@ Fund Type: <?=$port_fund_type?>
 	</form>
 </div>
 
+<p>
+	UUID: <?=$param_port_id?><br>
+	Name: <?=$port_name?><br>
+	COIN: <?=$port_coin_code?><br>
+	Fund Type: <?=$port_fund_type?>
+</p>
+
+<p>
+<strong>Quantity:</strong> <?=$quantity?>&nbsp;&nbsp;
+<!-- on_hand: <?=$sum_cash_theorycal?>&nbsp;&nbsp; -->
+<strong>HealthCost:</strong> <?=$health_cost?>&nbsp;&nbsp;
+
+<!-- sum_sell: <?=$sum_sell?>&nbsp;&nbsp; -->
+<!-- sum_buy: <?=$sum_buy?>&nbsp;&nbsp; -->
+</p>
+
+
+
 
 <table>
 <tr>
@@ -201,7 +203,7 @@ Fund Type: <?=$port_fund_type?>
 			<input type="hidden" name="port_id" value="<?=$param_port_id?>" />
 			<input required="true" size="<?=INPUT_SIZE_COUNTING?>" name="coin" placeholder="<?=INPUT_HINT_QUANTITY?>"></input>
 			<input required="true" size="<?=INPUT_SIZE_COUNTING?>" name="usd" placeholder="<?=INPUT_HINT_MONEY?>"></input>
-			<textarea required="true" rows="<?=INPUT_SIZE_H_NOTE?>" cols="<?=INPUT_SIZE_W_NOTE?>" name="note" placeholder="<?=INPUT_HINT_NOTE?>"></textarea>
+			<input required="true" size="<?=INPUT_SIZE_W_NOTE?>"   name="note" placeholder="<?=INPUT_HINT_NOTE?>"></input>
 			<input size="<?=INPUT_SIZE_DATETIME?>" name="ts" placeholder="<?=INPUT_HINT_DATETIME?>"></input>
 			<input type="submit" value="BUY" />
 		</form>
@@ -213,7 +215,7 @@ Fund Type: <?=$port_fund_type?>
 			<input type="hidden" name="port_id" value="<?=$param_port_id?>" />
 			<input required="true" size="<?=INPUT_SIZE_COUNTING?>" name="coin" placeholder="<?=INPUT_HINT_QUANTITY_WITHDRAW?>"></input>
 			<input required="true" size="<?=INPUT_SIZE_COUNTING?>" name="usd" placeholder="<?=INPUT_HINT_MONEY?>"></input>
-			<textarea required="true" rows="<?=INPUT_SIZE_H_NOTE?>" cols="<?=INPUT_SIZE_W_NOTE?>" name="note" placeholder="<?=INPUT_HINT_NOTE?>"></textarea>
+			<input required="true" size="<?=INPUT_SIZE_W_NOTE?>"   name="note" placeholder="<?=INPUT_HINT_NOTE?>"></input>
 			<input size="<?=INPUT_SIZE_DATETIME?>" name="ts" placeholder="<?=INPUT_HINT_DATETIME?>"></input>
 			<input type="submit" value="SELL" />
 		</form>
