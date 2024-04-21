@@ -232,7 +232,8 @@ page_top ();
 	</p>
 	<p>
 		<a href="/port.php">ALL</a>&nbsp;&nbsp;
-		<a href="/port.php?fund_type=MEGA">MEGA</a>&nbsp;&nbsp;
+		<a href="/port.php?fund_type=MEGA_SH">MG_SH</a>&nbsp;&nbsp;
+		<a href="/port.php?fund_type=MEGA_SC">MG_SC</a>&nbsp;&nbsp;
 		<a href="/port.php?fund_type=SHIT">SHIT</a>&nbsp;&nbsp;
 		<a href="/port.php?fund_type=FG1">FG1</a>&nbsp;&nbsp;
 		<a href="/port.php?fund_type=HELL">HELL</a>&nbsp;&nbsp;
