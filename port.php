@@ -32,6 +32,10 @@ update_price("PEPE");
 //update_price("TATE");
 //update_price("BOBO");
 
+update_price("PORK");
+update_price("PEPEC");
+update_price("TON");
+
 if (has_httppost("action_create_coin") == true) {
 	$req_name = get_httppost("name");
 	$req_coin_code = get_httppost("coin_code");
@@ -89,7 +93,7 @@ if (has_httppost("action_rename") == true) {
 if (isset($param_fund_type)) {
 	$coins = db_list("select id_, name_, coin_code, fund_type from portfolio where username = '$username' and fund_type = '$param_fund_type' order by name_");
 } else {
-	$coins = db_list("select id_, name_, coin_code, fund_type from portfolio where username = '$username' and fund_type <> 'closed' order by name_");
+	$coins = db_list("select id_, name_, coin_code, fund_type from portfolio where username = '$username' and fund_type NOT IN ('closed', 'FG2')  order by name_");
 }
 
 
@@ -229,10 +233,11 @@ page_top ();
 	<p>
 		<a href="/port.php">ALL</a>&nbsp;&nbsp;
 		<a href="/port.php?fund_type=MEGA">MEGA</a>&nbsp;&nbsp;
+		<a href="/port.php?fund_type=SHIT">SHIT</a>&nbsp;&nbsp;
 		<a href="/port.php?fund_type=FG1">FG1</a>&nbsp;&nbsp;
-		<a href="/port.php?fund_type=FG2">FG2</a>&nbsp;&nbsp;
 		<a href="/port.php?fund_type=HELL">HELL</a>&nbsp;&nbsp;
-		<a href="/port.php?fund_type=closed">CLOSED</a>
+		<a href="/port.php?fund_type=FG2">FG2*</a>&nbsp;&nbsp;
+		<a href="/port.php?fund_type=closed">CLOSED*</a>
 	</p>
 	<!-- <p>
 		<a href="/port0.php?fund_type=MEGA">MEGA</a>&nbsp;&nbsp;
@@ -245,17 +250,19 @@ page_top ();
 
 <?php
 	$ts_cz = file_get_contents("/home/mc/app/matrix/price-ts-cz");
+	$ts_mx = file_get_contents("/home/mc/app/matrix/price-ts-mx");
 	$ts_erc = file_get_contents("/home/mc/app/matrix/price-ts-erc");
 ?>
 <p>
-	<strong>Binance: <?=$ts_cz?></strong>&nbsp;&nbsp;&nbsp;&nbsp;
+	<strong>CZ: <?=$ts_cz?></strong>&nbsp;&nbsp;&nbsp;&nbsp;
+	<strong>MX: <?=$ts_mx?></strong>&nbsp;&nbsp;&nbsp;&nbsp;
 
 	<?php if (isset($param_fund_type)) { ?>
 		<strong><?= "type=$param_fund_type" ?></strong>&nbsp;&nbsp;&nbsp;&nbsp;
 	<?php } ?>
 
 
-	<strong><?= "1 USDT=$rate VND" ?></strong>
+	<strong><?= "Rate: ${rate}Đ" ?></strong>
 </p>
 
 <p>
@@ -280,7 +287,7 @@ page_top ();
 <table class="table table-striped" id="portz">
 	<thead>
 		<tr>
-			<!-- <th>#</th> -->
+			<th>#</th>
 			<th>Name</th>
 			<th>Coin</th>
 
@@ -311,7 +318,7 @@ foreach($coins as $coin) {
 	$vnd_round = -4;
 ?>
 <tr>
-	<!-- <td><?=escape($coin['id_'])?></td> -->
+	<td><?=escape($coin['id_'])?></td>
 	<td><?=escape($coin['name_'])?></td>
 	<td><a href="/port_history.php?port_id=<?=$coin["id_"]?>"><?=escape($coin['coin_code'])?></a></td>
 
