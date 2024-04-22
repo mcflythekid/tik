@@ -35,6 +35,7 @@ update_price("PEPE");
 update_price("PORK");
 update_price("PEPEC");
 update_price("TON");
+update_price("MX");
 
 if (has_httppost("action_create_coin") == true) {
 	$req_name = get_httppost("name");
