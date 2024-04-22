@@ -10,8 +10,8 @@ $param_fund_type = $_GET["fund_type"];
 
 page_title("Portfolio");
 function update_price($code) {
-	$price_txt = file_get_contents("/home/mc/app/matrix/price-$code");
-	db_query("update portfolio_price set price = $price_txt where code = '$code'");
+	$price_txt = file_get_contents("/home/mc/app/matrix/price-$code");=
+	db_query("INSERT INTO portfolio_price (code, price, order_) VALUES ('$code', $price_txt, 'zz') ON DUPLICATE KEY UPDATE price = $price_txt ");
 }
 
 //tier a
@@ -26,12 +26,9 @@ update_price("FIRO");
 update_price("LTC");
 update_price("FLM");
 update_price("ARB");
-
-//tier e
 update_price("PEPE");
-//update_price("TATE");
-//update_price("BOBO");
 
+// MEXC
 update_price("PORK");
 update_price("PEPEC");
 update_price("TON");
