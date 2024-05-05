@@ -27,6 +27,7 @@ update_price("LTC");
 update_price("FLM");
 update_price("ARB");
 update_price("PEPE");
+update_price("PAXG");
 
 // MEXC
 update_price("PORK");

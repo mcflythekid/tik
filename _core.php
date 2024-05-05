@@ -368,3 +368,12 @@ function reduceToZero(&$target, $deduction) {
 		$target = 0;
 	}
 }
+
+
+
+
+///////////
+function getPAXG() {
+	$row = db_object("select * from portfolio_price where code = 'PAXG' ");
+	return $row["price"];
+}
