@@ -35,6 +35,7 @@ update_price("PEPEC");
 update_price("TON");
 update_price("MX");
 
+
 if (has_httppost("action_create_coin") == true) {
 	$req_name = get_httppost("name");
 	$req_coin_code = get_httppost("coin_code");
@@ -48,35 +49,6 @@ if (has_httppost("action_del") == true) {
 	$req_port_id = get_httppost("port_id");
 	db_query("delete from portfolio where id_ = $req_port_id");
 	db_query("delete from portfolio_trans where port_id = $req_port_id");
-	header("Refresh:0");
-	exit;
-}
-
-
-if (has_httppost("action_buy") == true) {
-	$req_port_id = get_httppost("port_id");
-	$req_coin = abs(get_httppost("coin"));
-	$req_usd = abs(get_httppost("usd"));
-	$req_note = get_httppost("note");
-	$req_ts = get_httppost("ts");
-	$cal_ts = ts_or_now($req_ts);
-	db_query("insert into portfolio_trans (username, port_id, type, amount_coin, amount_usd, note, ts)	values ('$username', '$req_port_id', 'buy', '$req_coin', '$req_usd', '$req_note', FROM_UNIXTIME($cal_ts))");
-	header("Refresh:0");
-	exit;
-}
-
-if (has_httppost("action_sell") == true) {
-	$cal_type = get_httppost("coin") == "spent" ? "spent" : "sell";
-	
-	$req_port_id = get_httppost("port_id");
-	$req_coin = abs(get_httppost("coin"));
-	$req_usd = abs(get_httppost("usd"));
-	$req_note = get_httppost("note");
-	$req_ts = get_httppost("ts");
-	$cal_ts = ts_or_now($req_ts);
-	
-	
-	db_query("insert into portfolio_trans (username, port_id, type, amount_coin, amount_usd, note, ts)	values ('$username', '$req_port_id', '$cal_type', '$req_coin', '$req_usd', '$req_usd', FROM_UNIXTIME($cal_ts))");
 	header("Refresh:0");
 	exit;
 }
@@ -104,7 +76,8 @@ foreach($prices as $price ) {
 	$price_data[$price["code"]] = $price["price"];
 }
 
-
+$paxg_price_now = getPAXG();
+$paxg_price_now  = $paxg_price_now * GOLD_RATE;
 
 $coin_data = array();
 foreach($coins as $coin ) {
@@ -114,54 +87,74 @@ foreach($coins as $coin ) {
 	
 	$tran_index = 0;
 	$quantity = 0;
+	//
 	$sum_buy = 0;
 	$sum_sell = 0;
-	$trans = db_list("select amount_coin, amount_usd, type from portfolio_trans where port_id = $port_id");
+	$sum_buy_G = 0;
+	$sum_sell_G = 0;
+	//
+	$trans = db_list("select amount_coin, amount_usd, type, paxg from portfolio_trans where port_id = $port_id");
 	
 	$health_cost = 0;
+	$health_cost_G = 0;
 
 	$sum_cash_theorycal = 0;
 	$sum_cash_avaiable = 0;
-	
+
 	foreach($trans as $tran) {
-		$tran_amount = $tran["amount_usd"];
 		$tran_quantity = $tran["amount_coin"];
+
+
+		$tran_amount = $tran["amount_usd"];
+		//
+		if (isset($tran["paxg"])) {
+			$tran_gold_price = $tran["paxg"] * GOLD_RATE;
+		} else {
+			$tran_gold_price = $paxg_price_now;
+		}
+		$tran_amount_G = $tran_amount / $tran_gold_price;
 		
 		// For quantity, sum buy/sell
 		if ($tran["type"] == "sell") {
 			$quantity -= $tran_quantity;
-			$sum_sell += $tran_amount;
+			//
+			$sum_sell   += $tran_amount;
+			$sum_sell_G += $tran_amount_G;
 		} else if ($tran["type"] == "buy") { // buy
 			$quantity += $tran_quantity;
-			$sum_buy += $tran_amount;
+			//
+			$sum_buy   += $tran_amount;
+			$sum_buy_G += $tran_amount_G;
 		}
 		
 		// For on hand, health cost
 		if ($tran_index++ > 0) {
 			if ($tran["type"] == "spent") { // External
 				reduceToZero($sum_cash_theorycal, $tran_amount);
-				reduceToZero($sum_cash_avaiable, $tran_amount);
+				reduceToZero($sum_cash_avaiable,  $tran_amount);
 
 			} else if ($tran["type"] == "move") { // Internal
-				reduceToZero($sum_cash_avaiable, $tran_amount);
+				reduceToZero($sum_cash_avaiable,   $tran_amount);
 				
 			} else if ($tran["type"] == "sell") { // sell
 				$sum_cash_theorycal += $tran_amount;
-				$sum_cash_avaiable += $tran_amount;
+				$sum_cash_avaiable  += $tran_amount;
 				
 				
 			} else { // buy
 				if ($tran_amount > $sum_cash_avaiable) {
-					$health_cost += $tran_amount - $sum_cash_avaiable;
+					$delta = $tran_amount - $sum_cash_avaiable;
+					$health_cost += $delta;
+					$health_cost_G += $delta / $tran_gold_price;
 				}
-	
 				reduceToZero($sum_cash_theorycal, $tran_amount);
-				reduceToZero($sum_cash_avaiable, $tran_amount);
+				reduceToZero($sum_cash_avaiable,  $tran_amount);
 			}
 			
 			
 		} else { // First BUY transaction
 			$health_cost += $tran_amount;
+			$health_cost_G += $tran_amount_G;
 		}
 	}
 	
@@ -169,43 +162,79 @@ foreach($coins as $coin ) {
 
 	// $data["per_recovered"] = 1 / $health_cost * 100.0;
 	// Calculations
-	$market_value = $quantity * $price; // Market value of remaining coins
+	$market_value =   $quantity * $price; // Market value of remaining coins
+	$market_value_G = $market_value / $paxg_price_now;
+
 	// Amount if rugpull
 	$rugpull_value_avaiable  = $sum_cash_avaiable  + $market_value; // Real
+	$rugpull_value_avaiable_G  = $rugpull_value_avaiable / $paxg_price_now;
+	//
 	$rugpull_value_theorycal = $sum_cash_theorycal + $market_value; // Virtual
+	$rugpull_value_theorycal_G = $rugpull_value_theorycal / $paxg_price_now;
+
 	//
 	$recover_per_avaiable  = $sum_cash_avaiable  / $health_cost * 100.0;
 	$recover_per_theorycal = $sum_cash_theorycal / $health_cost * 100.0;
+	//
+	$recover_per_avaiable_G  = $sum_cash_avaiable / $paxg_price_now  / $health_cost_G * 100.0;
+	$recover_per_theorycal_G = $sum_cash_theorycal / $paxg_price_now / $health_cost_G * 100.0;
+
+	// echo "recover_per_avaiable_G : $recover_per_avaiable_G <br>";
+	// echo "recover_per_theorycal_G : $recover_per_theorycal_G <br>"; 
+	// echo "";
+	// echo "";
+	// exit;
+
 	// % Profit if rugpull
 	$rugpull_per_avaiable  = $rugpull_value_avaiable  / $health_cost * 100.0;
 	$rugpull_per_theorycal = $rugpull_value_theorycal / $health_cost * 100.0;
+	//
+	$rugpull_per_avaiable_G  = $rugpull_value_avaiable_G  / $health_cost_G * 100.0;
+	$rugpull_per_theorycal_G = $rugpull_value_theorycal_G / $health_cost_G * 100.0;
+
 	// Δ Profit if rugpull
 	$rugpull_delta_avaiable      = $rugpull_value_avaiable  - $health_cost;
 	$rugpull_delta_theorycal     = $rugpull_value_theorycal - $health_cost;
+	//
+	$rugpull_delta_avaiable_G      = $rugpull_value_avaiable_G  - $health_cost_G;
+	$rugpull_delta_theorycal_G     = $rugpull_value_theorycal_G - $health_cost_G;
+	//
 	$rugpull_delta_avaiable_vnd  = $rugpull_delta_avaiable * $rate;
 	$rugpull_delta_theorycal_vnd = $rugpull_delta_theorycal * $rate;
 
 	// Assign data
 	$data = array();
 	//
-	$data["quantity"]     = $quantity;
-	$data["market_value"] = $market_value;
-	$data["health_cost"]  = $health_cost;
+	$data["quantity"]       = $quantity;
+	$data["market_value"]   = $market_value;
+	$data["market_value_G"] = $market_value_G;
+	$data["health_cost"]    = $health_cost;
+	$data["health_cost_G"]  = $health_cost_G;
 	//
-	$data["sum_cash_avaiable"]  = $sum_cash_avaiable;
-	$data["sum_cash_theorycal"] = $sum_cash_theorycal;
+	$data["sum_cash_avaiable"]    = $sum_cash_avaiable;
+	$data["sum_cash_avaiable_G"]  = $sum_cash_avaiable_G;
+	$data["sum_cash_theorycal"]   = $sum_cash_theorycal;
+	$data["sum_cash_theorycal_G"] = $sum_cash_theorycal_G;
 	//
-	$data["rugpull_value_avaiable"]  = $rugpull_value_avaiable;
-	$data["rugpull_value_theorycal"] = $rugpull_value_theorycal;
+	$data["rugpull_value_avaiable"]    = $rugpull_value_avaiable;
+	$data["rugpull_value_avaiable_G"]  = $rugpull_value_avaiable_G;
+	$data["rugpull_value_theorycal"]   = $rugpull_value_theorycal;
+	$data["rugpull_value_theorycal_G"] = $rugpull_value_theorycal_G;
 	//
-	$data["recover_per_avaiable"] = $recover_per_avaiable;
-	$data["recover_per_theorycal"] = $recover_per_theorycal;
+	$data["recover_per_avaiable"]    = $recover_per_avaiable;
+	$data["recover_per_avaiable_G"]  = $recover_per_avaiable_G;
+	$data["recover_per_theorycal"]   = $recover_per_theorycal;
+	$data["recover_per_theorycal_G"] = $recover_per_theorycal_G;
 	//
-	$data["rugpull_per_avaiable"]  = $rugpull_per_avaiable;
-	$data["rugpull_per_theorycal"] = $rugpull_per_theorycal;
+	$data["rugpull_per_avaiable"]    = $rugpull_per_avaiable;
+	$data["rugpull_per_avaiable_G"]  = $rugpull_per_avaiable_G;
+	$data["rugpull_per_theorycal"]   = $rugpull_per_theorycal;
+	$data["rugpull_per_theorycal_G"] = $rugpull_per_theorycal_G;
 	//
-	$data["rugpull_delta_avaiable"]      = $rugpull_delta_avaiable; // troll
-	$data["rugpull_delta_theorycal"]     = $rugpull_delta_theorycal;
+	$data["rugpull_delta_avaiable"]        = $rugpull_delta_avaiable; // troll
+	$data["rugpull_delta_theorycal"]       = $rugpull_delta_theorycal;
+	$data["rugpull_delta_theorycal_G"]     = $rugpull_delta_theorycal_G;
+
 	$data["rugpull_delta_avaiable_vnd"]  = $rugpull_delta_avaiable_vnd; //troll
 	$data["rugpull_delta_theorycal_vnd"] = $rugpull_delta_theorycal_vnd;
 	
@@ -214,6 +243,15 @@ foreach($coins as $coin ) {
 
 page_title("CAT: " . $param_fund_type);
 page_top ();
+
+$mode = $_GET["mode"];
+if (!isset($mode)) {
+	$mode = "all";
+}
+$modeGold = $mode === "gold";
+$modeMoney = $mode === "money";
+$modeAll = $mode === "all";
+
 ?>
 
 <div style="float:right; ">
@@ -224,6 +262,7 @@ page_top ();
 		<input type="submit" value=">logout" />
 	</form>
 </div>
+
 
 <div>
 	<p>
@@ -273,6 +312,8 @@ page_top ();
 </p>
 <hr/>
 
+
+
 <?php if (isset($param_fund_type)) { ?>
 <div style="margin-bottom: 20px;">
 	<form  method='post'>
@@ -285,30 +326,81 @@ page_top ();
 </div>
 <?php } ?>
 
+<div style="margin-top: 30px; margin-bottom: 10px;">
+    <a href="#" onclick="replaceURLParam('mode', 'money')"><strong>[MONEY-MODE]</strong></a>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href="#" onclick="replaceURLParam('mode', 'gold')"><strong>[GOLD-MODE]</strong></a>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href="#" onclick="replaceURLParam('mode', 'all')"><strong>[ALL-MODE]</strong></a>&nbsp;&nbsp;&nbsp;&nbsp;
+	Mode = <?= $mode ?>
+</div>
+
 <table class="table table-striped" id="portz">
 	<thead>
 		<tr>
-			<th>#</th>
+			<th>#ID</th>
 			<th>Name</th>
 			<th>Coin</th>
 
-			<th>%Exit T</th>
-			<th>ΔExit T</th>
-			<th>$Exit A</th>
+
+			<?php if ($modeAll): ?>
+				<th>%ExitVN_Th</th>
+				<th>%ExitG_Th</th>
+				<th>ΔExitVN_Th</th>
+				<th>ΔExitG_Th</th>
+			<?php elseif ($modeGold): ?>
+				<th>%ExitG_Th</th>
+				<th>ΔExitG_Th</th>
+			<?php elseif ($modeMoney): ?>
+				<th>%ExitVN_Th</th>
+				<th>ΔExitVN_Th</th>
+			<?php endif; ?>
+
+
+			<?php if ($modeAll): ?>
+				<th>$ExitVN_A</th>
+				<th>$ExitG_A</th>
+			<?php elseif ($modeGold): ?>
+				<th>$ExitG_A</th>
+			<?php elseif ($modeMoney): ?>
+				<th>$ExitVN_A</th>
+			<?php endif; ?>
+
 
 			<?php if (!isset($param_fund_type)) { ?><th>Fund</th><?php } ?>
 
+
 			<th>Quantity</th>
-			<th>Market</th>
-			<th>Health</th>
-	
-			<th>Cash A</th>
-			<th>%Recover</th>
 			
-			<th>#</th>
-			<th>#</th>
-			<th>#</th>
-			<th>#</th>
+
+			<?php if ($modeAll): ?>
+				<th>Market</th>
+				<th>MarketG</th>
+				<th>Health</th>
+				<th>HealthG</th>
+			<?php elseif ($modeGold): ?>
+				<th>MarketG</th>
+				<th>HealthG</th>
+			<?php elseif ($modeMoney): ?>
+				<th>Market</th>
+				<th>Health</th>
+			<?php endif; ?>
+
+
+			<th>Cash_A</th>
+
+
+			<?php if ($modeAll): ?>
+				<th>%Recover</th>
+				<th>%RecoverG</th>
+			<?php elseif ($modeGold): ?>
+				<th>%RecoverG</th>
+			<?php elseif ($modeMoney): ?>
+				<th>%Recover</th>
+			<?php endif; ?>
+
+
+			<th>_</th>
+			<th>_</th>
+			<th>_</th>
 		</tr>
 	</thead>
 <tbody>
@@ -317,33 +409,85 @@ page_top ();
 foreach($coins as $coin) {
 	$coin_data_tmp = $coin_data[$coin["id_"]];
 	$vnd_round = -4;
+	$gold_round = 4;
 ?>
 <tr>
 	<td><?=escape($coin['id_'])?></td>
 	<td><?=escape($coin['name_'])?></td>
 	<td><a href="/port_history.php?port_id=<?=$coin["id_"]?>"><?=escape($coin['coin_code'])?></a></td>
 
-	<td><?=digit($coin_data_tmp["rugpull_per_theorycal"], 0)?>%</td>
-	<td><?=money_color(digit(round($coin_data_tmp["rugpull_delta_theorycal_vnd"], $vnd_round), 0))?></td>
-	<td class="value"><?=digit(round($coin_data_tmp["rugpull_value_avaiable"] * $rate, $vnd_round), 0)?></td>
+
+	<?php if ($modeAll): ?>
+		<td                 ><?=digit($coin_data_tmp["rugpull_per_theorycal"], 0)?>%</td>
+		<td class="for_gold"><?=digit($coin_data_tmp["rugpull_per_theorycal_G"], 0)?>%</td>
+		<td                ><?=money_color(digit(round($coin_data_tmp["rugpull_delta_theorycal_vnd"], $vnd_round), 0))?></td>
+		<td class="for_gold"><?=money_color(digit($coin_data_tmp["rugpull_delta_theorycal_G"], $gold_round), '❖')?></td>
+	<?php elseif ($modeGold): ?>
+		<td class="for_gold"><?=digit($coin_data_tmp["rugpull_per_theorycal_G"], 0)?>%</td>
+		<td class="for_gold"><?=money_color(digit($coin_data_tmp["rugpull_delta_theorycal_G"], $gold_round), '❖')?></td>
+	<?php elseif ($modeMoney): ?>
+		<td><?=digit($coin_data_tmp["rugpull_per_theorycal"], 0)?>%</td>
+		<td><?=money_color(digit(round($coin_data_tmp["rugpull_delta_theorycal_vnd"], $vnd_round), 0))?></td>
+	<?php endif; ?>
+
+
+
+	<?php if ($modeAll): ?>
+		<td class="value"><?=digit(round($coin_data_tmp["rugpull_value_avaiable"] * $rate, $vnd_round), 0)?></td>
+		<td class="value">❖<?=round($coin_data_tmp["rugpull_value_avaiable_G"], $gold_round) ?></td>
+	<?php elseif ($modeGold): ?>
+		<td class="value">❖<?=round($coin_data_tmp["rugpull_value_avaiable_G"], $gold_round) ?></td>
+	<?php elseif ($modeMoney): ?>
+		<td class="value"><?=digit(round($coin_data_tmp["rugpull_value_avaiable"] * $rate, $vnd_round), 0)?></td>
+	<?php endif; ?>
+
 
 	<?php if (!isset($param_fund_type)) { ?><td><?=escape($coin['fund_type'])?></td><?php } ?>
 
+
 	<td class="quantity">  <?=digit($coin_data_tmp["quantity"], 5)?>   </td>
-	<td class="market_value">$<?=digit($coin_data_tmp["market_value"], 0)?>   </td>
-	<td class="health_cost">$<?=digit($coin_data_tmp["health_cost"], 0)?>    </td>
-	
-	<td class="normal_green"><?=$coin_data_tmp["sum_cash_avaiable"] > 0 ? "$" . digit($coin_data_tmp["sum_cash_avaiable"], 0) : ""?></td>
-	<td class="normal_green"><?=$coin_data_tmp["recover_per_theorycal"] > 1 ? digit($coin_data_tmp["recover_per_theorycal"], 0) . "%": ""?></td>
+
+
+	<?php if ($modeAll): ?>
+		<td class="market_value         ">$<?=digit($coin_data_tmp["market_value"], 0)?>   </td>
+		<td class="market_value for_gold">❖<?=digit($coin_data_tmp["market_value_G"], $gold_round)?>   </td>
+		<td class="health_cost          ">$<?=digit($coin_data_tmp["health_cost"], 0)?>    </td>
+		<td class="health_cost  for_gold">❖<?=digit($coin_data_tmp["health_cost_G"], $gold_round)?>    </td>
+	<?php elseif ($modeGold): ?>
+		<td class="market_value for_gold">❖<?=digit($coin_data_tmp["market_value_G"], $gold_round)?>   </td>
+		<td class="health_cost  for_gold">❖<?=digit($coin_data_tmp["health_cost_G"], $gold_round)?>    </td>
+	<?php elseif ($modeMoney): ?>
+		<td class="market_value">$<?=digit($coin_data_tmp["market_value"], 0)?>   </td>
+		<td class="health_cost">$<?=digit($coin_data_tmp["health_cost"], 0)?>    </td>
+	<?php endif; ?>
 
 	
-	<td><a href="/port_history.php?port_id=<?=$coin["id_"]?>">History</a></td>
+	<td class="normal_green"><?=$coin_data_tmp["sum_cash_avaiable"] > 0 ? "$" . digit($coin_data_tmp["sum_cash_avaiable"], 0) : ""?></td>
+
+
+	<?php if ($modeAll): ?>
+		<td class="normal_green         "><?=$coin_data_tmp["recover_per_theorycal"]   > 1 ? digit($coin_data_tmp["recover_per_theorycal"], 0)   . "%": ""?></td>
+		<td class="normal_green for_gold"><?=$coin_data_tmp["recover_per_theorycal_G"] > 1 ? digit($coin_data_tmp["recover_per_theorycal_G"], 0) . "%": ""?></td>
+	<?php elseif ($modeGold): ?>
+		<td class="normal_green for_gold"><?=$coin_data_tmp["recover_per_theorycal_G"] > 1 ? digit($coin_data_tmp["recover_per_theorycal_G"], 0) . "%": ""?></td>
+	<?php elseif ($modeMoney): ?>
+		<td class="normal_green"><?=$coin_data_tmp["recover_per_theorycal"]   > 1 ? digit($coin_data_tmp["recover_per_theorycal"], 0)   . "%": ""?></td>
+	<?php endif; ?>
+
+
+	<?php if ($modeAll): ?>
+
+	<?php elseif ($modeGold): ?>
+
+	<?php elseif ($modeMoney): ?>
+
+	<?php endif; ?>
+
+	
 	<td><?=ui_del($coin)?></td>
 	
 	<td id="act_<?=$coin["id_"]?>" style="display: none;">
 		<div>
-			<div><div><?=ui_buy($coin)?></div></div>
-			<div><div><?=ui_sell($coin)?></div></div>
 			<div><div><?=ui_rename($coin)?></div></div>
 		</div>
 	</td>
@@ -354,42 +498,22 @@ foreach($coins as $coin) {
 </table>
 
 <style>
-	.quantity { font-weight: bold; color: #fcba03 }
-	.market_value { font-weight: bold; color: #fcba03 }
+	.quantity { font-weight: bold; color: #000 }
+	.market_value { font-weight: bold; color: #2e8499 }
 	.value { font-style: normal; color: green }
 	.normal_green { font-weight: normal; color: green }
 	.health_cost { font-weight: bold; color: red }
+
+	.for_gold {
+		text-decoration: underline;
+	}
 </style>
-
-<?php function ui_buy($coin) { ?>
-	<form method='post' onSubmit="return confirm('Ghi nhận MUA [<?=$coin['coin_code']?>] ?');">
-		<input type="hidden" name="action_buy" value="xxx" />
-		<input type="hidden" name="port_id" value="<?=$coin["id_"]?>" />
-		<input required="true" size="<?=INPUT_SIZE_COUNTING?>" name="coin" placeholder="<?=INPUT_HINT_QUANTITY?>"></input>
-		<input required="true" size="<?=INPUT_SIZE_COUNTING?>" name="usd" placeholder="<?=INPUT_HINT_MONEY?>"></input>
-		<textarea required="true" rows="<?=INPUT_SIZE_H_NOTE?>" cols="<?=INPUT_SIZE_W_NOTE?>" name="note"  placeholder="<?=INPUT_HINT_NOTE?>"></textarea>
-		<input size="<?=INPUT_SIZE_DATETIME?>" name="ts" placeholder="<?=INPUT_HINT_DATETIME?>"></input>
-		<input type="submit" value="BUY" />
-	</form>
-<?php } ?>
-
-<?php function ui_sell($coin) { ?>
-	<form method='post' onSubmit="return confirm('Ghi nhận BÁN [<?=$coin['coin_code']?>] ?');">
-		<input type="hidden" name="action_sell" value="xxx" />
-		<input type="hidden" name="port_id" value="<?=$coin["id_"]?>" />
-		<input required="true" size="<?=INPUT_SIZE_COUNTING?>" name="coin" placeholder="<?=INPUT_HINT_QUANTITY?>"></input>
-		<input required="true"" size="<?=INPUT_SIZE_COUNTING?>" name="usd" placeholder="<?=INPUT_HINT_MONEY?>"></input>
-		<textarea required="true" rows="<?=INPUT_SIZE_H_NOTE?>" cols="<?=INPUT_SIZE_W_NOTE?>" name="note"  placeholder="<?=INPUT_HINT_NOTE?>"></textarea>
-		<input size="<?=INPUT_SIZE_DATETIME?>" name="ts" placeholder="<?=INPUT_HINT_DATETIME?>"></input>
-		<input type="submit" value="SELL" />
-	</form>
-<?php } ?>
 
 <?php function ui_rename($coin) { ?>
 	<form method='post' onSubmit="return confirm('Ghi nhận RENAME [<?=$coin['name_']?>] ?');">
 		<input type="hidden" name="action_rename" value="xxx" />
 		<input type="hidden" name="port_id" value="<?=$coin["id_"]?>" />
-		<textarea required="true" rows="<?=INPUT_SIZE_H_NAME?>" cols="<?=INPUT_SIZE_W_NAME?>" name="name"  placeholder="<?=INPUT_HINT_NAME?>"><?=escape($coin["name_"])?></textarea>
+		<input required="true" size="<?=INPUT_SIZE_NAME?>" name="name" placeholder="<?=INPUT_HINT_NAME?>"  value='<?=escape($coin["name_"])?>' />
 		<input type="submit" value="RENAME" />
 	</form>
 <?php } ?>
@@ -423,9 +547,42 @@ foreach($coins as $coin) {
 	$(document).ready(function() {
 		$('#portz').DataTable({
 			"pageLength": 50,
-			"order": [[3, 'desc']]
+
+			<?php if ($modeAll): ?>
+				"order": [[4, 'desc']]
+			<?php elseif ($modeGold): ?>
+				"order": [[3, 'desc']]
+			<?php elseif ($modeMoney): ?>
+				"order": [[3, 'desc']]
+			<?php endif; ?>
+
+			
 		});
 	});
+
+	function replaceURLParam(paramName, paramNewValue) {
+		// Get the current URL
+		var currentURL = window.location.href;
+			
+		// Regular expression to find and replace the parameter value
+		var regex = new RegExp('(' + paramName + '=)([^&]*)');
+		
+		// Check if the parameter exists in the current URL
+		if (currentURL.match(regex)) {
+			// If the parameter exists, replace its value
+			var newURL = currentURL.replace(regex, '$1' + paramNewValue);
+		} else {
+			// If the parameter doesn't exist, add it to the URL
+			var separator = currentURL.includes('?') ? '&' : '?';
+			var newURL = currentURL + separator + paramName + '=' + paramNewValue;
+		}
+			
+		// Update the URL
+		window.history.replaceState({}, '', newURL);
+		console.log('Updated URL:', newURL);
+
+		window.location.href = newURL;
+	}
 </script>
 
 

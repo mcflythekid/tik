@@ -3,20 +3,22 @@
 //ini_set('display_startup_errors', 1);
 //error_reporting(E_ALL);
 
-$rate = 25600;
+$rate = 26000;
+define("GOLD_RATE", 1.0 / 0.829426);
 
 define("INPUT_SIZE_COUNTING", 10);
 define("INPUT_SIZE_COIN_CODE", 4);
 define("INPUT_SIZE_DATETIME", 18);
+define("INPUT_SIZE_NOTE", 30);
+define("INPUT_SIZE_PAXG", 5);
+define("INPUT_SIZE_NAME", 30);
+
 define("INPUT_HINT_DATETIME", "1999-12-31 23:59:59");
 define("INPUT_HINT_QUANTITY", "Quantity");
 define("INPUT_HINT_MONEY", "Money");
 define("INPUT_HINT_NOTE", "Note");
 define("INPUT_HINT_NAME", "Name");
-define("INPUT_SIZE_H_NOTE", 2);
-define("INPUT_SIZE_H_NAME", 2);
-define("INPUT_SIZE_W_NOTE", 30);
-define("INPUT_SIZE_W_NAME", 30);
+define("INPUT_HINT_PAXG", "PAXG");
 //
 define("INPUT_HINT_QUANTITY_WITHDRAW", "N|spent|move");
 
@@ -349,11 +351,11 @@ function digit($in, $count = 3) {
 	return strpos($nbr,'.')!==false ? rtrim(rtrim($nbr,'0'),'.') : $nbr;
 }
 
-function money_color($num) {
+function money_color($num, $prefix = '') {
 	if ($num <= 0) {
-		return $num;
+		return "$prefix$num";
 	}
-	return "<strong style='color: green;'>$num</strong>";
+	return "<strong style='color: green;'>$prefix$num</strong>";
 }
 
 function startsWith($string, $substring) {
@@ -377,3 +379,4 @@ function getPAXG() {
 	$row = db_object("select * from portfolio_price where code = 'PAXG' ");
 	return $row["price"];
 }
+

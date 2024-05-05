@@ -12,6 +12,9 @@ db_open();
 $session_username = $_SESSION['username'];
 $param_port_id = get_httpget("port_id", "FFA");
 
+$paxg_price_now = getPAXG();
+// $paxg_price_now = 2000;
+
 
 $fund_types = db_list("select distinct(fund_type) from portfolio");
 if (isset($_POST["fund_type"])) {
@@ -37,14 +40,24 @@ if (has_httppost("action_del") == true) {
 	exit;
 }
 
+function getRequestPAXG() {
+	global $paxg_price_now;
+	$paxg = get_httppost("paxg");
+	if ($paxg == '') {
+		$paxg = $paxg_price_now;
+	}
+	return $paxg;
+}
+
 if (has_httppost("action_buy") == true) {
 	$req_coin = abs(get_httppost("coin"));
 	$req_usd = abs(get_httppost("usd"));
 	$req_note = get_httppost("note");
 	$req_ts = get_httppost("ts");
 	$cal_ts = ts_or_now($req_ts);
+	$cal_paxg = getRequestPAXG();
 	
-	db_query("insert into portfolio_trans (username, port_id, type, amount_coin, amount_usd, note, ts)	values ('$session_username', '$param_port_id', 'buy', '$req_coin', '$req_usd', '$req_note', FROM_UNIXTIME($cal_ts))");
+	db_query("insert into portfolio_trans (paxg, username, port_id, type, amount_coin, amount_usd, note, ts)	values ('$cal_paxg', '$session_username', '$param_port_id', 'buy', '$req_coin', '$req_usd', '$req_note', FROM_UNIXTIME($cal_ts))");
 	header("Refresh:0");
 	exit;
 }
@@ -62,8 +75,9 @@ if (has_httppost("action_sell") == true) {
 	$req_note = get_httppost("note");
 	$req_ts = get_httppost("ts");
 	$cal_ts = ts_or_now($req_ts);
+	$cal_paxg = getRequestPAXG();
 	
-	db_query("insert into portfolio_trans (username, port_id, type, amount_coin, amount_usd, note, ts)	values ('$session_username', '$param_port_id', '$cal_type', '$req_coin', '$req_usd', '$req_note', FROM_UNIXTIME($cal_ts))");
+	db_query("insert into portfolio_trans (paxg, username, port_id, type, amount_coin, amount_usd, note, ts)	values ('$cal_paxg', '$session_username', '$param_port_id', '$cal_type', '$req_coin', '$req_usd', '$req_note', FROM_UNIXTIME($cal_ts))");
 	header("Refresh:0");
 	exit;
 }
@@ -75,13 +89,14 @@ if (has_httppost("action_edit") == true) {
 	$req_note = get_httppost("note");
 	$req_ts = get_httppost("ts");
 	$cal_ts = ts_or_now($req_ts);
+	$cal_paxg = getRequestPAXG();
 	
-	db_query("update portfolio_trans set amount_coin = '$req_coin', amount_usd = '$req_usd', note = '$req_note', ts = FROM_UNIXTIME($cal_ts) where id_ = '$req_trans_id'");
+	db_query("update portfolio_trans set paxg = '$cal_paxg', amount_coin = '$req_coin', amount_usd = '$req_usd', note = '$req_note', ts = FROM_UNIXTIME($cal_ts) where id_ = '$req_trans_id'");
 	header("Refresh:0");
 	exit;
 }
 
-$trans = db_list("select id_, type, amount_coin, amount_usd, note, ts, (amount_usd / amount_coin) as price from portfolio_trans where username = '$session_username' and port_id = '$param_port_id' order by ts asc");
+$trans = db_list("select id_, type, paxg, amount_coin, amount_usd, note, ts, (amount_usd / amount_coin) as price from portfolio_trans where username = '$session_username' and port_id = '$param_port_id' order by ts asc");
 
 
 
@@ -177,9 +192,9 @@ page_top ();
 </div>
 
 <p>
-	UUID: <?=$param_port_id?><br>
-	Name: <?=$port_name?><br>
-	COIN: <?=$port_coin_code?><br>
+	UUID: <?=$param_port_id?>&nbsp;&nbsp;
+	Name: <?=$port_name?>&nbsp;&nbsp;
+	COIN: <?=$port_coin_code?>&nbsp;&nbsp;
 	Fund Type: <?=$port_fund_type?>
 </p>
 
@@ -203,6 +218,7 @@ page_top ();
 			<input required="true" size="<?=INPUT_SIZE_COUNTING?>" name="usd" placeholder="<?=INPUT_HINT_MONEY?>"  <?php if ($port_coin_code == "USD") : ?> value="0" <?php endif; ?> ></input>
 			<input required="true" size="<?=INPUT_SIZE_W_NOTE?>"   name="note" placeholder="<?=INPUT_HINT_NOTE?>"  <?php if ($port_coin_code == "USD") : ?> value="--" <?php endif; ?> ></input>
 			<input size="<?=INPUT_SIZE_DATETIME?>" name="ts" placeholder="<?=INPUT_HINT_DATETIME?>"></input>
+			<input size="<?=INPUT_SIZE_PAXG?>" name="paxg" placeholder="<?=INPUT_HINT_PAXG?>"></input>
 			<input type="submit" value="BUY" />
 		</form>
 	</td>
@@ -215,6 +231,7 @@ page_top ();
 			<input required="true" size="<?=INPUT_SIZE_COUNTING?>" name="usd" placeholder="<?=INPUT_HINT_MONEY?>"  <?php if ($port_coin_code == "USD") : ?> value="0" <?php endif; ?> ></input>
 			<input required="true" size="<?=INPUT_SIZE_W_NOTE?>"   name="note" placeholder="<?=INPUT_HINT_NOTE?>"  <?php if ($port_coin_code == "USD") : ?> value="--" <?php endif; ?> ></input>
 			<input size="<?=INPUT_SIZE_DATETIME?>" name="ts" placeholder="<?=INPUT_HINT_DATETIME?>"></input>
+			<input size="<?=INPUT_SIZE_PAXG?>" name="paxg" placeholder="<?=INPUT_HINT_PAXG?>" ></input>
 			<input type="submit" value="SELL" />
 		</form>
 	</td>
@@ -233,6 +250,7 @@ page_top ();
 	<th>Type</th>
 	<th>Quantity</th>
 	<th>USD</th>
+	<th>PAXG</th>
 	<th>~Price</th>
 	<th>Σ $Theorycal</th>
 	<th>Σ $Avaiable</th>
@@ -262,6 +280,7 @@ page_top ();
 
 	<td><?=digit($tran['amount_coin'], 9)?></td>
 	<td><?=digit($tran['amount_usd'])?></td>
+	<td><?=digit($tran['paxg'])?></td>
 	<td><?=digit($tran['price'], 9)?></td>
 	<td><?=digit($tran['sum_cash_theorycal'], 9)?></td>
 	<td><?=digit($tran['sum_cash_avaiable'], 9)?></td>
@@ -285,10 +304,11 @@ page_top ();
 	<form method='post' onSubmit="return confirm('Ghi nhận SỬA?');">
 		<input type="hidden" name="action_edit" value="xxx" />
 		<input type="hidden" name="tran_id" value="<?=$tran["id_"]?>" />
-		<input required="true" size="<?=INPUT_SIZE_COUNTING?>" name="coin" placeholder="<?=INPUT_HINT_QUANTITY?>" value="<?=$tran['amount_coin']?>"></input>
-		<input required="true"" size="<?=INPUT_SIZE_COUNTING?>" name="usd" placeholder="<?=INPUT_HINT_MONEY?>" value="<?=$tran['amount_usd']?>"></input>
-		<textarea required="true" rows="<?=INPUT_SIZE_H_NOTE?>" cols="<?=INPUT_SIZE_W_NOTE?>" name="note"  placeholder="<?=INPUT_HINT_NOTE?>"><?=escape($tran['note'])?></textarea>
-		<input size="<?=INPUT_SIZE_DATETIME?>" name="ts" placeholder="<?=INPUT_HINT_DATETIME?>" value="<?=$tran['ts']?>"></input>
+		<input required="true" size="<?=INPUT_SIZE_COUNTING?>" name="coin" placeholder="<?=INPUT_HINT_QUANTITY?>" value="<?=$tran['amount_coin']?>" />
+		<input required="true" size="<?=INPUT_SIZE_COUNTING?>" name="usd" placeholder="<?=INPUT_HINT_MONEY?>" value="<?=$tran['amount_usd']?>" />
+		<input required="true" size="<?=INPUT_SIZE_NOTE?>" name="note"  placeholder="<?=INPUT_HINT_NOTE?>" value="<?=escape($tran['note'])?>" />
+		<input size="<?=INPUT_SIZE_DATETIME?>" name="ts" placeholder="<?=INPUT_HINT_DATETIME?>" value="<?=$tran['ts']?>" />
+		<input size="<?=INPUT_SIZE_PAXG?>" name="paxg" placeholder="<?=INPUT_HINT_PAXG?>" value="<?=$tran['paxg']?>" />
 		<input type="submit" value="Submit" />
 	</form>
 <?php } ?>
