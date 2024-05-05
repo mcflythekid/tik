@@ -8,9 +8,9 @@ $username = $_SESSION['username'];
 
 $param_fund_type = $_GET["fund_type"];
 
-page_title("Portfolio");
+
 function update_price($code) {
-	$price_txt = file_get_contents("/home/mc/app/matrix/price-$code");=
+	$price_txt = file_get_contents("/home/mc/app/matrix/price-$code");
 	db_query("INSERT INTO portfolio_price (code, price, order_) VALUES ('$code', $price_txt, 'zz') ON DUPLICATE KEY UPDATE price = $price_txt ");
 }
 
@@ -91,7 +91,7 @@ if (has_httppost("action_rename") == true) {
 if (isset($param_fund_type)) {
 	$coins = db_list("select id_, name_, coin_code, fund_type from portfolio where username = '$username' and fund_type = '$param_fund_type' order by name_");
 } else {
-	$coins = db_list("select id_, name_, coin_code, fund_type from portfolio where username = '$username' and fund_type NOT IN ('closed', 'FG2')  order by name_");
+	$coins = db_list("select id_, name_, coin_code, fund_type from portfolio where username = '$username' and fund_type NOT IN ('closed', 'FREEDOM')  order by name_");
 }
 
 
@@ -211,7 +211,7 @@ foreach($coins as $coin ) {
 	$coin_data[$port_id] = $data;
 }
 
-
+page_title("CAT: " . $param_fund_type);
 page_top ();
 ?>
 
@@ -230,12 +230,13 @@ page_top ();
 	</p>
 	<p>
 		<a href="/port.php">ALL</a>&nbsp;&nbsp;
-		<a href="/port.php?fund_type=MEGA_SH">MG_SH</a>&nbsp;&nbsp;
-		<a href="/port.php?fund_type=MEGA_SC">MG_SC</a>&nbsp;&nbsp;
-		<a href="/port.php?fund_type=SHIT">SHIT</a>&nbsp;&nbsp;
 		<a href="/port.php?fund_type=FG1">FG1</a>&nbsp;&nbsp;
-		<a href="/port.php?fund_type=HELL">HELL</a>&nbsp;&nbsp;
-		<a href="/port.php?fund_type=FG2">FG2*</a>&nbsp;&nbsp;
+		<a href="/port.php?fund_type=MEGA_SH">_SH</a>&nbsp;&nbsp;
+		<a href="/port.php?fund_type=MEGA_SC">_SC</a>&nbsp;&nbsp;
+		<!-- <a href="/port.php?fund_type=MEGA_176">_176</a>&nbsp;&nbsp; -->
+		<a href="/port.php?fund_type=MEGA_REV">_REV</a>&nbsp;&nbsp;
+		
+		<a href="/port.php?fund_type=FREEDOM">FREEDOM*</a>&nbsp;&nbsp;
 		<a href="/port.php?fund_type=closed">CLOSED*</a>
 	</p>
 	<!-- <p>

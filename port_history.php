@@ -193,8 +193,6 @@ page_top ();
 </p>
 
 
-
-
 <table>
 <tr>
 	<td>
@@ -202,8 +200,8 @@ page_top ();
 			<input type="hidden" name="action_buy" value="xxx" />
 			<input type="hidden" name="port_id" value="<?=$param_port_id?>" />
 			<input required="true" size="<?=INPUT_SIZE_COUNTING?>" name="coin" placeholder="<?=INPUT_HINT_QUANTITY?>"></input>
-			<input required="true" size="<?=INPUT_SIZE_COUNTING?>" name="usd" placeholder="<?=INPUT_HINT_MONEY?>"></input>
-			<input required="true" size="<?=INPUT_SIZE_W_NOTE?>"   name="note" placeholder="<?=INPUT_HINT_NOTE?>"></input>
+			<input required="true" size="<?=INPUT_SIZE_COUNTING?>" name="usd" placeholder="<?=INPUT_HINT_MONEY?>"  <?php if ($port_coin_code == "USD") : ?> value="0" <?php endif; ?> ></input>
+			<input required="true" size="<?=INPUT_SIZE_W_NOTE?>"   name="note" placeholder="<?=INPUT_HINT_NOTE?>"  <?php if ($port_coin_code == "USD") : ?> value="--" <?php endif; ?> ></input>
 			<input size="<?=INPUT_SIZE_DATETIME?>" name="ts" placeholder="<?=INPUT_HINT_DATETIME?>"></input>
 			<input type="submit" value="BUY" />
 		</form>
@@ -214,8 +212,8 @@ page_top ();
 			<input type="hidden" name="action_sell" value="xxx" />
 			<input type="hidden" name="port_id" value="<?=$param_port_id?>" />
 			<input required="true" size="<?=INPUT_SIZE_COUNTING?>" name="coin" placeholder="<?=INPUT_HINT_QUANTITY_WITHDRAW?>"></input>
-			<input required="true" size="<?=INPUT_SIZE_COUNTING?>" name="usd" placeholder="<?=INPUT_HINT_MONEY?>"></input>
-			<input required="true" size="<?=INPUT_SIZE_W_NOTE?>"   name="note" placeholder="<?=INPUT_HINT_NOTE?>"></input>
+			<input required="true" size="<?=INPUT_SIZE_COUNTING?>" name="usd" placeholder="<?=INPUT_HINT_MONEY?>"  <?php if ($port_coin_code == "USD") : ?> value="0" <?php endif; ?> ></input>
+			<input required="true" size="<?=INPUT_SIZE_W_NOTE?>"   name="note" placeholder="<?=INPUT_HINT_NOTE?>"  <?php if ($port_coin_code == "USD") : ?> value="--" <?php endif; ?> ></input>
 			<input size="<?=INPUT_SIZE_DATETIME?>" name="ts" placeholder="<?=INPUT_HINT_DATETIME?>"></input>
 			<input type="submit" value="SELL" />
 		</form>
