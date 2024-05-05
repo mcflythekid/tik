@@ -342,26 +342,26 @@ $modeAll = $mode === "all";
 
 
 			<?php if ($modeAll): ?>
-				<th>%ExitVN_Th</th>
+				<th>%Exit_Th</th>
 				<th>%ExitG_Th</th>
-				<th>ΔExitVN_Th</th>
+				<th>ΔExit_Th</th>
 				<th>ΔExitG_Th</th>
 			<?php elseif ($modeGold): ?>
 				<th>%ExitG_Th</th>
 				<th>ΔExitG_Th</th>
 			<?php elseif ($modeMoney): ?>
-				<th>%ExitVN_Th</th>
-				<th>ΔExitVN_Th</th>
+				<th>%Exit_Th</th>
+				<th>ΔExit_Th</th>
 			<?php endif; ?>
 
 
 			<?php if ($modeAll): ?>
-				<th>$ExitVN_A</th>
+				<th>$Exit_A</th>
 				<th>$ExitG_A</th>
 			<?php elseif ($modeGold): ?>
 				<th>$ExitG_A</th>
 			<?php elseif ($modeMoney): ?>
-				<th>$ExitVN_A</th>
+				<th>$Exit_A</th>
 			<?php endif; ?>
 
 
@@ -420,25 +420,25 @@ foreach($coins as $coin) {
 	<?php if ($modeAll): ?>
 		<td                 ><?=digit($coin_data_tmp["rugpull_per_theorycal"], 0)?>%</td>
 		<td class="for_gold"><?=digit($coin_data_tmp["rugpull_per_theorycal_G"], 0)?>%</td>
-		<td                ><?=money_color(digit(round($coin_data_tmp["rugpull_delta_theorycal_vnd"], $vnd_round), 0))?></td>
+		<td                ><?=money_color(digit($coin_data_tmp["rugpull_delta_theorycal"], 0), '$')?></td>
 		<td class="for_gold"><?=money_color(digit($coin_data_tmp["rugpull_delta_theorycal_G"], $gold_round), '❖')?></td>
 	<?php elseif ($modeGold): ?>
 		<td class="for_gold"><?=digit($coin_data_tmp["rugpull_per_theorycal_G"], 0)?>%</td>
 		<td class="for_gold"><?=money_color(digit($coin_data_tmp["rugpull_delta_theorycal_G"], $gold_round), '❖')?></td>
 	<?php elseif ($modeMoney): ?>
 		<td><?=digit($coin_data_tmp["rugpull_per_theorycal"], 0)?>%</td>
-		<td><?=money_color(digit(round($coin_data_tmp["rugpull_delta_theorycal_vnd"], $vnd_round), 0))?></td>
+		<td><?=money_color(digit($coin_data_tmp["rugpull_delta_theorycal"], 0), '$')?></td>
 	<?php endif; ?>
 
 
 
 	<?php if ($modeAll): ?>
-		<td class="value"><?=digit(round($coin_data_tmp["rugpull_value_avaiable"] * $rate, $vnd_round), 0)?></td>
+		<td class="value">$<?=digit($coin_data_tmp["rugpull_value_avaiable"] , 0)?></td>
 		<td class="value">❖<?=round($coin_data_tmp["rugpull_value_avaiable_G"], $gold_round) ?></td>
 	<?php elseif ($modeGold): ?>
 		<td class="value">❖<?=round($coin_data_tmp["rugpull_value_avaiable_G"], $gold_round) ?></td>
 	<?php elseif ($modeMoney): ?>
-		<td class="value"><?=digit(round($coin_data_tmp["rugpull_value_avaiable"] * $rate, $vnd_round), 0)?></td>
+		<td class="value">$<?=digit($coin_data_tmp["rugpull_value_avaiable"], 0)?></td>
 	<?php endif; ?>
 
 
