@@ -279,6 +279,7 @@ $modeAll = $mode === "all";
 		<a href="/port.php?fund_type=MEGA_SH">_SH</a>&nbsp;&nbsp;
 		<a href="/port.php?fund_type=MEGA_SC">_SC</a>&nbsp;&nbsp;
 		<a href="/port.php?fund_type=MEGA_176">_176</a>&nbsp;&nbsp;
+		<a href="/port.php?fund_type=MEGA_SSF">_SSF</a>&nbsp;&nbsp;
 		<a href="/port.php?fund_type=MEGA_REV">_REV</a>&nbsp;&nbsp;
 		
 		<a href="/port.php?fund_type=FREEDOM">FREEDOM*</a>&nbsp;&nbsp;
