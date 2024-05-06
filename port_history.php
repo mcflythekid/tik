@@ -29,7 +29,10 @@ $port = db_object("select name_, coin_code, fund_type from portfolio where id_ =
 $port_name = $port["name_"];
 $port_coin_code = $port["coin_code"];
 $port_fund_type = $port["fund_type"];
-page_title("History | $port_coin_code | $port_name");
+
+$isLoanLog = contains($port_name, "_Loan") && $port_coin_code == 'USD';
+
+page_title("Logs of $port_name");
 
 
 // ##
@@ -214,9 +217,9 @@ page_top ();
 		<form method='post' onSubmit="return confirm('Ghi nhận MUA?');">
 			<input type="hidden" name="action_buy" value="xxx" />
 			<input type="hidden" name="port_id" value="<?=$param_port_id?>" />
-			<input required="true" size="<?=INPUT_SIZE_COUNTING?>" name="coin" placeholder="<?=INPUT_HINT_QUANTITY?>"></input>
-			<input required="true" size="<?=INPUT_SIZE_COUNTING?>" name="usd" placeholder="<?=INPUT_HINT_MONEY?>"  <?php if ($port_coin_code == "USD") : ?> value="0" <?php endif; ?> ></input>
-			<input required="true" size="<?=INPUT_SIZE_W_NOTE?>"   name="note" placeholder="<?=INPUT_HINT_NOTE?>"  <?php if ($port_coin_code == "USD") : ?> value="--" <?php endif; ?> ></input>
+			<input required="true" size="<?=INPUT_SIZE_COUNTING?>" name="coin" placeholder="<?=INPUT_HINT_QUANTITY?>"   <?php if ($isLoanLog) : ?> value="0" <?php endif; ?>  />
+			<input required="true" size="<?=INPUT_SIZE_COUNTING?>" name="usd" placeholder="<?=INPUT_HINT_MONEY?>"   />
+			<input required="true" size="<?=INPUT_SIZE_W_NOTE?>"   name="note" placeholder="<?=INPUT_HINT_NOTE?>"  />
 			<input size="<?=INPUT_SIZE_DATETIME?>" name="ts" placeholder="<?=INPUT_HINT_DATETIME?>"></input>
 			<input size="<?=INPUT_SIZE_PAXG?>" name="paxg" placeholder="<?=INPUT_HINT_PAXG?>"></input>
 			<input type="submit" value="BUY" />
@@ -227,9 +230,9 @@ page_top ();
 		<form method='post' onSubmit="return confirm('Ghi nhận BÁN/Rút?');">
 			<input type="hidden" name="action_sell" value="xxx" />
 			<input type="hidden" name="port_id" value="<?=$param_port_id?>" />
-			<input required="true" size="<?=INPUT_SIZE_COUNTING?>" name="coin" placeholder="<?=INPUT_HINT_QUANTITY_WITHDRAW?>"></input>
-			<input required="true" size="<?=INPUT_SIZE_COUNTING?>" name="usd" placeholder="<?=INPUT_HINT_MONEY?>"  <?php if ($port_coin_code == "USD") : ?> value="0" <?php endif; ?> ></input>
-			<input required="true" size="<?=INPUT_SIZE_W_NOTE?>"   name="note" placeholder="<?=INPUT_HINT_NOTE?>"  <?php if ($port_coin_code == "USD") : ?> value="--" <?php endif; ?> ></input>
+			<input required="true" size="<?=INPUT_SIZE_COUNTING?>" name="coin" placeholder="<?=INPUT_HINT_QUANTITY_WITHDRAW?>"  <?php if ($isLoanLog) : ?> value="0" <?php endif; ?>  />
+			<input required="true" size="<?=INPUT_SIZE_COUNTING?>" name="usd" placeholder="<?=INPUT_HINT_MONEY?>"  />
+			<input required="true" size="<?=INPUT_SIZE_W_NOTE?>"   name="note" placeholder="<?=INPUT_HINT_NOTE?>"  />
 			<input size="<?=INPUT_SIZE_DATETIME?>" name="ts" placeholder="<?=INPUT_HINT_DATETIME?>"></input>
 			<input size="<?=INPUT_SIZE_PAXG?>" name="paxg" placeholder="<?=INPUT_HINT_PAXG?>" ></input>
 			<input type="submit" value="SELL" />

@@ -64,7 +64,7 @@ if (has_httppost("action_rename") == true) {
 if (isset($param_fund_type)) {
 	$coins = db_list("select id_, name_, coin_code, fund_type from portfolio where username = '$username' and fund_type = '$param_fund_type' order by name_");
 } else {
-	$coins = db_list("select id_, name_, coin_code, fund_type from portfolio where username = '$username' and fund_type NOT IN ('closed', 'FREEDOM')  order by name_");
+	$coins = db_list("select id_, name_, coin_code, fund_type from portfolio where username = '$username' and fund_type NOT IN ('closed', 'FREEDOM') and name_ not like '%_Loan' order by name_");
 }
 
 
@@ -241,7 +241,12 @@ foreach($coins as $coin ) {
 	$coin_data[$port_id] = $data;
 }
 
-page_title("CAT: " . $param_fund_type);
+if (isset($param_fund_type)) {
+	page_title("[ " . $param_fund_type . ' ]');
+} else {
+	page_title("[ Portfolio ]");
+}
+
 page_top ();
 
 $mode = $_GET["mode"];
@@ -273,7 +278,7 @@ $modeAll = $mode === "all";
 		<a href="/port.php?fund_type=FG1">FG1</a>&nbsp;&nbsp;
 		<a href="/port.php?fund_type=MEGA_SH">_SH</a>&nbsp;&nbsp;
 		<a href="/port.php?fund_type=MEGA_SC">_SC</a>&nbsp;&nbsp;
-		<!-- <a href="/port.php?fund_type=MEGA_176">_176</a>&nbsp;&nbsp; -->
+		<a href="/port.php?fund_type=MEGA_176">_176</a>&nbsp;&nbsp;
 		<a href="/port.php?fund_type=MEGA_REV">_REV</a>&nbsp;&nbsp;
 		
 		<a href="/port.php?fund_type=FREEDOM">FREEDOM*</a>&nbsp;&nbsp;

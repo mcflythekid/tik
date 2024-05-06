@@ -371,7 +371,9 @@ function reduceToZero(&$target, $deduction) {
 	}
 }
 
-
+function contains($str, $feed) {
+    return strpos($str, $feed) !== false;
+}
 
 
 ///////////
