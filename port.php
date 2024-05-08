@@ -92,9 +92,25 @@ foreach($coins as $coin ) {
 	$sum_sell = 0;
 	$sum_buy_G = 0;
 	$sum_sell_G = 0;
-	//
-	$trans = db_list("select amount_coin, amount_usd, type, paxg from portfolio_trans where port_id = $port_id");
 	
+
+
+	$originName = db_object("select name_ from portfolio where id_ = $port_id ")["name_"];
+	$loanName = $originName . "_Loan";
+	//
+	$trans_origin = db_list("select amount_coin, amount_usd, type, paxg from portfolio_trans where port_id = $port_id");
+	//
+	$portlogId = db_object("select id_ from portfolio where name_ = '$loanName' ")["id_"];
+	if (isset($portlogId)) {
+		$trans_loanLogs = db_list("select amount_coin, amount_usd, type, paxg from portfolio_trans where port_id = $portlogId ");
+		$trans = array_merge($trans_origin, $trans_loanLogs);
+	} else {
+		$trans = $trans_origin;
+	}
+
+	
+
+
 	$health_cost = 0;
 	$health_cost_G = 0;
 
