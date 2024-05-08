@@ -68,6 +68,15 @@ if (isset($param_fund_type)) {
 }
 
 
+$include_loan_interest = true;
+$include_loan_starter = true;
+//
+if (get_httpget("include-loan-interest", "") == "false") {
+	$include_loan_interest = false;
+}
+if (get_httpget("include-loan-starter", "") == "false") {
+	$include_loan_starter = false;
+}
 
 
 $prices = db_list("select * from portfolio_price order by order_");
@@ -95,18 +104,27 @@ foreach($coins as $coin ) {
 	
 
 
-	$originName = db_object("select name_ from portfolio where id_ = $port_id ")["name_"];
-	$loanName = $originName . "_Loan";
+
 	//
 	$trans_origin = db_list("select amount_coin, amount_usd, type, paxg from portfolio_trans where port_id = $port_id");
-	//
-	$portlogId = db_object("select id_ from portfolio where name_ = '$loanName' ")["id_"];
-	if (isset($portlogId)) {
-		$trans_loanLogs = db_list("select amount_coin, amount_usd, type, paxg from portfolio_trans where port_id = $portlogId ");
-		$trans = array_merge($trans_origin, $trans_loanLogs);
+	
+	if ($include_loan_interest) {
+
+		$originName = db_object("select name_ from portfolio where id_ = $port_id ")["name_"];
+		$loanName = $originName . "_Loan";
+		$portlogId = db_object("select id_ from portfolio where name_ = '$loanName' ")["id_"];
+		if (isset($portlogId)) {
+			$trans_loanLogs = db_list("select amount_coin, amount_usd, type, paxg from portfolio_trans where port_id = $portlogId ");
+			$trans = array_merge($trans_origin, $trans_loanLogs);
+		} else {
+			$trans = $trans_origin;
+		}
+
 	} else {
 		$trans = $trans_origin;
 	}
+
+
 
 	
 
@@ -353,6 +371,15 @@ $modeAll = $mode === "all";
     <a href="#" onclick="replaceURLParam('mode', 'gold')"><strong>[GOLD-MODE]</strong></a>&nbsp;&nbsp;&nbsp;&nbsp;
     <a href="#" onclick="replaceURLParam('mode', 'all')"><strong>[ALL-MODE]</strong></a>&nbsp;&nbsp;&nbsp;&nbsp;
 	Mode = <?= $mode ?>
+</div>
+
+<div style="margin-top: 5px; margin-bottom: 10px;">
+    <a href="#" onclick="replaceURLParam('include-loan-interest', 'true')"><strong>[+loan]</strong></a>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href="#" onclick="replaceURLParam('include-loan-interest', 'false')"><strong>[-loan]</strong></a>&nbsp;&nbsp;&nbsp;&nbsp;
+    <!-- <a href="#" onclick="replaceURLParam('include-loan-starter', 'true')"><strong>[+starter]</strong></a>&nbsp;&nbsp;&nbsp;&nbsp; -->
+    <!-- <a href="#" onclick="replaceURLParam('include-loan-starter', 'false')"><strong>[-starter]</strong></a>&nbsp;&nbsp;&nbsp;&nbsp; -->
+	include-loan-logs : <?= $include_loan_interest ? "Yes" : "No" ?> 
+	<!-- | include-loan-starter : <?= $include_loan_starter ? "Yes" : "No" ?>  -->
 </div>
 
 <table class="table table-striped" id="portz">
