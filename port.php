@@ -61,11 +61,11 @@ if (has_httppost("action_rename") == true) {
 	exit;
 }
 
-if (isset($param_fund_type)) {
+if (isset($param_fund_type) & $param_fund_type != "") {
 	$coins = db_list("select id_, name_, coin_code, fund_type from portfolio where username = '$username' and fund_type = '$param_fund_type' order by name_");
 } else {
 	$coins = db_list("select id_, name_, coin_code, fund_type from portfolio where username = '$username' " .
-	 " and fund_type NOT IN ('closed', 'FREEDOM') and name_ not like '%_Loan' and name_ not like '%_Tmp'  order by name_");
+	 " and fund_type NOT IN ('closed', 'FFA') and name_ not like '%_Loan' and name_ not like '%_Tmp'  order by name_");
 }
 
 
@@ -322,25 +322,14 @@ $modeAll = $mode === "all";
 		<a href="/index.php?cat=TODO&days=1">Dashboard</a>&nbsp;&nbsp;
 	</p>
 	<p>
-		<a href="/port.php">ALL</a>&nbsp;&nbsp;
-		<a href="/port.php?fund_type=FG1">FG1</a>&nbsp;&nbsp;
-		<a href="/port.php?fund_type=MEGA_SH">_SH</a>&nbsp;&nbsp;
-		<a href="/port.php?fund_type=MEGA_SC">_SC</a>&nbsp;&nbsp;
-		<a href="/port.php?fund_type=MEGA_176">_176</a>&nbsp;&nbsp;
-		<a href="/port.php?fund_type=MEGA_SSF">_SSF</a>&nbsp;&nbsp;
-		<a href="/port.php?fund_type=MEGA_REV">_REV</a>&nbsp;&nbsp;
-		<a href="/port.php?fund_type=GAZ">GAZ</a>&nbsp;&nbsp;
-		
-		<a href="/port.php?fund_type=FREEDOM">FREEDOM*</a>&nbsp;&nbsp;
-		<a href="/port.php?fund_type=closed">CLOSED*</a>
+		<a href="#" onclick="replaceURLParam('fund_type', '')">ALL</a> &nbsp;&nbsp;
+		<a href="#" onclick="replaceURLParam('fund_type', 'FG1')">FG1</a> &nbsp;&nbsp;
+		<a href="#" onclick="replaceURLParam('fund_type', 'FG2')">FG2</a> &nbsp;&nbsp;
+		<a href="#" onclick="replaceURLParam('fund_type', 'MEGA')">MEGA</a> &nbsp;&nbsp;
+		<a href="#" onclick="replaceURLParam('fund_type', 'FFA')">*FFA</a> &nbsp;&nbsp;
+		<a href="#" onclick="replaceURLParam('fund_type', 'closed')">*CLOSED</a> &nbsp;&nbsp;
+
 	</p>
-	<!-- <p>
-		<a href="/port0.php?fund_type=MEGA">MEGA</a>&nbsp;&nbsp;
-		<a href="/port0.php?fund_type=FG1">FG1</a>&nbsp;&nbsp;
-		<a href="/port0.php?fund_type=FG2">FG2</a>&nbsp;&nbsp;
-		<a href="/port0.php?fund_type=HELL">HELL</a>&nbsp;&nbsp;
-		<a href="/port0.php?fund_type=closed">CLOSED</a>
-	</p> -->
 </div>
 
 <?php
