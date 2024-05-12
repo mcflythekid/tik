@@ -64,7 +64,8 @@ if (has_httppost("action_rename") == true) {
 if (isset($param_fund_type)) {
 	$coins = db_list("select id_, name_, coin_code, fund_type from portfolio where username = '$username' and fund_type = '$param_fund_type' order by name_");
 } else {
-	$coins = db_list("select id_, name_, coin_code, fund_type from portfolio where username = '$username' and fund_type NOT IN ('closed', 'FREEDOM') and name_ not like '%_Loan' order by name_");
+	$coins = db_list("select id_, name_, coin_code, fund_type from portfolio where username = '$username' " .
+	 " and fund_type NOT IN ('closed', 'FREEDOM') and name_ not like '%_Loan' and name_ not like '%_Tmp'  order by name_");
 }
 
 
@@ -315,6 +316,7 @@ $modeAll = $mode === "all";
 		<a href="/port.php?fund_type=MEGA_176">_176</a>&nbsp;&nbsp;
 		<a href="/port.php?fund_type=MEGA_SSF">_SSF</a>&nbsp;&nbsp;
 		<a href="/port.php?fund_type=MEGA_REV">_REV</a>&nbsp;&nbsp;
+		<a href="/port.php?fund_type=GAZ">GAZ</a>&nbsp;&nbsp;
 		
 		<a href="/port.php?fund_type=FREEDOM">FREEDOM*</a>&nbsp;&nbsp;
 		<a href="/port.php?fund_type=closed">CLOSED*</a>
@@ -555,6 +557,7 @@ foreach($coins as $coin) {
 
 	.for_gold {
 		text-decoration: underline;
+		font-style: italic;
 	}
 </style>
 
