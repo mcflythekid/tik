@@ -86,6 +86,19 @@ foreach($prices as $price ) {
 	$price_data[$price["code"]] = $price["price"];
 }
 
+function getCustomPrice($coin_code, &$price_data) {
+	$key = 'p' . $coin_code;
+	if (isset($_GET[$key])) {
+		$price_data[$coin_code] = $_GET[$key];
+	}
+	// echo $_GET[$key] . "<br>";
+}
+foreach($prices as $price ) {
+	getCustomPrice($price["code"], $price_data);
+}
+//print_r($price_data);
+
+
 $paxg_price_now = getPAXG();
 $paxg_price_now  = $paxg_price_now * GOLD_RATE;
 
