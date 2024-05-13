@@ -273,95 +273,74 @@ span.line-head-skipable {
 	
 	
 	<hr />
-	<p>
+	<!-- <p>
 		<span class="line-head"></span>
 		<?=menu("info", $weather["temp"] . "℃", "#")?>
 		<?=menu("info",  ($weather["hum"] - 0) . "%", "#")?>
 		<?=menu("info",  date("H:i:s", strtotime($weather["ts"])), "#")?>
-	</p>
-	<p>
-		<span class="line-head">!!!</span>
-		<?=menu("danger", "🌞 Begin", "?cat=daily_begin&days=1")?>
-		<?=menu("danger", "🌞 End", "?cat=daily_end&days=1")?>
-		<?=menu("info", "Conn", "?cat=connect_all&days=30")?>
-	</p>
-	<p>
-		<span class="line-head">!!</span>
-		<?=menu("warning", "⚔️GYM", "?cat=gym&days=7")?>
-		<?=menu("warning", "⚔️FGT", "?cat=BOXING&days=6")?>
-		<?=menu("warning", "⚔LEARN", "?cat=LEARN&days=1")?>
-		<?=menu("warning", "⚔Pay", "?cat=f30d_payment")?>
-	</p>
-	<p>
-		<span class="line-head">!</span>
-		<?=menu("success", "3dCare", "?cat=care_f003d")?>
-		<?=menu("success", "1wCare", "?cat=care_f007d")?>
-		<?=menu("success", "2wCare", "?cat=care_f014d")?>
-	</p>
-		
-		
-	<hr/>
-	<p>
-		<span class="line-head">KSS</span>
-		<?=menu("danger", "3D",  "?cat=WORK_003d")?>
-		<?=menu("danger", "1W",  "?cat=WORK_007d")?>
-		<?=menu("danger", "1M", "?cat=WORK_030d")?>
-		<?=menu("danger", "3M", "?cat=WORK_180d")?>
-	</p>
+	</p> -->
 
-
-	<hr/>
+	<!-- WEEKEND -->
 	<p>
 		<form method='post' id="skip-all-t7cn-form">
 			<input type="hidden" name="action_skipAllGroup" value="xxx" />
 			<input type="hidden" name="category_prefix" value="WEEKEND_" />
 		</form>
-		<span class="line-head line-head-skipable" onclick="document.getElementById('skip-all-t7cn-form').submit();">T7CN</span>
+		<span class="line-head line-head-skipable" onclick="document.getElementById('skip-all-t7cn-form').submit();">SUN</span>
 	    <?=menu("info", "1W", "?cat=WEEKEND_007d")?>
-	    <?=menu("info", "2W", "?cat=WEEKEND_014d")?>
 	    <?=menu("info", "1M", "?cat=WEEKEND_030d")?>
 	    <?=menu("info", "2M", "?cat=WEEKEND_060d")?>
 	    <?=menu("info", "6M", "?cat=WEEKEND_180d")?>
 	    <?=menu("info", "1Y", "?cat=WEEKEND_360d")?>
-	    <?=menu("info", "2Y", "?cat=WEEKEND_720d")?>
+	</p>
+	<hr style="margin-bottom: 6px;"/>
+
+
+	<p>
+		<?=menu("success", "D1", "?cat=daily_begin&days=1")?>
+		<?=menu("success", "D2", "?cat=care_f003d")?>
+		<?=menu("success", "D7", "?cat=care_f007d")?>
+		<?=menu("success", "D14", "?cat=care_f014d")?>
+		
+		<span style="float:right; "><?=menu("danger", "🌞 End", "?cat=daily_end&days=1")?></span>
+	</p>
+
+
+
+	<p>
+		<?=menu("secondary", "GYM", "?cat=gym&days=7")?>
+		<?=menu("secondary", "FGT", "?cat=BOXING&days=6")?>
+		<?=menu("secondary", "GOD", "?cat=LEARN&days=1")?>
+		<?=menu("secondary", "🔧", "?cat=maintain&type=countdown")?>
+		<?=menu("secondary", "🌘", "?cat=luna&type=luna")?>	
+		<!-- <?=menu("secondary", "⌛", "?cat=events&type=countdown")?> -->
+		<?=menu("secondary", "CPG", "?cat=cpg")?>
 	</p>
 	<p>
-		<form method='post' id="skip-all-ocd-form">
-			<input type="hidden" name="action_skipAllGroup" value="xxx" />
-			<input type="hidden" name="category_prefix" value="OCD_" />
-		</form>
-		<span class="line-head line-head-skipable" onclick="document.getElementById('skip-all-ocd-form').submit();">OSD</span>
-	    <?=menu("info", "1W", "?cat=OCD_007d")?>
-	    <?=menu("info", "2W", "?cat=OCD_014d")?>
-	    <?=menu("info", "1M", "?cat=OCD_030d")?>
-	    <?=menu("info", "2M", "?cat=OCD_060d")?>
-	    <?=menu("info", "6M", "?cat=OCD_180d")?>
-	    <?=menu("info", "1Y", "?cat=OCD_360d")?>
-	    <?=menu("info", "2Y", "?cat=OCD_720d")?>
+		<?=menu("purple", "CONNECTION", "?cat=connect_all")?>
+		<?=menu("purple", "CONNECTION_DEBT", "?cat=DEBT")?>
+
+		<span style="float:right; "><?=menu("coin", "> ₿^ALL", "/port.php")?></span>
+		<span style="float:right; "><?=menu("warning", "⚔Pay", "?cat=f30d_payment")?></span>
 	</p>
-	<p>
-		<span class="line-head">REC</span>
-		<?=menu("secondary", "⌛🔧", "?cat=maintain&type=countdown")?>
-		<?=menu("secondary", "⌛☇", "?cat=events&type=countdown")?>
-		<?=menu("secondary", "⌛🌘", "?cat=luna&type=luna")?>	
-		<?=menu("secondary", "☑CPG", "?cat=cpg")?>
-		<?=menu("secondary", "☑Wsh", "?cat=wishlist")?>
-		<?=menu("secondary", "☑🤑", "?cat=DEBT&days=14")?>
-		<?=menu("secondary", "☑💊", "?cat=toxic")?>
-	</p>
-	
-	
+
+
+
 	<hr/>
-	<p>
-		<?=menu("danger", "ASAP", "?cat=TODO&days=1")?>
-		<?=menu("success", "POOL", "?cat=POOL&days=1")?>
-		<?=menu("secondary", "> ₿^ALL", "/port.php")?>
-		<?=menu("secondary", "> ₿^1", "/port.php?fund_type=FG1")?>
-	</p>
-	
-	
+
 	<br>
 </div>
+
+<style>
+.badge-purple {
+    color: #000;
+    background-color: pink;
+}
+.badge-coin {
+    color: #fff;
+    background-color: #a80717;
+}
+</style>
 
 <div class="row">
 	<div class="col-9">
