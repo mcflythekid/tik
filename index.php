@@ -132,7 +132,7 @@ unset($tik); // https://stackoverflow.com/questions/7158741/why-php-iteration-by
 function handle_normal(&$tik) {
 	$name = $tik["name_"];
 	$count = $tik["counter"];
-	$tik["tik_out_line"] = $count > 0 ? "$name ⟳$count" : $name;
+	$tik["tik_out_line"] = $count > 0 ? "$name <strong style='color: orange;'>⟳$count</strong>" : $name;
 }
 function handle_luna(&$tik) {
 	global $luna;
@@ -451,7 +451,7 @@ div#skipAll {
 		?>
 			<tr>
 				<?php if ($type == "tik") { ?>
-					<td><?=escape($tik['tik_out_line'])?></td>
+					<td><?=($tik['tik_out_line'])?></td>
 					<td class="td-min"><?=ago2($tik['tik'], false, $tik_color_day, "tik", $skipMillis)?></td>
 					<td class="td-min">
 						<form method='post' onSubmitz="return confirm('chắc chưa đại vương? <?=escape($tik['name_'])?>');">
@@ -469,7 +469,7 @@ div#skipAll {
 				<?php } else if ($type == 'countdown') { 
 					$tmp_date = str_replace(" 00:00:00", "", $tik['tik']);
 				?>
-					<td><?=escape($tik['name_'])?></td>
+					<td><?=($tik['name_'])?></td>
 					<td class="td-min"><?=ago2($tik['tik'], true, 0, "xx", $skipMillis)?> (<?=$tmp_date?>)</td>
 					
 					<td class="td-min">
