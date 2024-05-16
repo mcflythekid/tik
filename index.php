@@ -319,9 +319,11 @@ span.line-head-skipable {
 		<span style="float:right; "><?=menu("warning", "➕", "?cat=COUNTER")?></span>
 	</p>
 	<p>
-		<?=menu("purple", "CONNECTION", "?cat=connect_all")?>
-		<?=menu("purple", "CONNECTION_DEBT", "?cat=DEBT")?>
+		<?=menu("purple", "CONN", "?cat=connect_all")?>
+		<?=menu("purple", "CONN_DEBT", "?cat=DEBT")?>
 
+		<span style="float:right; "><?=menu("info", "LZ", "https://www.lazylearn.com/deck.php")?></span>
+		<span style="float:right; "><?=menu("success", "#", "https://docs.google.com/spreadsheets/d/1eVT6yArygT65vaiIQtuSG7m0M_X81JbIcjuoY_3j1ao/edit#gid=1716775415")?></span>
 		<span style="float:right; "><?=menu("coin", "> ₿^ALL", "/port.php")?></span>
 		<span style="float:right; "><?=menu("warning", "⚔Pay", "?cat=f30d_payment")?></span>
 	</p>
