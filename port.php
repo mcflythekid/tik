@@ -316,10 +316,16 @@ $modeAll = $mode === "all";
 	</form>
 </div>
 
-
+<?php
+	$ts_cz = file_get_contents("/home/mc/app/matrix/price-ts-cz");
+	$ts_mx = file_get_contents("/home/mc/app/matrix/price-ts-mx");
+	$ts_erc = file_get_contents("/home/mc/app/matrix/price-ts-erc");
+?>
 <div>
 	<p>
 		<a href="/index.php?cat=TODO&days=1">Dashboard</a>&nbsp;&nbsp;
+		<strong>CZ: <?=$ts_cz?></strong>&nbsp;&nbsp;&nbsp;&nbsp;
+		<strong>MX: <?=$ts_mx?></strong>&nbsp;&nbsp;&nbsp;&nbsp;
 	</p>
 	<p>
 		<a href="#" onclick="replaceURLParam('fund_type', '')">ALL</a> &nbsp;&nbsp;
@@ -332,25 +338,25 @@ $modeAll = $mode === "all";
 	</p>
 </div>
 
-<?php
-	$ts_cz = file_get_contents("/home/mc/app/matrix/price-ts-cz");
-	$ts_mx = file_get_contents("/home/mc/app/matrix/price-ts-mx");
-	$ts_erc = file_get_contents("/home/mc/app/matrix/price-ts-erc");
-?>
-<p>
-	<strong>CZ: <?=$ts_cz?></strong>&nbsp;&nbsp;&nbsp;&nbsp;
-	<strong>MX: <?=$ts_mx?></strong>&nbsp;&nbsp;&nbsp;&nbsp;
 
-	<?php if (isset($param_fund_type)) { ?>
+<p>
+	
+
+	<?php if (isset($param_fund_type) && $param_fund_type != "") { ?>
 		<strong><?= "type=$param_fund_type" ?></strong>&nbsp;&nbsp;&nbsp;&nbsp;
 	<?php } ?>
 
 
-	<strong><?= "Rate: ${rate}Đ" ?></strong>
+	<!-- <strong><?= "Rate: ${rate}Đ" ?></strong> -->
 </p>
 
 <p>
-<?php foreach($prices as $price ) {?>
+<?php foreach($prices as $price ) {
+	$code = $price["code"];
+	if ($code == "ARB" || $code == "USD" || $code == "PEPE" || $code == "LTC" ) {
+		continue;
+	}
+?>
 	<span><?=$price["code"]?>=<?=digit($price["price"], 10)?></span>&nbsp;&nbsp;
 <?php } ?>
 </p>
@@ -370,7 +376,7 @@ $modeAll = $mode === "all";
 </div>
 <?php } ?>
 
-<div style="margin-top: 30px; margin-bottom: 10px;">
+<div style="margin-top: 10px; margin-bottom: 10px;">
     <a href="#" onclick="replaceURLParam('mode', 'money')"><strong>[MONEY-MODE]</strong></a>&nbsp;&nbsp;&nbsp;&nbsp;
     <a href="#" onclick="replaceURLParam('mode', 'gold')"><strong>[GOLD-MODE]</strong></a>&nbsp;&nbsp;&nbsp;&nbsp;
     <a href="#" onclick="replaceURLParam('mode', 'all')"><strong>[ALL-MODE]</strong></a>&nbsp;&nbsp;&nbsp;&nbsp;
