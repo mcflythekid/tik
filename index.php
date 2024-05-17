@@ -316,7 +316,7 @@ span.line-head-skipable {
 		<!-- <?=menu("secondary", "⌛", "?cat=events&type=countdown")?> -->
 		<?=menu("secondary", "CPG", "?cat=cpg")?>
 		
-		<span style="float:right; "><?=menu("warning", "➕", "?cat=COUNTER")?></span>
+		<!-- <span style="float:right; "><?=menu("warning", "➕", "?cat=COUNTER")?></span> -->
 	</p>
 	<p>
 		<?=menu("purple", "CONN", "?cat=connect_all")?>
