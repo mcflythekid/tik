@@ -311,6 +311,7 @@ span.line-head-skipable {
 		<?=menu("secondary", "GYM", "?cat=gym&days=7")?>
 		<?=menu("secondary", "FGT", "?cat=BOXING&days=6")?>
 		<?=menu("secondary", "GOD", "?cat=LEARN&days=1")?>
+		<?=menu("secondary", "REFR", "?cat=REFR&days=1")?>
 		<?=menu("secondary", "🔧", "?cat=maintain&type=countdown")?>
 		<?=menu("secondary", "🌘", "?cat=luna&type=luna")?>	
 		<!-- <?=menu("secondary", "⌛", "?cat=events&type=countdown")?> -->
