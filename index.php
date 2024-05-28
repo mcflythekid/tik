@@ -302,7 +302,8 @@ span.line-head-skipable {
 		<?=menu("success", "D7", "?cat=care_f007d")?>
 		<?=menu("success", "D14", "?cat=care_f014d")?>
 		
-		<span style="float:right; "><?=menu("danger", "🌞 End", "?cat=daily_end&days=1")?></span>
+		
+		<span style="floatz:right; "><?=menu("danger", "🌞 End", "?cat=daily_end&days=1")?></span>
 	</p>
 
 
@@ -323,10 +324,10 @@ span.line-head-skipable {
 		<?=menu("purple", "CONN", "?cat=connect_all")?>
 		<?=menu("purple", "CONN_DEBT", "?cat=DEBT")?>
 
-		<span style="float:right; "><?=menu("info", "LZ", "https://www.lazylearn.com/deck.php")?></span>
-		<span style="float:right; "><?=menu("success", "#", "https://docs.google.com/spreadsheets/d/1eVT6yArygT65vaiIQtuSG7m0M_X81JbIcjuoY_3j1ao/edit#gid=1716775415")?></span>
-		<span style="float:right; "><?=menu("coin", "> ₿^ALL", "/port.php")?></span>
-		<span style="float:right; "><?=menu("warning", "⚔Pay", "?cat=f30d_payment")?></span>
+		<span style="floatz:right; "><?=menu("info", "LZ", "https://www.lazylearn.com/deck.php")?></span>
+		<span style="floatz:right; "><?=menu("success", "#", "https://docs.google.com/spreadsheets/d/1eVT6yArygT65vaiIQtuSG7m0M_X81JbIcjuoY_3j1ao/edit#gid=1716775415")?></span>
+		<span style="floatz:right; "><?=menu("coin", "> ₿^ALL", "/port.php")?></span>
+		<span style="floatz:right; "><?=menu("warning", "⚔Pay", "?cat=f30d_payment")?></span>
 	</p>
 
 
