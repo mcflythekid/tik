@@ -298,41 +298,29 @@ span.line-head-skipable {
 
 	<p>
 		<?=menu("success", "D1", "?cat=daily_begin&days=1")?>
-		<?=menu("success", "D2", "?cat=care_f003d")?>
+		<?=menu("success", "D3", "?cat=care_f003d")?>
 		<?=menu("success", "D7", "?cat=care_f007d")?>
 		<?=menu("success", "D14", "?cat=care_f014d")?>
-		
-		
-		<span style="floatz:right; "><?=menu("danger", "🌞 End", "?cat=daily_end&days=1")?></span>
-	</p>
-
-
-
-	<p>
 		<?=menu("secondary", "GYM", "?cat=gym&days=7")?>
 		<?=menu("secondary", "FGT", "?cat=BOXING&days=6")?>
 		<?=menu("secondary", "GOD", "?cat=LEARN&days=1")?>
-		<?=menu("secondary", "🔧", "?cat=maintain&type=countdown")?>
-		<?=menu("secondary", "🌘", "?cat=luna&type=luna")?>	
-		<!-- <?=menu("secondary", "⌛", "?cat=events&type=countdown")?> -->
-		<?=menu("secondary", "CPG", "?cat=cpg")?>
-		
-		<!-- <span style="float:right; "><?=menu("warning", "➕", "?cat=COUNTER")?></span> -->
-	</p>
-	<p>
-		<?=menu("purple", "CONN", "?cat=connect_all")?>
-		<?=menu("purple", "CONN_DEBT", "?cat=DEBT")?>
-
-		<span style="floatz:right; "><?=menu("info", "LZ", "https://www.lazylearn.com/deck.php")?></span>
-		<span style="floatz:right; "><?=menu("success", "#", "https://docs.google.com/spreadsheets/d/1eVT6yArygT65vaiIQtuSG7m0M_X81JbIcjuoY_3j1ao/edit#gid=1716775415")?></span>
-		<span style="floatz:right; "><?=menu("coin", "> ₿^ALL", "/port.php")?></span>
 		<span style="floatz:right; "><?=menu("warning", "⚔Pay", "?cat=f30d_payment")?></span>
+		
+		<!-- <span style="floatz:right; "><?=menu("danger", "🌞 End", "?cat=daily_end&days=1")?></span> -->
 	</p>
 
 
 
+	<p>
+		<?=menu("secondary", "🌘", "?cat=luna&type=luna")?>	
+		<?=menu("secondary", "🔧", "?cat=maintain&type=countdown")?>
+		<?=menu("secondary", "⌛", "?cat=events&type=countdown")?>
+		<?=menu("secondary", "CPG", "?cat=cpg")?>
+		<?=menu("purple", "CONN", "?cat=connect_all&days=21")?>
+		<?=menu("purple", "DEBT", "?cat=DEBT")?>
+		<span style="floatz:right; "><?=menu("coin", "> ₿^ALL", "/port.php")?></span>
+	</p>
 	<hr/>
-
 	<br>
 </div>
 
