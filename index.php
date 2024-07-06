@@ -109,6 +109,13 @@ if (has_httppost("action_skipAllGroup") == true) {
 	exit;
 }
 
+// Reset Skip
+if (has_httppost("action_skipReset") == true) {
+	db_query("update tik set skip = null");
+	header("Refresh:0");
+	exit;
+}
+
 $order_by = 'tik asc';
 if (in_array($cat, array("TODO", "TODO2", "cpg", "w"))) { // No tik
     $order_by = 'name_ asc';
@@ -266,13 +273,16 @@ span.line-head-skipable {
 	<?php } ?>
 	
 	<div style="float:right; ">
-		<form action='/logout.php' onSubmit="return confirm('thoát nha anh hai');">
+		<form action='/logout.php' onSubmit="return confirm('thoát nha anh hai');" style="display:inline;">
 			<input type="submit" class="btn btn-sm btn-warning" value="🌚" />
+		</form>
+		<form method='post' style="display:inline;">
+			<input type="hidden" name="action_skipReset" value="xxx" />
+			<input type="submit" class="btn btn-sm btn-info =" value="Rv" />
 		</form>
 	</div>
 	
-	
-	<hr />
+
 	<!-- <p>
 		<span class="line-head"></span>
 		<?=menu("info", $weather["temp"] . "℃", "#")?>
