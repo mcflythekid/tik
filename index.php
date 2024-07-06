@@ -322,6 +322,7 @@ span.line-head-skipable {
 
 
 	<p>
+		<?=menu("warning", "Strzz", "?cat=instant")?>	
 		<?=menu("secondary", "🌘", "?cat=luna&type=luna")?>	
 		<?=menu("secondary", "🔧", "?cat=maintain&type=countdown")?>
 		<?=menu("secondary", "⌛", "?cat=events&type=countdown")?>
