@@ -365,13 +365,16 @@ span.line-head-skipable {
 		<?=menu("purple", "CONN", "?cat=connect_all&days=21")?>
 		<?=menu("purple", "DEBT", "?cat=DEBT")?>
 		<span style="floatz:right; "><?=menu("coin", "> ₿^ALL", "/port.php")?></span>
+		<span style="floatz:right; "><?=menu("warning", "⚔Pay", "?cat=f30d_payment")?></span>
 	</p>
 
 	<p>	
-		<span style="floatz:right; "><?=menu("warning", "⚔Pay", "?cat=f30d_payment")?></span>
-		<?=menu("warning", "Strzz", "?cat=instant")?>	
-		<?=menu("warning", "TMR", "?type=todo&cat=TODO_TMR")?>	
+		
+		<?=menu("warning", "Alpha", "?cat=instant&type=todo")?>	
+		<?=menu("warning", "Bravo", "?type=todo&cat=TODO_TMR")?>	
+		<?=menu("warning", "Chore", "?type=todo&cat=todo_chore")?>	
 		<?=menu("warning", "KMS", "?type=todo&cat=KMS")?>	
+		<?=menu("warning", "PePe", "?type=todo&cat=todo_pepe")?>	
 	</p>
 
 	<hr/>
@@ -555,14 +558,17 @@ div#skipAll {
 							<?= simpleAction("BOT", ["todo_move_bottom" => $tik_id], '') ?>
 							<?= simpleAction("UP", ["todo_move_up" => $tik_id], '') ?>
 							<?= simpleAction("DOWN", ["todo_move_down" => $tik_id], '') ?>
+							<?=ui_del($tik)?>
 						</div>
 					</td>
 				<?php endif; ?>
 	
-				<td class="td-min">
-					<?=ui_del($tik)?>
-					<?=ui_toggle($tik)?>
-				</td>
+				<?php if ($type !== 'todo') : ?>
+					<td class="td-min">
+						<?=ui_del($tik)?>
+						<?=ui_toggle($tik)?>
+					</td>
+				<?php endif; ?>
 			</tr>
 		<?php }?>
 		</tbody>
