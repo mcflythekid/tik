@@ -19,12 +19,42 @@ $username = $_SESSION['username'];
 $tik_color_day = isset($_GET['days']) ? $_GET['days'] : get_tik_color_day($cat);
 
 // create for tik
-if (isset($_POST['name_'])) {
+if (isset($_POST['name_']) && $type == 'tik') {
 	$new_name = $_POST['name_'];
 	db_query("insert into tik (username, category, type_, name_, tik) values ('$username', '$cat', 'tik', '$new_name', now() - interval 10 year)");
 	header("Refresh:0");
 	exit;
 }
+
+// TODO
+if ($type == 'todo') {
+	if (isset($_POST['name_'])) {
+		todo_create($cat, $_POST['name_']);
+		header("Refresh:0");
+		exit;
+	}
+	if (isset($_POST['todo_move_top'])) {
+		todo_move_top($_POST['todo_move_top']);
+		header("Refresh:0");
+		exit;
+	}
+	if (isset($_POST['todo_move_bottom'])) {
+		todo_move_bottom($_POST['todo_move_bottom']);
+		header("Refresh:0");
+		exit;
+	}
+	if (isset($_POST['todo_move_up'])) {
+		todo_move_up($_POST['todo_move_up']);
+		header("Refresh:0");
+		exit;
+	}
+	if (isset($_POST['todo_move_down'])) {
+		todo_move_down($_POST['todo_move_down']);
+		header("Refresh:0");
+		exit;
+	}
+}
+
 
 // create for countdown
 if (isset($_POST['countdown_name']) && isset($_POST['countdown_tik'])) {
@@ -120,6 +150,10 @@ $order_by = 'tik asc';
 if (in_array($cat, array("TODO", "TODO2", "cpg", "w"))) { // No tik
     $order_by = 'name_ asc';
 }
+if ($type == 'todo') {
+	$order_by = 'todo_order DESC';
+}
+
 $tiks = db_list("select id_, name_, tik, category, counter, skip from tik where username = '$username' and category = '$cat' and type_ = '$type' order by $order_by");
 
 
@@ -221,8 +255,7 @@ if ($kind == "xhr") {
 }
 
 $weather = db_object("select * from weather where id = 'main'");
-// var_dump($weather);
-// exit;
+
 
 page_top ();
 ?>
@@ -308,21 +341,23 @@ span.line-head-skipable {
 
 	<p>
 		<?=menu("success", "D1", "?cat=daily_begin&days=1")?>
+		<span style="floatz:right; "><?=menu("danger", "🌞 D1", "?cat=daily_end&days=1")?></span>
+
 		<?=menu("success", "D3", "?cat=care_f003d")?>
 		<?=menu("success", "D7", "?cat=care_f007d")?>
 		<?=menu("success", "D14", "?cat=care_f014d")?>
 		<?=menu("secondary", "GYM", "?cat=gym&days=7")?>
 		<?=menu("secondary", "FGT", "?cat=BOXING&days=6")?>
 		<?=menu("secondary", "GOD", "?cat=LEARN&days=1")?>
-		<span style="floatz:right; "><?=menu("warning", "⚔Pay", "?cat=f30d_payment")?></span>
 		
-		<!-- <span style="floatz:right; "><?=menu("danger", "🌞 End", "?cat=daily_end&days=1")?></span> -->
+		
+		
 	</p>
 
 
 
 	<p>
-		<?=menu("warning", "Strzz", "?cat=instant")?>	
+		
 		<?=menu("secondary", "🌘", "?cat=luna&type=luna")?>	
 		<?=menu("secondary", "🔧", "?cat=maintain&type=countdown")?>
 		<?=menu("secondary", "⌛", "?cat=events&type=countdown")?>
@@ -331,6 +366,14 @@ span.line-head-skipable {
 		<?=menu("purple", "DEBT", "?cat=DEBT")?>
 		<span style="floatz:right; "><?=menu("coin", "> ₿^ALL", "/port.php")?></span>
 	</p>
+
+	<p>	
+		<span style="floatz:right; "><?=menu("warning", "⚔Pay", "?cat=f30d_payment")?></span>
+		<?=menu("warning", "Strzz", "?cat=instant")?>	
+		<?=menu("warning", "TMR", "?type=todo&cat=TODO_TMR")?>	
+		<?=menu("warning", "KMS", "?type=todo&cat=KMS")?>	
+	</p>
+
 	<hr/>
 	<br>
 </div>
@@ -390,7 +433,7 @@ div#skipAll {
 </style>
 
 <div id="adding">
-	<?php if ($type == "tik") { ?>
+	<?php if ($type == "tik" || $type == 'todo') { ?>
 		<form  method='post'>
 			<div class="row">
 				<div class="input-group col-lg-4 col-md-6 col-sm-8 col-xs-12">
@@ -437,6 +480,8 @@ div#skipAll {
 
 				<?php if ($type == "tik") { ?>
 					<th>Tik</th>
+				<?php } else if ($type == "todo") { ?>
+					<th></th>
 				<?php } else { ?>
 					<th>Countdown</th>
 				<?php } ?>
@@ -450,6 +495,7 @@ div#skipAll {
 		<tbody>
 		<?php foreach($tiks as $tik ) {
 			$skipMillis = strtotime($tik['skip']);
+			$tik_id = $tik["id_"];
 		?>
 			<tr>
 				<?php if ($type == "tik") { ?>
@@ -467,7 +513,14 @@ div#skipAll {
 							<input type="submit" classz="btn btn-warning" value="Skip" />
 						</form>
 					</td>
-		
+
+
+				<?php } else if ($type == 'todo') { 
+					
+				?>
+					<td><?=($tik['name_'])?></td>
+
+
 				<?php } else if ($type == 'countdown') { 
 					$tmp_date = str_replace(" 00:00:00", "", $tik['tik']);
 				?>
@@ -492,6 +545,19 @@ div#skipAll {
 						<tr><td><?=ui_edit($tik, $all_categories)?></td></tr>
 					</table>
 				</td>
+
+				<?php if ($type == 'todo') : ?>
+					<td >
+						<div class="button-container">
+							
+							<?= simpleAction("TOP", ["todo_move_top" => $tik_id], '') ?>
+							
+							<?= simpleAction("BOT", ["todo_move_bottom" => $tik_id], '') ?>
+							<?= simpleAction("UP", ["todo_move_up" => $tik_id], '') ?>
+							<?= simpleAction("DOWN", ["todo_move_down" => $tik_id], '') ?>
+						</div>
+					</td>
+				<?php endif; ?>
 	
 				<td class="td-min">
 					<?=ui_del($tik)?>
@@ -503,6 +569,18 @@ div#skipAll {
 
 	</table>
 </div>
+
+<style>
+.button-container {
+	display: flex;
+    /* text-align: center; */
+}
+
+.button-container input {
+    display: inline-block;
+    /* margin: 0 10px;  */
+}
+</style>
 
 <?php if (startsWith($cat, "connect_")) { ?>
 	<script>

@@ -385,3 +385,79 @@ function getPAXG() {
 	return $row["price"];
 }
 
+
+
+
+// TODO related
+function getTodoGroupMinOfId($id) {
+	$data = db_object("SELECT MIN(todo_order) AS min FROM tik WHERE category = (SELECT category FROM tik WHERE id_ = ${id}) ");
+	return $data['min'] != null ? $data['min'] : 0;
+}
+function getTodoGroupMaxOfId($id) {
+	$data = db_object("SELECT MAX(todo_order) AS max FROM tik WHERE category = (SELECT category FROM tik WHERE id_ = ${id}) ");
+	return $data['max'] != null ? $data['max'] : 0;
+}
+function getTodoGroupMinOfCat($cat) {
+	$data = db_object("SELECT MIN(todo_order) AS min FROM tik WHERE category = '${cat}' ");
+	return $data['min'] != null ? $data['min'] : 0;
+}
+function todo_create($cat, $name) {
+	$username = $_SESSION['username'];
+	$position = getTodoGroupMinOfCat($cat) - 1;
+	db_query("INSERT INTO tik (username, category, type_, name_, todo_order) values ('$username', '$cat', 'todo', '$name', $position)");
+}
+function todo_move_top($id) {
+	$position = getTodoGroupMaxOfId($id) + 1;
+	db_query("UPDATE tik SET todo_order = $position WHERE id_ = $id");
+}
+function todo_move_bottom($id) {
+	$position = getTodoGroupMinOfId($id) - 1;
+	db_query("UPDATE tik SET todo_order = $position WHERE id_ = $id");
+}
+function todo_move_down($id) {
+    $current = db_object("SELECT id_, category, todo_order FROM tik WHERE id_ = ${id}");
+    $currentOrder = $current['todo_order'];
+    $category = $current['category'];
+
+    // Get the item just above the current item
+    $above = db_object("SELECT id_, todo_order FROM tik WHERE category = '${category}' AND todo_order < ${currentOrder} ORDER BY todo_order DESC LIMIT 1");
+
+    if ($above) {
+        $aboveId = $above['id_'];
+        $aboveOrder = $above['todo_order'];
+
+        // Swap the order values
+        db_query("UPDATE tik SET todo_order = ${currentOrder} WHERE id_ = ${aboveId}");
+        db_query("UPDATE tik SET todo_order = ${aboveOrder} WHERE id_ = ${id}");
+    }
+}
+function todo_move_up($id) {
+    $current = db_object("SELECT id_, category, todo_order FROM tik WHERE id_ = ${id}");
+    $currentOrder = $current['todo_order'];
+    $category = $current['category'];
+
+    // Get the item just below the current item
+    $below = db_object("SELECT id_, todo_order FROM tik WHERE category = '${category}' AND todo_order > ${currentOrder} ORDER BY todo_order ASC LIMIT 1");
+
+    if ($below) {
+        $belowId = $below['id_'];
+        $belowOrder = $below['todo_order'];
+
+        // Swap the order values
+        db_query("UPDATE tik SET todo_order = ${currentOrder} WHERE id_ = ${belowId}");
+        db_query("UPDATE tik SET todo_order = ${belowOrder} WHERE id_ = ${id}");
+    }
+}
+
+
+function simpleAction($text, $array, $class = 'btn btn-warning') {
+	$html = "<form method='post'>";
+
+	foreach ($array as $key => $value):
+		$html .= "<input type='hidden' name='$key' value='$value' />";
+	endforeach;
+	
+	$html .= "<input type='submit' class='$class' value='$text' />";
+	$html .= "</form>";
+	return $html;
+}
