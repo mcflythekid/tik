@@ -73,6 +73,9 @@ function db_open(){
 function db_object($sql){
 	global $con;
 	$rs = mysqli_query($con, $sql);
+	if (!$rs) {
+		return false;
+	}
 	if (mysqli_num_rows($rs) > 0) {
 		$obj = mysqli_fetch_assoc($rs); 
 		return $obj;
