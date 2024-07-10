@@ -346,7 +346,7 @@ span.line-head-skipable {
 		<?=menu("success", "D3", "?cat=care_f003d")?>
 		<?=menu("success", "D7", "?cat=care_f007d")?>
 		<?=menu("success", "D14", "?cat=care_f014d")?>
-		<?=menu("secondary", "GYM", "?cat=gym&days=7")?>
+		<?=menu("secondary", "GYM", "?cat=gym&days=8")?>
 		<?=menu("secondary", "FGT", "?cat=BOXING&days=6")?>
 		<?=menu("secondary", "GOD", "?cat=LEARN&days=1")?>
 		
@@ -370,11 +370,13 @@ span.line-head-skipable {
 
 	<p>	
 		
-		<?=menu("warning", "Alpha", "?cat=instant&type=todo")?>	
-		<?=menu("warning", "Bravo", "?type=todo&cat=TODO_TMR")?>	
-		<?=menu("warning", "Chore", "?type=todo&cat=todo_chore")?>	
+		<?=menu("warning", "Alpha", "?type=todo&cat=TD_ALPHA")?>
+
+
 		<?=menu("warning", "KMS", "?type=todo&cat=KMS")?>	
 		<?=menu("warning", "PePe", "?type=todo&cat=todo_pepe")?>	
+		<?=menu("warning", "Chore", "?type=todo&cat=TD_chore")?>	
+		
 	</p>
 
 	<hr/>
