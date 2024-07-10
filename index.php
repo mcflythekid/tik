@@ -373,7 +373,6 @@ span.line-head-skipable {
 		<?=menu("warning", "Alpha", "?type=todo&cat=TD_ALPHA")?>
 
 
-		<?=menu("warning", "KMS", "?type=todo&cat=KMS")?>	
 		<?=menu("warning", "PePe", "?type=todo&cat=todo_pepe")?>	
 		<?=menu("warning", "Chore", "?type=todo&cat=TD_chore")?>	
 		
