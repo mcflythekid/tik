@@ -560,6 +560,7 @@ div#skipAll {
 							<?= simpleAction("UP", ["todo_move_up" => $tik_id], '') ?>
 							<?= simpleAction("DOWN", ["todo_move_down" => $tik_id], '') ?>
 							<?=ui_del($tik)?>
+							<?=ui_toggle($tik)?>
 						</div>
 					</td>
 				<?php endif; ?>
@@ -618,6 +619,7 @@ div#skipAll {
 <?php function ui_edit($tik, $all_categories) { 
 	$tik_name = $tik["name_"];
 	$tik_cat = $tik["category"];
+	global $type;
 ?>
 	<form method='post' onSubmitz="return confirm('Ghi nhận SỬA <?=$tik_name?>?');">
 		<input type="hidden" name="action_edit" value="xxx" />
@@ -634,7 +636,8 @@ div#skipAll {
 		</select>
 		
 		
-		<input size="<?=INPUT_SIZE_DATETIME?>" name="ts" placeholder="<?=INPUT_HINT_DATETIME?>" value="<?=$tik['tik']?>"></input>
+		<input <?= $type=='todo' ? ' type="hidden" ' : '' ?> size="<?=INPUT_SIZE_DATETIME?>" name="ts" placeholder="<?=INPUT_HINT_DATETIME?>" value="<?=$tik['tik']?>"></input>
+
 		<input type="submit" value="Submit" />
 	</form>
 <?php } ?>
