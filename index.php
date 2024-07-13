@@ -361,7 +361,6 @@ span.line-head-skipable {
 		<?=menu("secondary", "🌘", "?cat=luna&type=luna")?>	
 		<?=menu("secondary", "🔧", "?cat=maintain&type=countdown")?>
 		<?=menu("secondary", "⌛", "?cat=events&type=countdown")?>
-		<?=menu("secondary", "CPG", "?cat=cpg")?>
 		<?=menu("purple", "CONN", "?cat=connect_all&days=21")?>
 		<?=menu("purple", "DEBT", "?cat=DEBT")?>
 		<span style="floatz:right; "><?=menu("coin", "> ₿^ALL", "/port.php")?></span>
@@ -374,7 +373,8 @@ span.line-head-skipable {
 
 
 		<?=menu("warning", "PePe", "?type=todo&cat=todo_pepe")?>	
-		<?=menu("warning", "Chore", "?type=todo&cat=TD_chore")?>	
+		<?=menu("warning", "NICE_2_HAVE", "?type=todo&cat=TD_NICE_TO_HAVE")?>
+		<?=menu("warning", "SINS", "?type=todo&cat=TD_SINS")?>
 		
 	</p>
 
