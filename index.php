@@ -352,6 +352,12 @@ span.line-head-skipable {
 		
 		
 		
+		
+	</p>
+
+	<p>
+		<?=menu("warning", "STEP_BY_STEP", "?cat=STEP_BY_STEP&days=1")?>
+		<?=menu("warning", "☣ AVOID", "?cat=AVOID")?>
 	</p>
 
 
