@@ -374,6 +374,7 @@ span.line-head-skipable {
 
 	<p>	
 		
+		<?=menu("warning", "Must Must Must", "?type=todo&cat=TD_NOW")?>
 		<?=menu("warning", "Alpha", "?type=todo&cat=TD_ALPHA")?>
 
 
