@@ -348,7 +348,6 @@ span.line-head-skipable {
 		<?=menu("success", "D14", "?cat=care_f014d")?>
 		<?=menu("secondary", "GYM", "?cat=gym&days=8")?>
 		<?=menu("secondary", "FGT", "?cat=BOXING&days=6")?>
-		<?=menu("secondary", "GOD", "?cat=LEARN&days=1")?>
 		
 		
 		
