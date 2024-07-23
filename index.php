@@ -368,7 +368,7 @@ span.line-head-skipable {
 		<?=menu("secondary", "⌛", "?cat=events&type=countdown")?>
 		<?=menu("purple", "CONN", "?cat=connect_all&days=21")?>
 		<?=menu("purple", "DEBT", "?cat=DEBT")?>
-		<span style="floatz:right; "><?=menu("coin", "> ₿^ALL", "/port.php")?></span>
+		<span style="floatz:right; "><?=menu("coin", "> ₿^ALL", "https://tik.lazylearn.com/port.php")?></span>
 		<span style="floatz:right; "><?=menu("warning", "⚔Pay", "?cat=f30d_payment")?></span>
 	</p>
 

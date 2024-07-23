@@ -323,7 +323,7 @@ $modeAll = $mode === "all";
 ?>
 <div>
 	<p>
-		<a href="/index.php?cat=TODO&days=1">Dashboard</a>&nbsp;&nbsp;
+		<a href="http://t.geemxsystem.online/index.php?cat=TODO&days=1">Dashboard</a>&nbsp;&nbsp;
 		<strong>CZ: <?=$ts_cz?></strong>&nbsp;&nbsp;&nbsp;&nbsp;
 		<strong>MX: <?=$ts_mx?></strong>&nbsp;&nbsp;&nbsp;&nbsp;
 	</p>
