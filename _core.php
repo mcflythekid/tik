@@ -401,9 +401,14 @@ function getTodoGroupMinOfCat($cat) {
 	$data = db_object("SELECT MIN(todo_order) AS min FROM tik WHERE category = '${cat}' ");
 	return $data['min'] != null ? $data['min'] : 0;
 }
+function getTodoGroupMaxOfCat($cat) {
+	$data = db_object("SELECT MAX(todo_order) AS max FROM tik WHERE category = '${cat}' ");
+	return $data['max'] != null ? $data['max'] : 0;
+}
 function todo_create($cat, $name) {
 	$username = $_SESSION['username'];
-	$position = getTodoGroupMinOfCat($cat) - 1;
+	// $position = getTodoGroupMinOfCat($cat) - 1;
+	$position = getTodoGroupMaxOfCat($cat) + 1;
 	db_query("INSERT INTO tik (username, category, type_, name_, todo_order) values ('$username', '$cat', 'todo', '$name', $position)");
 }
 function todo_move_top($id) {
