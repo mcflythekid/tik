@@ -374,13 +374,16 @@ span.line-head-skipable {
 
 	<p>	
 		
-		<?=menu("warning", "Must Must Must", "?type=todo&cat=TD_NOW")?>
+		<?=menu("success", " 🗲 Fast", "?type=todo&cat=TD_FAST")?>
 		<?=menu("warning", "Alpha", "?type=todo&cat=TD_ALPHA")?>
 
 
 		<?=menu("warning", "PePe", "?type=todo&cat=todo_pepe")?>	
-		<?=menu("warning", "NICE_2_HAVE", "?type=todo&cat=TD_NICE_TO_HAVE")?>
-		<?=menu("warning", "SINS", "?type=todo&cat=TD_SINS")?>
+
+		<?=menu("warning", "- Tốn Sức", "?type=todo&cat=TD_COST_TIME")?>
+		<?=menu("warning", "- Tốn Tiền", "?type=todo&cat=TD_COST_MONEY")?>
+
+		<?=menu("warning", "⛪ Sins", "?type=todo&cat=TD_SINS")?>
 		
 	</p>
 
