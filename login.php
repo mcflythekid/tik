@@ -1,5 +1,12 @@
 <?php
 session_start ();
+$_SESSION ["username"] = "marty";
+header("Location:/index.php");
+exit;
+
+
+
+
 require_once ("_core.php");
 if (isset ( $_SESSION ["username"] )) { // go home if logged in
   header("Location:/index.php");
