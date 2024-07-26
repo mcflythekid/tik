@@ -191,17 +191,21 @@ function handle_luna(&$tik) {
 	$sola_day = $sola_obj[0];
 	
 	$today = new DateTime("now");
-	$haha = new DateTime("$sola_year-$sola_month-$sola_day 12:00:00");
 	
+	$haha = new DateTime("$sola_year-$sola_month-$sola_day 12:00:00");
+
 	if ($today > $haha) {
 		
-		$tmp_luna_obj = $luna->convertSolar2Lunar(idate("d"),idate("m"),idate("Y") + 1,7);
-		$tmp_luna_leap = $tmp_luna_obj[3];
+		//$tmp_luna_obj = $luna->convertSolar2Lunar(idate("d"),idate("m"),idate("Y") + 1,7);
+		//$tmp_luna_leap = $tmp_luna_obj[3];
 		
 		$sola_obj = $luna->convertLunar2Solar($luna_day, $luna_month, $now_luna_year + 1,$tmp_luna_leap,7);
 		$sola_year = $sola_obj[2];
 		$sola_month = $sola_obj[1];
 		$sola_day = $sola_obj[0];
+
+		echo "<br>";
+		var_dump($sola_obj);
 	}
 	
 	$weekday = date('D', strtotime("$sola_year-$sola_month-$sola_day"));
@@ -240,7 +244,7 @@ if ($kind == "xhr") {
 			}
 			
 		} else if ($type == 'luna') {
-			if (strpos($line, "green") !== false) {
+			if (isset($line) && strpos($line, "green") !== false) {
 				$green += 1;
 			}
 			$line = $tik["luna_out_line"];
@@ -318,9 +322,11 @@ span.line-head-skipable {
 
 	<!-- <p>
 		<span class="line-head"></span>
-		<?=menu("info", $weather["temp"] . "℃", "#")?>
-		<?=menu("info",  ($weather["hum"] - 0) . "%", "#")?>
-		<?=menu("info",  date("H:i:s", strtotime($weather["ts"])), "#")?>
+		<?php if (is_array($weather)): ?>
+			<?=menu("info", $weather["temp"] . "℃", "#")?>
+			<?=menu("info",  ($weather["hum"] - 0) . "%", "#")?>
+			<?=menu("info",  date("H:i:s", strtotime($weather["ts"])), "#")?>
+		<?php endif; ?>
 	</p> -->
 
 	<!-- WEEKEND -->
@@ -356,7 +362,7 @@ span.line-head-skipable {
 
 	<p>
 		<?=menu("warning", "STEP_BY_STEP", "?cat=STEP_BY_STEP&days=1")?>
-		<?=menu("warning", "☣ AVOID", "?cat=AVOID")?>
+		<?=menu("warning", "☣ AVOID", "?cat=AVOID&days=1")?>
 	</p>
 
 
@@ -375,15 +381,13 @@ span.line-head-skipable {
 	<p>	
 		
 		<?=menu("success", " 🗲 Fast", "?type=todo&cat=TD_FAST")?>
-		<?=menu("warning", "Alpha", "?type=todo&cat=TD_ALPHA")?>
-
 
 		<?=menu("warning", "PePe", "?type=todo&cat=todo_pepe")?>	
 
 		<?=menu("warning", "- Tốn Sức", "?type=todo&cat=TD_COST_TIME")?>
 		<?=menu("warning", "- Tốn Tiền", "?type=todo&cat=TD_COST_MONEY")?>
 
-		<?=menu("warning", "⛪ Sins", "?type=todo&cat=TD_SINS")?>
+		
 		
 	</p>
 

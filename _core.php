@@ -228,7 +228,10 @@ function ago($date_string, $color = false)
 
 function get_tik_color_day($cat) {
     preg_match_all('!\d+!', $cat, $matches);
-    return $matches[0][0];
+	if (is_array($matches) && is_array($matches[0]) && sizeof($matches[0]) > 0) {
+		return $matches[0][0];
+	}
+    return null;
 }
 
 

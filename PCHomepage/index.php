@@ -17,7 +17,7 @@
 	
 		<h3>TRACKING</h3>
 		<ul>
-			<li><a href="https://tik.lazylearn.com/">--- TIK ---</a></li>
+			<li><a href="https://t.geemxsystem.online/index.php?type=todo&cat=TD_FAST">--- TIK ---</a></li>
 			<li><a href="https://www.lazylearn.com/deck.php">--- LZ ---</a></li>
 			<li><a href="https://docs.google.com/spreadsheets/d/1eVT6yArygT65vaiIQtuSG7m0M_X81JbIcjuoY_3j1ao/edit#gid=729162559">tracker</a></li>
 
