@@ -380,7 +380,7 @@ span.line-head-skipable {
 
 	<p>	
 		
-		<?=menu("success", " 🗲 Fast", "?type=todo&cat=TD_FAST")?>
+		<?=menu("success", " ☣ Fast ☣ ", "?type=todo&cat=TD_FAST")?>
 
 		<?=menu("warning", "PePe", "?type=todo&cat=todo_pepe")?>	
 
