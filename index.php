@@ -204,8 +204,8 @@ function handle_luna(&$tik) {
 		$sola_month = $sola_obj[1];
 		$sola_day = $sola_obj[0];
 
-		echo "<br>";
-		var_dump($sola_obj);
+		//echo "<br>";
+		//var_dump($sola_obj);
 	}
 	
 	$weekday = date('D', strtotime("$sola_year-$sola_month-$sola_day"));
