@@ -77,18 +77,18 @@ if (isset($_POST['luna_name']) && isset($_POST['luna_tik'])) {
 }
 
 // do the tik
-if (isset($_POST['tik_id'])) {
-	$tik_id = $_POST['tik_id'];
+if (isset($_POST['tik_id_async'])) {
+	$tik_id = $_POST['tik_id_async'];
 	db_query("update tik set tik = now(), counter = counter + 1, skip = NULL where id_ = $tik_id");
-	header("Refresh:0");
+	echo "OK";
 	exit;
 }
 
 // removal
-if (isset($_POST['rm_id'])) {
-	$rm_id = $_POST['rm_id'];
+if (isset($_POST['rm_id_async'])) {
+	$rm_id = $_POST['rm_id_async'];
 	db_query("delete from tik where id_ = $rm_id");
-	header("Refresh:0");
+	echo "OK";
 	exit;
 }
 
@@ -106,14 +106,14 @@ if (has_httppost("action_edit") == true) {
 }
 
 // skip
-if (has_httppost("action_skip") == true) {
-	$req_id = get_httppost("id");
+if (has_httppost("action_skip_async_id") == true) {
+	$req_id = get_httppost("action_skip_async_id");
 
 	$endString = date('Y-m-d 23:59:59', time());
 	$endMillis = strtotime($endString);
 	
 	db_query("update tik set skip = FROM_UNIXTIME($endMillis) where id_ = '$req_id'");
-	header("Refresh:0");
+	echo "OK";
 	exit;
 }
 
@@ -517,18 +517,12 @@ div#skipAll {
 			<tr>
 				<?php if ($type == "tik") { ?>
 					<td><?=($tik['tik_out_line'])?></td>
-					<td class="td-min"><?=ago2($tik['tik'], false, $tik_color_day, "tik", $skipMillis)?></td>
+					<td class="td-min tik_async_prefix" data-id="<?=$tik['id_']?>"><?=ago2($tik['tik'], false, $tik_color_day, "tik", $skipMillis)?></td>
 					<td class="td-min">
-						<form method='post' onSubmitz="return confirm('chắc chưa đại vương? <?=escape($tik['name_'])?>');">
-							<input type="hidden" name="tik_id" value="<?=$tik['id_']?>" />
-							<input type="submit" classz="btn btn-success" value="Tik" />
-						</form>
 
-						<form method='post'>
-							<input type="hidden" name="action_skip" value="xxx" />
-							<input type="hidden" name="id" value="<?=$tik['id_']?>" />
-							<input type="submit" classz="btn btn-warning" value="Skip" />
-						</form>
+						<!-- do tik -->
+						<button class="btn btn-sm btn-warning tik_async" data-id="<?=$tik['id_']?>">Tik</button>
+						<button class="btn btn-sm btn-info tikskip_async" data-id="<?=$tik['id_']?>">Skip</button>
 					</td>
 
 
@@ -622,10 +616,7 @@ div#skipAll {
 
 
 <?php function ui_del($tik) { ?>
-	<form  method='post' onSubmit="return confirm('XÓA LUÔN ĐÓ ANH? <?=escape($tik['name_'])?>');" >
-		<input type="hidden" name="rm_id" value="<?=$tik['id_']?>" />
-		<input type="submit" value="Xóa" classz="btn btn-danger"/>
-	</form>
+	<button class="btn btn-sm btn-danger tik_delete_btn" data-id="<?=$tik['id_']?>" data-name="<?= $tik['name_'] ?>">Xóa</button>
 <?php } ?>
 
 
@@ -681,20 +672,132 @@ page_bot ();
 db_close ();
 ?>
 
+
 <script>
-	$(".hed").each(function(index) {
-		var ref = $(this).parent().attr("href");
-		if (ref.includes("http")) {
+	$(document).on('click', ".tik_async" , function() {
+		blockui();
+
+		var tikId = $(this).data('id');
+		const formData = new FormData();
+		formData.append('tik_id_async', tikId);
+
+		axios.post('index.php', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+			.then(response => {
+				if (response.data != "OK") {
+					alert("Failed to TIK");
+					return;
+				}
+				//
+				$('td.tik_async_prefix[data-id="' + tikId + '"]').text('now');
+				//
+				var button = $('button.tik_async[data-id="' + tikId + '"]');
+				button.removeClass('btn-warning').addClass('btn-default');
+				//
+				reloadHeaders('current');
+			})
+			.catch(error => {
+				alert("Failed to TIK");
+			})
+			.finally(() => {
+				unblockui();
+			});
+	});
+
+	$(document).on('click', ".tikskip_async" , function() {
+		blockui();
+
+		var tikId = $(this).data('id');
+		const formData = new FormData();
+		formData.append('action_skip_async_id', tikId);
+
+		axios.post('index.php', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+			.then(response => {
+				if (response.data != "OK") {
+					alert("Failed to Skip");
+					return;
+				}
+				//
+				var prefix = $('td.tik_async_prefix[data-id="' + tikId + '"] strong');
+				prefix.css('color', 'pink');
+				//
+				var button = $('button.tikskip_async[data-id="' + tikId + '"]');
+				button.removeClass('btn-info').addClass('btn-default');
+				//
+				reloadHeaders('current');
+			})
+			.catch(error => {
+				alert("Failed to Skip");
+			})
+			.finally(() => {
+				unblockui();
+			});
+	});
+
+	$(document).on('click', ".tik_delete_btn" , function() {
+		blockui();
+
+		var tikId = $(this).data('id');
+		var tikName = $(this).data('name');
+		
+		const isConfirmed = confirm("XÓA LUÔN ĐÓ ANH? >> " + tikName);
+		if (!isConfirmed) {
 			return;
 		}
 		
-		var el = $(this);
-		$.ajax(`./${ref}&kind=xhr`).done(function(res) {
-			var badge = res.badge;
-			if (badge) {
-				el.next().html(`${badge}`);
-			}
-		});
-		
+		const formData = new FormData();
+		formData.append('rm_id_async', tikId);
+
+		axios.post('index.php', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+			.then(response => {
+				if (response.data != "OK") {
+					alert("Failed to Delete");
+					return;
+				}
+				//
+				var button = $('button.tik_delete_btn[data-id="' + tikId + '"]');
+				const tr = button.closest('tr');
+				if (tr) {
+					tr.remove();
+				}
+				//
+				reloadHeaders('current');
+			})
+			.catch(error => {
+				alert("Failed to Delete");
+			})
+			.finally(() => {
+				unblockui();
+			});
 	});
+</script>
+
+<script>
+	function reloadHeaders(type) {
+
+		$(".hed").each(function(index) {
+			var ref = $(this).parent().attr("href");
+			if (ref.includes("http")) {
+				return;
+			}
+
+			if (type == 'current') {
+				var currentRef = window.location.search;
+				if (ref != currentRef) {
+					return;
+				}
+			}
+			
+			var el = $(this);
+			$.ajax(`./${ref}&kind=xhr`).done(function(res) {
+				var badge = res.badge;
+				if (badge) {
+					el.next().html(`${badge}`);
+				} else {
+					el.next().html("");
+				}
+			});
+			
+		});
+	}
+	reloadHeaders('all');
 </script>

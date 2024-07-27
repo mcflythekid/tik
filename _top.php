@@ -18,9 +18,25 @@
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
 
+	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
 	<link rel="icon" type="image/png" href="favicon-1.png" />
 
 	<title><?=$page_title?></title>
+
+	<script src = "https://malsup.github.io/jquery.blockUI.js"> </script>
+    <script>
+        function blockui() {
+            $.blockUI({
+                theme:     true, 
+                title:    'Processing your request', 
+                message:  '<p>Please wait!</p>'
+            } );
+        }
+        function unblockui() {
+            $.unblockUI();
+        }
+    </script>
 </head>
 <body>
 <div class="container-fluid">
