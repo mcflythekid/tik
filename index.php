@@ -409,7 +409,7 @@ span.line-head-skipable {
 <div class="row">
 	<div class="col-9">
 		<div class="alert alert-primary" role="alert">
-		  <?=escape($cat)?>
+		  <?=escape($cat)?> [<?= sizeof($tiks) ?>]
 		  <?php 
 			if (isset($tik_color_day)) {
 				$suffix = $tik_color_day > 1 ? "days" : "day";
