@@ -217,8 +217,8 @@ page_top ();
 		<form method='post' onSubmit="return confirm('Ghi nhận MUA?');">
 			<input type="hidden" name="action_buy" value="xxx" />
 			<input type="hidden" name="port_id" value="<?=$param_port_id?>" />
-			<input required="true" size="<?=INPUT_SIZE_COUNTING?>" name="coin" placeholder="<?=INPUT_HINT_QUANTITY?>"   <?php if ($isLoanLog) : ?> value="0" <?php endif; ?>  />
 			<input required="true" size="<?=INPUT_SIZE_COUNTING?>" name="usd" placeholder="<?=INPUT_HINT_MONEY?>"   />
+			<input required="true" size="<?=INPUT_SIZE_COUNTING?>" name="coin" placeholder="<?=INPUT_HINT_QUANTITY?>"   <?php if ($isLoanLog) : ?> value="0" <?php endif; ?>  />
 			<input required="true" size="<?=INPUT_SIZE_W_NOTE?>"   name="note" placeholder="<?=INPUT_HINT_NOTE?>"  />
 			<input size="<?=INPUT_SIZE_DATETIME?>" name="ts" placeholder="<?=INPUT_HINT_DATETIME?>"></input>
 			<input size="<?=INPUT_SIZE_PAXG?>" name="paxg" placeholder="<?=INPUT_HINT_PAXG?>"></input>
@@ -230,8 +230,8 @@ page_top ();
 		<form method='post' onSubmit="return confirm('Ghi nhận BÁN/Rút?');">
 			<input type="hidden" name="action_sell" value="xxx" />
 			<input type="hidden" name="port_id" value="<?=$param_port_id?>" />
-			<input required="true" size="<?=INPUT_SIZE_COUNTING?>" name="coin" placeholder="<?=INPUT_HINT_QUANTITY_WITHDRAW?>"  <?php if ($isLoanLog) : ?> value="0" <?php endif; ?>  />
 			<input required="true" size="<?=INPUT_SIZE_COUNTING?>" name="usd" placeholder="<?=INPUT_HINT_MONEY?>"  />
+			<input required="true" size="<?=INPUT_SIZE_COUNTING?>" name="coin" placeholder="<?=INPUT_HINT_QUANTITY_WITHDRAW?>"  <?php if ($isLoanLog) : ?> value="0" <?php endif; ?>  />
 			<input required="true" size="<?=INPUT_SIZE_W_NOTE?>"   name="note" placeholder="<?=INPUT_HINT_NOTE?>"  />
 			<input size="<?=INPUT_SIZE_DATETIME?>" name="ts" placeholder="<?=INPUT_HINT_DATETIME?>"></input>
 			<input size="<?=INPUT_SIZE_PAXG?>" name="paxg" placeholder="<?=INPUT_HINT_PAXG?>" ></input>
@@ -307,8 +307,8 @@ page_top ();
 	<form method='post' onSubmit="return confirm('Ghi nhận SỬA?');">
 		<input type="hidden" name="action_edit" value="xxx" />
 		<input type="hidden" name="tran_id" value="<?=$tran["id_"]?>" />
-		<input required="true" size="<?=INPUT_SIZE_COUNTING?>" name="coin" placeholder="<?=INPUT_HINT_QUANTITY?>" value="<?=$tran['amount_coin']?>" />
 		<input required="true" size="<?=INPUT_SIZE_COUNTING?>" name="usd" placeholder="<?=INPUT_HINT_MONEY?>" value="<?=$tran['amount_usd']?>" />
+		<input required="true" size="<?=INPUT_SIZE_COUNTING?>" name="coin" placeholder="<?=INPUT_HINT_QUANTITY?>" value="<?=$tran['amount_coin']?>" />
 		<input required="true" size="<?=INPUT_SIZE_NOTE?>" name="note"  placeholder="<?=INPUT_HINT_NOTE?>" value="<?=escape($tran['note'])?>" />
 		<input size="<?=INPUT_SIZE_DATETIME?>" name="ts" placeholder="<?=INPUT_HINT_DATETIME?>" value="<?=$tran['ts']?>" />
 		<input size="<?=INPUT_SIZE_PAXG?>" name="paxg" placeholder="<?=INPUT_HINT_PAXG?>" value="<?=$tran['paxg']?>" />
