@@ -195,33 +195,31 @@ function handle_gym_preprocess(&$tik) {
 	global $gym_records;
 	$name = $tik["name_"];
 	$tikDate = $tik['tik'];
-	$muscleGroup = extractFirstStringInBrackets($name);
-	if ($muscleGroup != null) {
+	$muscleGroups = extractAllStringsInBrackets($name);
+	foreach ($muscleGroups as $muscleGroup) {
 		addGymRecord($gym_records, $muscleGroup, $tikDate);
 	}
 }
 function handle_gym(&$tik) {
 	global $gym_records;
+	$WHITELIST_WINDOW_HOURS = 8;
 
 	$name = $tik["name_"];
-	$muscleGroup = extractFirstStringInBrackets($name);
-	if ($muscleGroup == null) {
-		return;
-	}
-	
-	$currentDateTime = new DateTime();
-	$latestDateTime = $gym_records[$muscleGroup];
-	$interval = $currentDateTime->diff($latestDateTime);
-	$hoursDifference = ($interval->days * 24) + $interval->h + ($interval->i / 60);
-	//
-	$limit = 44;
-	$hoursDifferenceStr = floor($hoursDifference) . "/" . $limit . "h";
-	//
-	if ($hoursDifference > 8 && $hoursDifference <= $limit) {
-		$tik["tik_out_line"] .= " <span class='color_red'>[${hoursDifferenceStr}]</span>";
-	}
+	$muscleGroups = extractAllStringsInBrackets($name);
 
-	
+	$error = "";
+	foreach ($muscleGroups as $muscleGroup) {
+		$hourLimit = getGymLimitHour($muscleGroup);
+		$hourPassed = getGymHourPassed($gym_records, $muscleGroup);
+		$hourPassedFloor = floor($hourPassed);
+		if ($hourPassed > $WHITELIST_WINDOW_HOURS && $hourPassed <= $hourLimit) {
+			$error .= "${muscleGroup}:${hourPassedFloor}/${hourLimit}h ";
+		}
+	}
+	if (isNotBlank($error)) {
+		$error = trim($error);
+		$tik["tik_out_line"] .= " <span class='color_red'>[${error}]</span>";
+	}
 }
 function handle_luna(&$tik) {
 	global $luna;
@@ -744,7 +742,12 @@ db_close ();
 				var button = $('button.tik_async[data-id="' + tikId + '"]');
 				button.removeClass('btn-warning').addClass('btn-default');
 				//
-				reloadHeaders('current');
+				<?php if ($cat == 'gym'): ?>
+					location.reload();
+				<?php else: ?>
+					reloadHeaders('current');
+				<?php endif; ?>
+				
 			})
 			.catch(error => {
 				alert("Failed to TIK");

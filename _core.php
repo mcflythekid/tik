@@ -477,6 +477,13 @@ function simpleAction($text, $array, $class = 'btn btn-warning') {
 	return $html;
 }
 
+function isBlank($input) {
+    return $input === null || trim($input) === '';
+}
+function isNotBlank($input) {
+    // Use the opposite of isBlank
+    return !isBlank($input);
+}
 
 
 
@@ -488,6 +495,22 @@ function extractFirstStringInBrackets($input) {
     }
     return null;
 }
+function extractAllStringsInBrackets($input) {
+    // Use a regular expression to match all occurrences of strings within square brackets
+    preg_match_all('/\[(.*?)\]/', $input, $matches);
+
+    // Get the array of all matches found
+    $allMatches = $matches[1];
+
+    // Filter out empty elements and those that are just whitespace
+    $filteredMatches = array_filter($allMatches, function($value) {
+        // Trim the value and check if it's not empty
+        return !empty(trim($value));
+    });
+
+    // Return the filtered array, which will be empty if no valid matches are found
+    return $filteredMatches;
+}
 function addGymRecord(&$array, $key, $date) {
     $newDate = new DateTime($date);
     if (array_key_exists($key, $array)) {
@@ -498,5 +521,40 @@ function addGymRecord(&$array, $key, $date) {
     } else {
         $array[$key] = $newDate;
     }
+}
+function getGymLimitHour($muscleGroup) {
+    // Define an associative array with muscle groups as keys and rest limits as values
+	$WINDOW = 2;
+	//
+	$ONE_DAY = 24     - $WINDOW;
+	$TWO_DAY = 24*2   - $WINDOW;
+	$THREE_DAY = 24*3 - $WINDOW;
+
+    $restLimits = [
+        'Chest' => $TWO_DAY,
+        'Bicep' => $TWO_DAY,
+        'Leg' => $THREE_DAY,
+        'Tricep' => $TWO_DAY,
+        'Shoulder' => $TWO_DAY,
+        'Abs' => $TWO_DAY,
+        'Calf' => $TWO_DAY,
+        'Back' => $TWO_DAY,
+        // Add more muscle groups and their limits as needed
+    ];
+
+    // Check if the muscle group exists in the array and return the corresponding value
+    if (array_key_exists($muscleGroup, $restLimits)) {
+        return $restLimits[$muscleGroup];
+    } else {
+        // Return null or a default value if the muscle group is not found
+        return null; // or return 0 if you prefer a numeric default value
+    }
+}
+function getGymHourPassed($gym_records, $muscleGroup) {
+	$currentDateTime = new DateTime();
+	$latestDateTime = $gym_records[$muscleGroup];
+	$interval = $currentDateTime->diff($latestDateTime);
+	$hoursDifference = ($interval->days * 24) + $interval->h + ($interval->i / 60);
+	return $hoursDifference;
 }
 //// END OF Gymmer functions
