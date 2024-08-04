@@ -159,21 +159,69 @@ $tiks = db_list("select id_, name_, tik, category, counter, skip from tik where 
 
 $all_categories = db_list("select distinct category from tik order by category");
 
+$gym_records = array();
+// Pre-process
+foreach ($tiks as &$tik) {
+	if ($type == 'tik' && $cat == 'gym') {
+		handle_gym_preprocess($tik);
+	}
+}
+// Process
 foreach ($tiks as &$tik) {
 	if ($type == "luna"){
 		handle_luna($tik);
 	} else if ($type == "tik"){
 		handle_normal($tik);
+	} 
+	
+	// Extra processor for gymmer
+	if ($type == 'tik' && $cat == 'gym') {
+		handle_gym($tik);
 	}
 } 
 unset($tik); // https://stackoverflow.com/questions/7158741/why-php-iteration-by-reference-returns-a-duplicate-last-record
 // https://bugs.php.net/bug.php?id=29992
 
+// print_r($tiks);
+// print_r($gym_records);
 
 function handle_normal(&$tik) {
 	$name = $tik["name_"];
 	$count = $tik["counter"];
 	$tik["tik_out_line"] = $count > 0 ? "$name <strong style='color: orange;'>⟳$count</strong>" : $name;
+}
+function handle_gym_preprocess(&$tik) {
+	// prepare data for GYM first
+	global $gym_records;
+	$name = $tik["name_"];
+	$tikDate = $tik['tik'];
+	$muscleGroup = extractFirstStringInBrackets($name);
+	if ($muscleGroup != null) {
+		addGymRecord($gym_records, $muscleGroup, $tikDate);
+	}
+}
+function handle_gym(&$tik) {
+	global $gym_records;
+
+	$name = $tik["name_"];
+	$muscleGroup = extractFirstStringInBrackets($name);
+	if ($muscleGroup == null) {
+		return;
+	}
+	
+	$currentDateTime = new DateTime();
+	$latestDateTime = $gym_records[$muscleGroup];
+	$interval = $currentDateTime->diff($latestDateTime);
+	$hoursDifference = ($interval->days * 24) + $interval->h + ($interval->i / 60);
+	//
+	$limit = 44;
+	$hoursDifferenceStr = floor($hoursDifference) . "/" . $limit . "h";
+	//
+	if ($hoursDifference > 8 && $hoursDifference <= $limit) {
+		$tik["tik_out_line"] .= " <span class='color_red'>[${hoursDifferenceStr}]</span>";
+	}
+
+	
 }
 function handle_luna(&$tik) {
 	global $luna;
@@ -298,7 +346,10 @@ span.line-head-skipable {
 	font-style: italic;
 	text-decoration: underline;
 }
-
+.color_red {
+	color: red;
+	font-weight: bold;
+}
 </style>
 
 <div class="menu">

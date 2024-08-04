@@ -476,3 +476,27 @@ function simpleAction($text, $array, $class = 'btn btn-warning') {
 	$html .= "</form>";
 	return $html;
 }
+
+
+
+
+//// Gymmer functions
+function extractFirstStringInBrackets($input) {
+    // Use a regular expression to match the first occurrence of a string within square brackets
+    if (preg_match('/\[(.*?)\]/', $input, $matches)) {
+        return $matches[1];
+    }
+    return null;
+}
+function addGymRecord(&$array, $key, $date) {
+    $newDate = new DateTime($date);
+    if (array_key_exists($key, $array)) {
+        $existingDate = $array[$key];
+        if ($newDate > $existingDate) {
+            $array[$key] = $newDate;
+        }
+    } else {
+        $array[$key] = $newDate;
+    }
+}
+//// END OF Gymmer functions
