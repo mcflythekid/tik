@@ -12,6 +12,9 @@ define("INPUT_SIZE_DATETIME", 18);
 define("INPUT_SIZE_NOTE", 30);
 define("INPUT_SIZE_PAXG", 5);
 define("INPUT_SIZE_NAME", 30);
+//
+define("INPUT_SIZE_H_NAME", 2);
+define("INPUT_SIZE_W_NAME", 30);
 
 define("INPUT_HINT_DATETIME", "1999-12-31 23:59:59");
 define("INPUT_HINT_QUANTITY", "Quantity");
@@ -61,13 +64,17 @@ function db_open(){
 	global $param_db_db;
 	global $param_db_port;
 	global $param_timezone;
+	global $param_is_prod;
+	//
 	$con = mysqli_connect($param_db_server, $param_db_username, $param_db_password, $param_db_db, $param_db_port);
 	if (!$con) {
 		core_log("Connection failed: " . mysqli_connect_error());
 		exit;
 	}
 	mysqli_set_charset($con,"utf8");
-	mysqli_query($con, "SET timezone = '$param_timezone'");
+	if ($param_is_prod) {
+		mysqli_query($con, "SET timezone = '$param_timezone'");
+	}
 	//exit;
 }
 function db_object($sql){
