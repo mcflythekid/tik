@@ -539,6 +539,7 @@ function getGymLimitHour($muscleGroup) {
         'Abs' => $TWO_DAY,
         'Calf' => $TWO_DAY,
         'Back' => $TWO_DAY,
+        'Cardio' => $TWO_DAY,
         // Add more muscle groups and their limits as needed
     ];
 

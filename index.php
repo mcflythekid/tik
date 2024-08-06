@@ -202,7 +202,7 @@ function handle_gym_preprocess(&$tik) {
 }
 function handle_gym(&$tik) {
 	global $gym_records;
-	$WHITELIST_WINDOW_HOURS = 8;
+	$WHITELIST_WINDOW_HOURS = 2;
 
 	$name = $tik["name_"];
 	$muscleGroups = extractAllStringsInBrackets($name);
