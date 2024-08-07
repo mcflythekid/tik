@@ -478,7 +478,7 @@ span.line-head-skipable {
 
 	<hr/>
 
-	<?php if ($cat = "gym") : ?>
+	<?php if ($cat == "gym") : ?>
 		<div style="margin-top: 1px; margin-bottom: 1px;">
 			<a onclick="replaceURLParam('gym_mode', 'simple')"><strong>[Không Dùng Não]</strong></a>&nbsp;&nbsp;&nbsp;&nbsp;
 			<a onclick="replaceURLParam('gym_mode', 'complex')"><strong>[Bậc Thầy]</strong></a>&nbsp;&nbsp;&nbsp;&nbsp;
