@@ -245,7 +245,8 @@ function handle_luna(&$tik) {
 		//$tmp_luna_obj = $luna->convertSolar2Lunar(idate("d"),idate("m"),idate("Y") + 1,7);
 		//$tmp_luna_leap = $tmp_luna_obj[3];
 		
-		$sola_obj = $luna->convertLunar2Solar($luna_day, $luna_month, $now_luna_year + 1,$tmp_luna_leap,7);
+		$sola_obj = $luna->convertLunar2Solar($luna_day, $luna_month, $now_luna_year + 1, null ,7);
+		//$sola_obj = $luna->convertLunar2Solar($luna_day, $luna_month, $now_luna_year + 1,$tmp_luna_leap,7);
 		$sola_year = $sola_obj[2];
 		$sola_month = $sola_obj[1];
 		$sola_day = $sola_obj[0];
