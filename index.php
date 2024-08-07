@@ -234,8 +234,33 @@ function handle_gym(&$tik) {
 	$name = $tik["name_"];
 	$muscleGroups = extractAllStringsInBrackets($name);
 
+	// Recovery
+	$MAX_GYM_STREAK = 5;
+	if (count($muscleGroups) == 1 && $muscleGroups[0] == "Recover") {
+		$recoverDate = epocToHanoiYYYYMMDD(strtotime($tik['tik']));
+		$nowDate = epocToHanoiYYYYMMDD(time());
+		$interval = (new DateTime($recoverDate))->diff(new DateTime($nowDate));
+		$intervalDays = $interval->days;
+		$streak = $intervalDays - 1;
+
+		if ($streak > $MAX_GYM_STREAK) {
+			$tik["tik_out_line"] .= " <span class='color_red'>!! Rest Today Please Haha !! $streak/$MAX_GYM_STREAK streak reached</span>";
+			$tik['gym_sort'] = $tik['gym_sort'] - 300 * 3600 * 24 * 365;
+			
+		} else {
+			$tik["tik_out_line"] .= " <span class='color_green'>$streak/$MAX_GYM_STREAK streak</span>";
+		}
+
+		return;
+	}
+	// \\Recovery
+
 	$error = "";
 	foreach ($muscleGroups as $muscleGroup) {
+		if ($GROUP_NAME_RECOVER == $muscleGroup) {
+			continue;
+		}
+
 		$hourLimit = getGymLimitHour($muscleGroup);
 		$hourPassed = getGymHourPassed($gym_records, $muscleGroup);
 		$hourPassedFloor = floor($hourPassed);
@@ -386,6 +411,9 @@ span.line-head-skipable {
 .color_red {
 	color: red;
 	font-weight: bold;
+}
+.color_green {
+	color: green;
 }
 </style>
 

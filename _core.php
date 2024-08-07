@@ -558,4 +558,14 @@ function getGymHourPassed($gym_records, $muscleGroup) {
 	$hoursDifference = ($interval->days * 24) + $interval->h + ($interval->i / 60);
 	return $hoursDifference;
 }
+function epocToHanoiYYYYMMDD($epoc) {
+	// Create a DateTime object from the epoch timestamp
+	$dateTime = new DateTime("@$epoc");
+
+	// Set the time zone to UTC+7
+	$dateTime->setTimezone(new DateTimeZone('Asia/Bangkok')); // Bangkok is in UTC+7
+
+	// Format the date to yyyy-mm-dd
+	return $dateTime->format('Y-m-d');
+}
 //// END OF Gymmer functions
