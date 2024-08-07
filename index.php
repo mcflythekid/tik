@@ -159,7 +159,16 @@ $tiks = db_list("select id_, name_, tik, category, counter, skip from tik where 
 
 $all_categories = db_list("select distinct category from tik order by category");
 
+
+// Type gym
+$gym_mode = "simple"; // and "complex"
+if (isset($_GET["gym_mode"]) && isNotBlank($_GET["gym_mode"])) {
+    $gym_mode = $_GET["gym_mode"];
+}
+//
 $gym_records = array();
+
+
 // Pre-process
 foreach ($tiks as &$tik) {
 	if ($type == 'tik' && $cat == 'gym') {
@@ -182,26 +191,44 @@ foreach ($tiks as &$tik) {
 unset($tik); // https://stackoverflow.com/questions/7158741/why-php-iteration-by-reference-returns-a-duplicate-last-record
 // https://bugs.php.net/bug.php?id=29992
 
-// print_r($tiks);
-// print_r($gym_records);
+// 
+// print_r($gym_records); xxxx
+
+
 
 function handle_normal(&$tik) {
 	$name = $tik["name_"];
 	$count = $tik["counter"];
 	$tik["tik_out_line"] = $count > 0 ? "$name <strong style='color: orange;'>⟳$count</strong>" : $name;
 }
+
+
 function handle_gym_preprocess(&$tik) {
 	// prepare data for GYM first
 	global $gym_records;
+	//
 	$name = $tik["name_"];
 	$tikDate = $tik['tik'];
+	$skipDate = $tik['skip'];
+	//
 	$muscleGroups = extractAllStringsInBrackets($name);
 	foreach ($muscleGroups as $muscleGroup) {
 		addGymRecord($gym_records, $muscleGroup, $tikDate);
 	}
+
+	// Custom sort key
+	$tik_epox = strtotime($tikDate);
+	if ($skipDate != null) {
+		$skip_epox = strtotime($skipDate);
+		if ($skip_epox > time()) {
+			$tik_epox += 50 * 3600 * 24 * 365;
+			$tik['gym_sort_IS_SKIPPED'] = 1;
+		}
+	}
+	$tik['gym_sort'] = $tik_epox;
 }
 function handle_gym(&$tik) {
-	global $gym_records;
+	global $gym_records, $gym_mode;
 	$WHITELIST_WINDOW_HOURS = 2;
 
 	$name = $tik["name_"];
@@ -219,6 +246,12 @@ function handle_gym(&$tik) {
 	if (isNotBlank($error)) {
 		$error = trim($error);
 		$tik["tik_out_line"] .= " <span class='color_red'>[${error}]</span>";
+		//
+		if (!isset($tik['gym_sort_IS_SKIPPED']) || $tik['gym_sort_IS_SKIPPED'] != 1) { // Prevent duplicate 2 times
+			if ($gym_mode == "simple") {
+				$tik['gym_sort'] = $tik['gym_sort'] + 30 * 3600 * 24 * 365;
+			}
+		}
 	}
 }
 function handle_luna(&$tik) {
@@ -268,6 +301,11 @@ function handle_luna(&$tik) {
 
 if ($type == "luna"){
 	$collumnToSort = array_column($tiks, 'luna_out_ts');
+	array_multisort($collumnToSort, SORT_ASC, $tiks);
+}
+
+if ($cat == "gym"){
+	$collumnToSort = array_column($tiks, 'gym_sort');
 	array_multisort($collumnToSort, SORT_ASC, $tiks);
 }
 
@@ -436,12 +474,17 @@ span.line-head-skipable {
 
 		<?=menu("warning", "- Tốn Sức", "?type=todo&cat=TD_COST_TIME")?>
 		<?=menu("warning", "- Tốn Tiền", "?type=todo&cat=TD_COST_MONEY")?>
-
-		
-		
 	</p>
 
 	<hr/>
+
+	<?php if ($cat = "gym") : ?>
+		<div style="margin-top: 1px; margin-bottom: 1px;">
+			<a onclick="replaceURLParam('gym_mode', 'simple')"><strong>[Không Dùng Não]</strong></a>&nbsp;&nbsp;&nbsp;&nbsp;
+			<a onclick="replaceURLParam('gym_mode', 'complex')"><strong>[Bậc Thầy]</strong></a>&nbsp;&nbsp;&nbsp;&nbsp;
+		</div>
+	<?php endif; ?>
+
 	<br>
 </div>
 
@@ -778,7 +821,11 @@ db_close ();
 				var button = $('button.tikskip_async[data-id="' + tikId + '"]');
 				button.removeClass('btn-info').addClass('btn-default');
 				//
-				reloadHeaders('current');
+				<?php if ($cat == 'gym'): ?>
+					location.reload();
+				<?php else: ?>
+					reloadHeaders('current');
+				<?php endif; ?>
 			})
 			.catch(error => {
 				alert("Failed to Skip");
@@ -855,4 +902,32 @@ db_close ();
 		});
 	}
 	reloadHeaders('all');
+
+
+
+
+
+	function replaceURLParam(paramName, paramNewValue) {
+		// Get the current URL
+		var currentURL = window.location.href;
+			
+		// Regular expression to find and replace the parameter value
+		var regex = new RegExp('(' + paramName + '=)([^&]*)');
+		
+		// Check if the parameter exists in the current URL
+		if (currentURL.match(regex)) {
+			// If the parameter exists, replace its value
+			var newURL = currentURL.replace(regex, '$1' + paramNewValue);
+		} else {
+			// If the parameter doesn't exist, add it to the URL
+			var separator = currentURL.includes('?') ? '&' : '?';
+			var newURL = currentURL + separator + paramName + '=' + paramNewValue;
+		}
+			
+		// Update the URL
+		window.history.replaceState({}, '', newURL);
+		console.log('Updated URL:', newURL);
+
+		window.location.href = newURL;
+	}
 </script>
