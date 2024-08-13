@@ -28,6 +28,7 @@ update_price("FLM");
 update_price("ARB");
 update_price("PEPE");
 update_price("PAXG");
+update_price("DASH");
 
 // MEXC
 update_price("PORK");
