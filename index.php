@@ -478,7 +478,10 @@ span.line-head-skipable {
 
 	<p>
 		<?=menu("warning", "STEP_BY_STEP", "?cat=STEP_BY_STEP&days=1")?>
+		<?=menu("success", "KT: PePe", "?cat=GOD_HAND&days=1")?>
+		<?=menu("success", "KT: SS", "?cat=GOD_SS&days=1")?>
 		<?=menu("warning", "☣ AVOID", "?cat=AVOID&days=1")?>
+		<?=menu("purple", "TMP", "?cat=TMP")?>
 	</p>
 
 
@@ -497,6 +500,7 @@ span.line-head-skipable {
 	<p>	
 		
 		<?=menu("success", " ☣ Fast ☣ ", "?type=todo&cat=TD_FAST")?>
+		<?=menu("success", " ☣ TechDebt ☣ ", "?type=todo&cat=TD_TECHDEBT")?>
 
 		<?=menu("warning", "PePe", "?type=todo&cat=todo_pepe")?>	
 
