@@ -66,7 +66,7 @@ if (isset($param_fund_type) & $param_fund_type != "") {
 	$coins = db_list("select id_, name_, coin_code, fund_type from portfolio where username = '$username' and fund_type = '$param_fund_type' order by name_");
 } else {
 	$coins = db_list("select id_, name_, coin_code, fund_type from portfolio where username = '$username' " .
-	 " and fund_type NOT IN ('closed', 'FFA') and name_ not like '%_Loan' and name_ not like '%_Tmp'  order by name_");
+	 " and fund_type NOT IN ('closed', 'FFA', 'FREE') and name_ not like '%_Loan' and name_ not like '%_Tmp'  order by name_");
 }
 
 
@@ -331,9 +331,10 @@ $modeAll = $mode === "all";
 	<p>
 		<a href="#" onclick="replaceURLParam('fund_type', '')">ALL</a> &nbsp;&nbsp;
 		<a href="#" onclick="replaceURLParam('fund_type', 'FG1')">FG1</a> &nbsp;&nbsp;
-		<a href="#" onclick="replaceURLParam('fund_type', 'FG2')">FG2</a> &nbsp;&nbsp;
+		<a href="#" onclick="replaceURLParam('fund_type', 'SHORT')">SHORT</a> &nbsp;&nbsp;
+		<a href="#" onclick="replaceURLParam('fund_type', 'BOOM')">BOOM</a> &nbsp;&nbsp;
 		<a href="#" onclick="replaceURLParam('fund_type', 'MEGA')">MEGA</a> &nbsp;&nbsp;
-		<a href="#" onclick="replaceURLParam('fund_type', 'FFA')">*FFA</a> &nbsp;&nbsp;
+		<a href="#" onclick="replaceURLParam('fund_type', 'FREE')">FREE</a> &nbsp;&nbsp;
 		<a href="#" onclick="replaceURLParam('fund_type', 'closed')">*CLOSED</a> &nbsp;&nbsp;
 
 	</p>
