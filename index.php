@@ -242,6 +242,9 @@ function handle_gym(&$tik) {
 		$interval = (new DateTime($recoverDate))->diff(new DateTime($nowDate));
 		$intervalDays = $interval->days;
 		$streak = $intervalDays - 1;
+		if ($streak < 0) {
+			$streak = 0;
+		}
 
 		if ($streak > $MAX_GYM_STREAK) {
 			$tik["tik_out_line"] .= " <span class='color_red'>!! Rest Today Please Haha !! $streak/$MAX_GYM_STREAK streak reached</span>";
