@@ -235,7 +235,7 @@ function handle_gym(&$tik) {
 	$muscleGroups = extractAllStringsInBrackets($name);
 
 	// Recovery
-	$MAX_GYM_STREAK = 5;
+	$MAX_GYM_STREAK = 4;
 	if (count($muscleGroups) == 1 && $muscleGroups[0] == "Recover") {
 		$recoverDate = epocToHanoiYYYYMMDD(strtotime($tik['tik']));
 		$nowDate = epocToHanoiYYYYMMDD(time());
