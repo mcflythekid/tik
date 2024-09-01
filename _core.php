@@ -478,11 +478,11 @@ function simpleAction($text, $array, $class = 'btn btn-warning') {
 }
 
 function isBlank($input) {
-    return $input === null || trim($input) === '';
+    return !isset($input) || $input === null || trim($input) === '';
 }
 function isNotBlank($input) {
     // Use the opposite of isBlank
-    return !isBlank($input);
+    return isset($input) && !isBlank($input);
 }
 
 
@@ -539,7 +539,7 @@ function getGymLimitHour($muscleGroup) {
         'Abs' => $TWO_DAY,
         'Calf' => $TWO_DAY,
         'Back' => $TWO_DAY,
-        'Cardio' => $TWO_DAY,
+        'Cardio' => $ONE_DAY,
         // Add more muscle groups and their limits as needed
     ];
 
@@ -567,5 +567,24 @@ function epocToHanoiYYYYMMDD($epoc) {
 
 	// Format the date to yyyy-mm-dd
 	return $dateTime->format('Y-m-d');
+}
+function gymAgo($hours) {
+    // Validate input
+    if ($hours < 0) {
+        return "";
+    }
+
+    // Calculate days and remaining hours
+    $days = intdiv($hours, 24); // Integer division to get the number of days
+    $remainingHours = $hours % 24; // Modulo operation to get the remaining hours
+
+    // Generate the output string with pluralization
+    $daysText = $days > 1 ? $days . "d" : ($days === 1 ? "1d" : "");
+    $hoursText = $remainingHours > 1 ? $remainingHours. "h" : ($remainingHours === 1 ? "1h" : "");
+
+    // Combine the results
+    $result = trim("$daysText $hoursText");
+
+    return $result ?: "0h";
 }
 //// END OF Gymmer functions

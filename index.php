@@ -166,6 +166,11 @@ if (isset($_GET["gym_mode"]) && isNotBlank($_GET["gym_mode"])) {
     $gym_mode = $_GET["gym_mode"];
 }
 //
+$gym_only_muscle_group = ""; // Filter gym xzxzxz
+if (isset($_GET["gym_only_muscle_group"]) && isNotBlank($_GET["gym_only_muscle_group"])) {
+    $gym_only_muscle_group = $_GET["gym_only_muscle_group"];
+}
+//
 $gym_records = array();
 
 
@@ -191,8 +196,6 @@ foreach ($tiks as &$tik) {
 unset($tik); // https://stackoverflow.com/questions/7158741/why-php-iteration-by-reference-returns-a-duplicate-last-record
 // https://bugs.php.net/bug.php?id=29992
 
-// 
-// print_r($gym_records); xxxx
 
 
 
@@ -260,7 +263,7 @@ function handle_gym(&$tik) {
 
 	$error = "";
 	foreach ($muscleGroups as $muscleGroup) {
-		if ($GROUP_NAME_RECOVER == $muscleGroup) {
+		if (isset($GROUP_NAME_RECOVER) && $GROUP_NAME_RECOVER == $muscleGroup) {
 			continue;
 		}
 
@@ -275,11 +278,10 @@ function handle_gym(&$tik) {
 		$error = trim($error);
 		$tik["tik_out_line"] .= " <span class='color_red'>[${error}]</span>";
 		//
-		if (!isset($tik['gym_sort_IS_SKIPPED']) || $tik['gym_sort_IS_SKIPPED'] != 1) { // Prevent duplicate 2 times
-			if ($gym_mode == "simple") {
-				$tik['gym_sort'] = $tik['gym_sort'] + 30 * 3600 * 24 * 365;
-			}
+		if (!isset($tik['gym_sort_IS_SKIPPED']) || $tik['gym_sort_IS_SKIPPED'] != 1) { // Add 30days for skipped items
+			$tik['gym_sort'] = $tik['gym_sort'] + 30 * 3600 * 24 * 365;
 		}
+		$tik["gym_item_recovering"] = 1;
 	}
 }
 function handle_luna(&$tik) {
@@ -518,6 +520,54 @@ span.line-head-skipable {
 			<a onclick="replaceURLParam('gym_mode', 'simple')"><strong>[Không Dùng Não]</strong></a>&nbsp;&nbsp;&nbsp;&nbsp;
 			<a onclick="replaceURLParam('gym_mode', 'complex')"><strong>[Bậc Thầy]</strong></a>&nbsp;&nbsp;&nbsp;&nbsp;
 		</div>
+
+
+		<?php 
+		$expired_muscle_groups = array();
+		foreach ($gym_records as $muscleGroup => $val) {
+			$passed = round(getGymHourPassed($gym_records, $muscleGroup), 0);
+			$limit = getGymLimitHour($muscleGroup);
+			$expired = $passed - $limit;
+			//if ($muscleGroup == "Recover" || $expired < 0) {
+			if ($muscleGroup == "Recover") {
+				continue;
+			}
+			$expired_muscle_groups[$muscleGroup] = $expired;
+		}
+		arsort($expired_muscle_groups);
+		// xzxzxz
+		echo "<p>";
+		foreach ($expired_muscle_groups as $muscleGroup => $expiredHours) {
+			$ago = gymAgo($expiredHours);
+			if (isNotBlank($ago)) {
+				$ago = " $ago";
+			}
+
+			$htmlAction = "replaceURLParam(\"gym_only_muscle_group\", \"$muscleGroup\")";
+
+			// Size
+			if ($expiredHours < 0) {
+				$name = "$muscleGroup";
+			} else {
+				$name = "<strong>$muscleGroup</strong>";
+			}
+
+			// Color
+			if ($gym_only_muscle_group == $muscleGroup) {
+				$marker = "class='color_red'";
+			} else {
+				$marker = "";
+			}
+
+			echo "<a $marker onclick='$htmlAction'>[$name$ago]</a> &nbsp;&nbsp;";
+		}
+		if (isNotBlank($gym_only_muscle_group)) {
+			$htmlAction = "replaceURLParam(\"gym_only_muscle_group\", \"\")";
+			echo "<a onclick='$htmlAction'><strong class='color_red'>[Remove_Filter]</strong></a> &nbsp;&nbsp;";
+		}
+		echo "</p>";
+		?>
+
 	<?php endif; ?>
 
 	<br>
@@ -641,6 +691,22 @@ div#skipAll {
 		<?php foreach($tiks as $tik ) {
 			$skipMillis = strtotime($tik['skip']);
 			$tik_id = $tik["id_"];
+
+			// Skip recovery gym item
+			if ($cat == 'gym' && $gym_mode == "simple") {
+				if (isset($tik['gym_item_recovering']) && $tik['gym_item_recovering'] == 1) {
+					continue; // Skip recovering item
+				}
+			}
+
+			// Force gym focus mode xzxzxz
+			if ($cat == 'gym' && isNotBlank($gym_only_muscle_group)) {
+				$focusGroup = $gym_only_muscle_group;
+				$search = "[$focusGroup]";
+				if (!contains($tik["tik_out_line"], $search)) {
+					continue;
+				}
+			}
 		?>
 			<tr>
 				<?php if ($type == "tik") { ?>
