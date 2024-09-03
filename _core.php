@@ -524,7 +524,7 @@ function addGymRecord(&$array, $key, $date) {
 }
 function getGymLimitHour($muscleGroup) {
     // Define an associative array with muscle groups as keys and rest limits as values
-	$WINDOW = 2;
+	$WINDOW = 4;
 	//
 	$ONE_DAY = 24     - $WINDOW;
 	$TWO_DAY = 24*2   - $WINDOW;
@@ -585,6 +585,7 @@ function gymAgo($hours) {
     // Combine the results
     $result = trim("$daysText $hoursText");
 
-    return $result ?: "0h";
+	$minutes = round($hours * 60);
+    return $result ?: $minutes . "m";
 }
 //// END OF Gymmer functions

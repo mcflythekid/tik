@@ -525,7 +525,7 @@ span.line-head-skipable {
 		<?php 
 		$expired_muscle_groups = array();
 		foreach ($gym_records as $muscleGroup => $val) {
-			$passed = round(getGymHourPassed($gym_records, $muscleGroup), 0);
+			$passed = getGymHourPassed($gym_records, $muscleGroup);
 			$limit = getGymLimitHour($muscleGroup);
 			$expired = $passed - $limit;
 			//if ($muscleGroup == "Recover" || $expired < 0) {
@@ -547,7 +547,11 @@ span.line-head-skipable {
 
 			// Size
 			if ($expiredHours < 0) {
-				$name = "$muscleGroup";
+				$passed = getGymHourPassed($gym_records, $muscleGroup);
+				$limit = getGymLimitHour($muscleGroup);
+				$percent = round($passed / $limit * 100);
+				$hoursLeft = gymAgo(- $expiredHours);
+				$name = "⌛ $muscleGroup $percent% -- $hoursLeft";
 			} else {
 				$name = "<strong>$muscleGroup</strong>";
 			}
