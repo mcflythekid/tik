@@ -485,7 +485,9 @@ function isNotBlank($input) {
     return isset($input) && !isBlank($input);
 }
 
-
+function isTikSkipped($tik) {
+	return isset($tik['gym_sort_IS_SKIPPED']) &&  $tik['gym_sort_IS_SKIPPED'] == 1;
+}
 
 //// Gymmer functions
 function extractFirstStringInBrackets($input) {
@@ -522,6 +524,8 @@ function addGymRecord(&$array, $key, $date) {
         $array[$key] = $newDate;
     }
 }
+//
+define("GYM_SESSION_HOURS", 2); // How many hour gym item still display after picked
 function getGymLimitHour($muscleGroup) {
     // Define an associative array with muscle groups as keys and rest limits as values
 	$WINDOW = 4;
@@ -558,6 +562,13 @@ function getGymHourPassed($gym_records, $muscleGroup) {
 	$hoursDifference = ($interval->days * 24) + $interval->h + ($interval->i / 60);
 	return $hoursDifference;
 }
+function getGymHourPassedOfItem($tik) {
+	$currentDateTime = new DateTime();
+	$latestDateTime = new DateTime($tik['tik']);
+	$interval = $currentDateTime->diff($latestDateTime);
+	$hoursDifference = ($interval->days * 24) + $interval->h + ($interval->i / 60);
+	return $hoursDifference;
+}
 function epocToHanoiYYYYMMDD($epoc) {
 	// Create a DateTime object from the epoch timestamp
 	$dateTime = new DateTime("@$epoc");
@@ -583,7 +594,7 @@ function gymAgo($hours) {
     $hoursText = $remainingHours > 1 ? $remainingHours. "h" : ($remainingHours === 1 ? "1h" : "");
 
     // Combine the results
-    $result = trim("$daysText $hoursText");
+    $result = trim("$daysText$hoursText");
 
 	$minutes = round($hours * 60);
     return $result ?: $minutes . "m";

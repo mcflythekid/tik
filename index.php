@@ -166,13 +166,29 @@ if (isset($_GET["gym_mode"]) && isNotBlank($_GET["gym_mode"])) {
     $gym_mode = $_GET["gym_mode"];
 }
 //
-$gym_only_muscle_group = ""; // Filter gym xzxzxz
+$gym_only_muscle_group = ""; // Filter gym
 if (isset($_GET["gym_only_muscle_group"]) && isNotBlank($_GET["gym_only_muscle_group"])) {
     $gym_only_muscle_group = $_GET["gym_only_muscle_group"];
 }
 //
 $gym_records = array();
-
+//
+$gym_musble_group_avaiable_items = array(); // Count gym items
+function add_gym_musble_group_avaiable_items($muscleGroup) {
+	global $gym_musble_group_avaiable_items;
+	if (!isset($gym_musble_group_avaiable_items[$muscleGroup])) {
+		$gym_musble_group_avaiable_items[$muscleGroup] = 0;
+	}
+	$gym_musble_group_avaiable_items[$muscleGroup] += 1;
+}
+function get_gym_musble_group_avaiable_items($muscleGroup) {
+	global $gym_musble_group_avaiable_items;
+	if (!isset($gym_musble_group_avaiable_items[$muscleGroup])) {
+		return 0;
+	}
+	return $gym_musble_group_avaiable_items[$muscleGroup];
+}
+//
 
 // Pre-process
 foreach ($tiks as &$tik) {
@@ -232,7 +248,7 @@ function handle_gym_preprocess(&$tik) {
 }
 function handle_gym(&$tik) {
 	global $gym_records, $gym_mode;
-	$WHITELIST_WINDOW_HOURS = 2;
+	
 
 	$name = $tik["name_"];
 	$muscleGroups = extractAllStringsInBrackets($name);
@@ -262,28 +278,47 @@ function handle_gym(&$tik) {
 	// \\Recovery
 
 	$error = "";
-	foreach ($muscleGroups as $muscleGroup) {
-		if (isset($GROUP_NAME_RECOVER) && $GROUP_NAME_RECOVER == $muscleGroup) {
-			continue;
-		}
+	foreach ($muscleGroups as $muscleGroup) { // Loop on all muscle group of this $tik
 
 		$hourLimit = getGymLimitHour($muscleGroup);
-		$hourPassed = getGymHourPassed($gym_records, $muscleGroup);
-		$hourPassedFloor = floor($hourPassed);
-		if ($hourPassed > $WHITELIST_WINDOW_HOURS && $hourPassed <= $hourLimit) {
-			$error .= "${muscleGroup}:${hourPassedFloor}/${hourLimit}h ";
+		//
+		$hourPassedGroup = getGymHourPassed($gym_records, $muscleGroup);
+		$hourPassedGroupRnd = round($hourPassedGroup, 2);
+		//
+		$hourPassedItem = getGymHourPassedOfItem($tik);
+		$hourPassedItemRnd = round($hourPassedItem, 2);
+		//
+		$isFoundGroupLimit = false;
+		if ($hourPassedGroup > GYM_SESSION_HOURS && $hourPassedGroup <= $hourLimit) {
+			$error .= "G-${muscleGroup};${hourPassedGroupRnd}/${hourLimit};";
+			$isFoundGroupLimit = true;
+		}
+		//
+		if (!$isFoundGroupLimit && $hourPassedItem <= $hourLimit) { // Check NOT "isFoundGroupLimit" to save UI spaces
+			$error .= "I-${muscleGroup};${hourPassedItemRnd}/${hourLimit};";
+		}
+		//
+		$skipText = "SKIP;";
+		if (isTikSkipped($tik) && !contains($error, $skipText)) {
+			$error .= $skipText;
 		}
 	}
 	if (isNotBlank($error)) {
 		$error = trim($error);
-		$tik["tik_out_line"] .= " <span class='color_red'>[${error}]</span>";
+		$error = rtrim($error, ';');
+
+		$tik["tik_out_line"] .= "<br><span class='color_red'>[${error}]</span>";
 		//
 		if (!isset($tik['gym_sort_IS_SKIPPED']) || $tik['gym_sort_IS_SKIPPED'] != 1) { // Add 30days for skipped items
 			$tik['gym_sort'] = $tik['gym_sort'] + 30 * 3600 * 24 * 365;
 		}
-		$tik["gym_item_recovering"] = 1;
+		$tik["gym_item_recovering"] = 1; // Recovering (And sesion end by GYM_SESSION_HOURS)
+
+	} else {
+		add_gym_musble_group_avaiable_items($muscleGroup);
 	}
 }
+
 function handle_luna(&$tik) {
 	global $luna;
 	$now_luna_obj = $luna->convertSolar2Lunar(idate("d"),idate("m"),idate("Y"),7);
@@ -484,6 +519,7 @@ span.line-head-skipable {
 	<p>
 		<?=menu("warning", "STEP_BY_STEP", "?cat=STEP_BY_STEP&days=1")?>
 		<?=menu("success", "KT: PePe", "?cat=GOD_HAND&days=1")?>
+		<?=menu("success", "KT: PePe X2", "?cat=GOD_HANDx2&days=2")?>
 		<?=menu("success", "KT: SS", "?cat=GOD_SS&days=1")?>
 		<?=menu("warning", "☣ AVOID", "?cat=AVOID&days=1")?>
 		<?=menu("purple", "TMP", "?cat=TMP")?>
@@ -507,7 +543,9 @@ span.line-head-skipable {
 		<?=menu("success", " ☣ Fast ☣ ", "?type=todo&cat=TD_FAST")?>
 		<?=menu("success", " ☣ TechDebt ☣ ", "?type=todo&cat=TD_TECHDEBT")?>
 
-		<?=menu("warning", "PePe", "?type=todo&cat=todo_pepe")?>	
+		<?=menu("warning", "PePe", "?type=todo&cat=todo_pepe")?>
+		
+
 
 		<?=menu("warning", "- Tốn Sức", "?type=todo&cat=TD_COST_TIME")?>
 		<?=menu("warning", "- Tốn Tiền", "?type=todo&cat=TD_COST_MONEY")?>
@@ -517,8 +555,8 @@ span.line-head-skipable {
 
 	<?php if ($cat == "gym") : ?>
 		<div style="margin-top: 1px; margin-bottom: 1px;">
-			<a onclick="replaceURLParam('gym_mode', 'simple')"><strong>[Không Dùng Não]</strong></a>&nbsp;&nbsp;&nbsp;&nbsp;
-			<a onclick="replaceURLParam('gym_mode', 'complex')"><strong>[Bậc Thầy]</strong></a>&nbsp;&nbsp;&nbsp;&nbsp;
+			<a onclick="replaceURLParam('gym_mode', 'simple')"><span class="<?= $gym_mode === 'simple' ? 'color_red' : ''?>">[Không Dùng Não]</span></a>&nbsp;&nbsp;&nbsp;&nbsp;
+			<a onclick="replaceURLParam('gym_mode', 'complex')"><span class="<?= $gym_mode === 'complex' ? 'color_red' : ''?>">[Bậc Thầy]</span></a>&nbsp;&nbsp;&nbsp;&nbsp;
 		</div>
 
 
@@ -528,19 +566,19 @@ span.line-head-skipable {
 			$passed = getGymHourPassed($gym_records, $muscleGroup);
 			$limit = getGymLimitHour($muscleGroup);
 			$expired = $passed - $limit;
-			//if ($muscleGroup == "Recover" || $expired < 0) {
+
 			if ($muscleGroup == "Recover") {
 				continue;
 			}
 			$expired_muscle_groups[$muscleGroup] = $expired;
 		}
 		arsort($expired_muscle_groups);
-		// xzxzxz
+		//
 		echo "<p>";
 		foreach ($expired_muscle_groups as $muscleGroup => $expiredHours) {
 			$ago = gymAgo($expiredHours);
 			if (isNotBlank($ago)) {
-				$ago = " $ago";
+				$ago = "exp:$ago";
 			}
 
 			$htmlAction = "replaceURLParam(\"gym_only_muscle_group\", \"$muscleGroup\")";
@@ -551,9 +589,9 @@ span.line-head-skipable {
 				$limit = getGymLimitHour($muscleGroup);
 				$percent = round($passed / $limit * 100);
 				$hoursLeft = gymAgo(- $expiredHours);
-				$name = "⌛ $muscleGroup $percent% -- $hoursLeft";
+				$name = "${muscleGroup};♥$percent%;nxt:$hoursLeft";
 			} else {
-				$name = "<strong>$muscleGroup</strong>";
+				$name = "<strong>$muscleGroup;</strong>";
 			}
 
 			// Color
@@ -563,12 +601,22 @@ span.line-head-skipable {
 				$marker = "";
 			}
 
-			echo "<a $marker onclick='$htmlAction'>[$name$ago]</a> &nbsp;&nbsp;";
+			$count = get_gym_musble_group_avaiable_items($muscleGroup);
+			if ($count == 0 && $gym_mode === 'simple') {
+				// Drop muscle group that has no items
+			} else {
+				$countMark = $count > 0 ? "x$count " : "";
+				echo "<a $marker onclick='$htmlAction'>[$countMark$name$ago]</a> &nbsp;&nbsp;";
+			}
+			
 		}
+
+		// Filter remobal
 		if (isNotBlank($gym_only_muscle_group)) {
 			$htmlAction = "replaceURLParam(\"gym_only_muscle_group\", \"\")";
-			echo "<a onclick='$htmlAction'><strong class='color_red'>[Remove_Filter]</strong></a> &nbsp;&nbsp;";
+			echo "<a onclick='$htmlAction'><strong class='color_red'>[rm-filter]</strong></a> &nbsp;&nbsp;";
 		}
+
 		echo "</p>";
 		?>
 
@@ -703,7 +751,7 @@ div#skipAll {
 				}
 			}
 
-			// Force gym focus mode xzxzxz
+			// Filter by muscle-group
 			if ($cat == 'gym' && isNotBlank($gym_only_muscle_group)) {
 				$focusGroup = $gym_only_muscle_group;
 				$search = "[$focusGroup]";
